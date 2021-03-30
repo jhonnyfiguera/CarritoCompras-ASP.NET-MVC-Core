@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "tp_nt1": {
+    "carrito_de_compras": {
       "commandName": "Project",
       "launchBrowser": true,
       "applicationUrl": "http://localhost:5000",
