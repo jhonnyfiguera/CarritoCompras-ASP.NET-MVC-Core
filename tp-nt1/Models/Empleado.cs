@@ -8,9 +8,8 @@ namespace tp_nt1.Models
     public class Empleado : Persona
     {
         #region Constructores
-        public Empleado()
+        public Empleado() : base(string nombre, string apellido, string email, string numero, string caracteristica, string calle, int piso, string dpto)
         {
-            //¿Como reflejar el constructor de Persona?
         }
         #endregion
         #region Métodos

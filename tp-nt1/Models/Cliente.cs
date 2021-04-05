@@ -11,9 +11,8 @@ namespace tp_nt1.Models
         public List<Carrito> Carritos { get; private set; }
         #endregion
         #region Constructores
-        public Cliente(string dni)
+        public Cliente(string dni) : base(string nombre, string apellido, string email, string numero, string caracteristica, string calle, int piso, string dpto)
         {
-            //¿Como reflejar el constructor de Persona?
             Dni = dni;
             Compras = new List<Compra>();
             Carritos = new List<Carrito>();
