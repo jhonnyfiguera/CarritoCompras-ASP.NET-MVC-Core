@@ -8,7 +8,7 @@ namespace tp_nt1.Models
     public class Empleado : Persona
     {
         #region Constructores
-        public Empleado() : : base("Sin Asignar", "Sin Asignar", "Sin Asignar", 0, "Sin Asignar", "Sin Asignar", 0, 0)
+        public Empleado() : base("Sin Asignar", "Sin Asignar", "Sin Asignar", 0, "Sin Asignar", "Sin Asignar", 0, 0)
         {
         }
         #endregion
