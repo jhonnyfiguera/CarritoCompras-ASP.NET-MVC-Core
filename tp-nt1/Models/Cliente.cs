@@ -17,7 +17,7 @@ namespace tp_nt1.Models
             Compras = new List<Compra>();
             Carritos = new List<Carrito>();
         }
-        public Cliente() : this("Sin Asignar")
+        public Cliente() : this("Sin Asignar") : base("Sin Asignar", "Sin Asignar", "Sin Asignar", 0, "Sin Asignar", "Sin Asignar", 0, 0)
         {
         }
         #endregion
