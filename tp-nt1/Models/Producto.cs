@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace tp_nt1.Models
 {
     public class Producto
     {
-        /*
-        Producto y Categoría:
-        -- No pueden eliminarse del sistema.
-        -- Solo los productos pueden dehabilitarse.*/
-        #region propiedades
         [Key]
-        public Guid Id { get; private set; }
+        public Guid Id { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
         [MinLength(3, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
@@ -32,11 +24,8 @@ namespace tp_nt1.Models
         public decimal PrecioVigente { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
-        public Boolean Activo { get; set; }
+        public bool Activo { get; set; }
 
         public Categoria Categoria { get; set; }
-        //Pendiente FK preguntar al prof.
-        //public Guid CategoriaId { get; private set; }
-        #endregion
     }
 }
