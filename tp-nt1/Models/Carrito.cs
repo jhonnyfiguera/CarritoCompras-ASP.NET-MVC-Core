@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,34 +9,30 @@ namespace tp_nt1.Models
     public class Carrito
     {
         #region Propiedades
+
+
+
+        [Key]
         public Guid Id { get; private set; }
+
         public Boolean Activo { get; set; }
+
+        [Required(ErrorMessage = "El campo {0} es requerido")]
         public Cliente Cliente { get; set; }
+
         public List<CarritoItem> CarritosItems { get; private set; }
+
+        [Required(ErrorMessage = "El campo {0} es requerido")]
+        [Range(0, 10000000, ErrorMessage = "El {0} debe estar entre {1} y {2} ")]
         public decimal Subtotal { get; set; }
+
+
         //Propiedades FK
-        public Guid ClienteId { get; set; }
-        public Guid CompraId { get; set; }
+        //public Guid ClienteId { get; set; }
+        //public Guid CompraId { get; set; }
         #endregion
 
-        #region Constructores
-        public Carrito(Boolean activo, Cliente cliente, decimal subtotal)
-        {
-            Id = Guid.NewGuid();
-            Activo = activo;
-            Cliente = cliente;
-            CarritosItems = new List<CarritoItem>();
-            Subtotal = subtotal;
-            //Pendiente Definicion de FK
-            //ClienteId / CompraId;
-            
-        }
-
-        public Carrito () : this (false, new Cliente(), 0)
-        {
-
-        }
-        #endregion
+        
 
         
 
