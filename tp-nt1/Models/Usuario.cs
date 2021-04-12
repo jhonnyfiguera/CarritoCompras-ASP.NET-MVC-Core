@@ -9,18 +9,21 @@ namespace tp_nt1.Models
         public Guid Id { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
-        [MinLength(8, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
-        [MaxLength(50, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
-        [RegularExpression(@"[a-zA-Z áéíóú]*", ErrorMessage = "El nombre admite sólo caracteres alfabéticos")]
+        [MinLength(3, ErrorMessage = "El campo {0} admite un mínimo de {1} caracteres")]
+        [MaxLength(30, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
+        [RegularExpression(@"[a-zA-Z áéíóú]*", ErrorMessage = "El {0} admite sólo caracteres alfabéticos")]
         public string Nombre { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
-        [MaxLength(50, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
-        [RegularExpression(@"[a-zA-Z áéíóú]*", ErrorMessage = "El apellido admite sólo caracteres alfabéticos")]
+        [MinLength(3, ErrorMessage = "El campo {0} admite un mínimo de {1} caracteres")]
+        [MaxLength(30, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
+        [RegularExpression(@"[a-zA-Z áéíóú]*", ErrorMessage = "El {0} admite sólo caracteres alfabéticos")]
         public string Apellido { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
+        [MinLength(8, ErrorMessage = "El campo {0} admite un mínimo de {1} caracteres")]
         [MaxLength(20, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
+        [RegularExpression(@"[0-9]{2}\[0-9]{4}\[0-9]{4}", ErrorMessage = "El {0} debe tener un formato 12 3456 7890")]
         public string Telefono { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
@@ -28,11 +31,18 @@ namespace tp_nt1.Models
         public string Direccion { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
-        [MinLength(10, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
-        [MaxLength(100, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
-        public string Email { get; set; } //Pendiente definir manejo de Mail 
+        [MinLength(8, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
+        [MaxLength(80, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
+        [Display(Name = "E-mail")]
+        public string Email { get; set; }
 
         public DateTime FechaAlta { get; set; }
+
+        [Required(ErrorMessage = "El campo {0} es requerido")]
+        [MinLength(1, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
+        [MaxLength(80, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
+        [Display(Name ="Nombre de Usuario")]
+        public string Username { get; set; }
 
         public byte[] Password { get; set; }
     }
