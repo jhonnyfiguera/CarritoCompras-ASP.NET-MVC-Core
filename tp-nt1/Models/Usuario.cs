@@ -22,28 +22,27 @@ namespace tp_nt1.Models
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
         [MinLength(8, ErrorMessage = "El campo {0} admite un mínimo de {1} caracteres")]
-        [MaxLength(20, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
-        [RegularExpression(@"[0-9]{2}\[0-9]{4}\[0-9]{4}", ErrorMessage = "El {0} debe tener un formato 12 3456 7890")]
+        [MaxLength(13, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
+        [RegularExpression(@"[0-9]*", ErrorMessage = "El {0} admite sólo caracteres numéricos")]
         public string Telefono { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
-        [MaxLength(200, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
+        [RegularExpression(@"[a-zA-Z áéíóú]{3,50}\, [0-9 a-zA-Z áéíóú .]{3,50}\, [0-9]{3,4}", ErrorMessage = "El {0} admite la siguiente estructura Localidad, Calle, Número")]
         public string Direccion { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
-        [MinLength(8, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
-        [MaxLength(80, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
+        [RegularExpression(@"[0-9 a-zA-Z áéíóú ._-]{3,50}\@[0-9 a-zA-Z áéíóú .]{8,20}", ErrorMessage = "El {0} admite la siguiente estructura ejemplo@ejemplo.com")]
         [Display(Name = "E-mail")]
         public string Email { get; set; }
 
-        public DateTime FechaAlta { get; set; }
-
         [Required(ErrorMessage = "El campo {0} es requerido")]
-        [MinLength(1, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
         [MaxLength(80, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
-        [Display(Name ="Nombre de Usuario")]
+        [Display(Name = "Nombre de Usuario")]
         public string Username { get; set; }
 
         public byte[] Password { get; set; }
+
+        [Display(Name = "Fecha de Alta")]
+        public DateTime FechaAlta { get; set; }
     }
 }

@@ -7,7 +7,9 @@ namespace tp_nt1.Models
     public class Cliente : Usuario
     {
         [Required(ErrorMessage = "El campo {0} es requerido")]
-        [RegularExpression(@"[0-9]{2}\[0-9]{3}\[0-9]{3}", ErrorMessage = "El {0} debe tener un formato NN NNN NNN")]
+        [MinLength(7, ErrorMessage = "El campo {0} admite un mínimo de {1} caracteres")] 
+        [MaxLength(9, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
+        [RegularExpression(@"[0-9]*", ErrorMessage = "El {0} admite sólo caracteres numéricos")]
         public string Dni { get; set; }
 
         public List<Compra> Compras { get; set; }

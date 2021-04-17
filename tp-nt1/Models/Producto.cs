@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace tp_nt1.Models
 {
@@ -9,13 +10,13 @@ namespace tp_nt1.Models
         public Guid Id { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
-        [MinLength(3, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
-        [MaxLength(15, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
-        public string  Nombre { get; set; }
+        [MinLength(3, ErrorMessage = "El campo {0} admite un mínimo de {1} caracteres")]
+        [MaxLength(30, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
+        public string Nombre { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
-        [MinLength(10, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
-        [MaxLength(25, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
+        [MinLength(3, ErrorMessage = "El campo {0} admite un mínimo de {1} caracteres")]
+        [MaxLength(30, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
         public string Descripcion { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
@@ -26,6 +27,8 @@ namespace tp_nt1.Models
         [Required(ErrorMessage = "El campo {0} es requerido")]
         public bool Activo { get; set; }
 
+        [ForeignKey(nameof(Categoria))]
+        public Guid CategoriaId { get; set; }
         public Categoria Categoria { get; set; }
     }
 }
