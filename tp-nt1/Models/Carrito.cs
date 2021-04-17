@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace tp_nt1.Models
 {
@@ -11,6 +12,8 @@ namespace tp_nt1.Models
 
         public bool Activo { get; set; }
 
+        [ForeignKey(nameof(Cliente))]
+        public Guid ClienteId { get; set; }
         public Cliente Cliente { get; set; }
 
         public List<CarritoItem> CarritosItems { get; set; }
