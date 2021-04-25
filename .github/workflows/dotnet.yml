@@ -1,0 +1,25 @@
+name: .NET
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+    - name: Restore dependencies
+      run: dotnet restore ./tp-nt1/tp-nt1a-1.sln
+    - name: Build
+      run: dotnet build ./tp-nt1/tp-nt1a-2.sln --configuration Release
+    - name: Test
+      run: dotnet test  ./tp-nt1/tp-nt1a-2.sln --configuration Release --verbosity normal
