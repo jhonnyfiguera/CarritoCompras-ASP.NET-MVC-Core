@@ -40,9 +40,10 @@ namespace tp_nt1.Models
         [Display(Name = "Nombre de Usuario")]
         public string Username { get; set; }
 
-        public byte[] Password { get; set; }
-
         [Display(Name = "Fecha de Alta")]
         public DateTime FechaAlta { get; set; }
+
+        [ScaffoldColumn(false)] // Utilizamos esto para que no se autogenere el campo password cuando hacemos scaffolding
+        public byte[] Password { get; set; } // La password es de tipo array de bytes para almacenar las contraseñas encriptadas
     }
 }
