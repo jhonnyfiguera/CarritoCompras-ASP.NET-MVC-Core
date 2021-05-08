@@ -15,5 +15,7 @@ namespace tp_nt1.Models
         public List<Compra> Compras { get; set; }
 
         public List<Carrito> Carritos { get; set; }
+
+        public override Rol Rol => Rol.Cliente;
     }
 }
