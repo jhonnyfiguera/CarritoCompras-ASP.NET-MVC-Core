@@ -1,0 +1,67 @@
+﻿
+@{
+    ViewData["Title"] = "Ingresar";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/fontawesome/css/all.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <div class="container">
+        <main role="main" class="pb-3">
+
+            <div class="text-center">
+                <h1>Bienvenido al Carrito de Compras</h1>
+            </div>
+
+            <hr />
+
+            <div class="row">
+                <div class="col-lg-offset-4 col-md-4">
+                    <form method="post" asp-action="Ingresar">
+                        <div class="text-danger">
+                            @ViewBag.Error
+                        </div>
+                        <div class="form-group">
+                            <label laber-for="rol" class="control-label">Seleccione Rol:</label>
+                            <select class="form-control">
+                                <option></option>
+                                <option>Cliente</option>
+                                <option>Empleado</option>
+                                <option>Administrador</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label laber-for="username" class="control-label">Nombre de usuario:</label>
+                            <input name="username" class="form-control" type="text" value="@ViewBag.Username" />
+                        </div>
+                        <div class="form-group">
+                            <label label-for="Password" class="control-label">Contraseña:</label>
+                            <input name="password" class="form-control" type="password" />
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Login" class="btn btn-success" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div>
+        <a asp-Controller="Clientes" asp-action="Create">Registrate aquí</a>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>
+

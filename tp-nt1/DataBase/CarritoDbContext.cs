@@ -21,5 +21,6 @@ namespace tp_nt1.DataBase
         public DbSet<Producto> Productos { get; set; }
         public DbSet<StockItem> StockItems { get; set; }
         public DbSet<Sucursal> Sucursal { get; set; }
+        public DbSet<Administrador> Administradores { get; set; }
     }
 }
