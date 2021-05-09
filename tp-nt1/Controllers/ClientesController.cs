@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,7 @@ namespace tp_nt1.Controllers
             return View(await _context.Clientes.ToListAsync());
         }
 
+        [Authorize(Roles = nameof(Rol.Cliente))]
         // GET: Clientes/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -43,12 +45,14 @@ namespace tp_nt1.Controllers
             return View(cliente);
         }
 
+        [AllowAnonymous]
         // GET: Clientes/Create
         public IActionResult Create()
         {
             return View();
         }
 
+        [AllowAnonymous]
         // POST: Clientes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -58,15 +62,29 @@ namespace tp_nt1.Controllers
         {
             if (ModelState.IsValid)
             {
-                cliente.Id = Guid.NewGuid();
-                cliente.FechaAlta = DateTime.Now;
-                _context.Add(cliente);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //var username = _context.Clientes.FirstOrDefault(cliente => cliente.Username == cliente.Username);//¿Cómo es esto?
+                //if (username == null)
+                //{
+                    cliente.Id = Guid.NewGuid();
+                    cliente.FechaAlta = DateTime.Now;
+                    _context.Add(cliente);
+                    Carrito carrito = new Carrito
+                    {
+                        Id = Guid.NewGuid(),
+                        Activo = true,
+                        ClienteId = cliente.Id,
+                        Subtotal = 0
+                    };
+                    _context.Add(carrito);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(AccesosController.Ingresar), "Accesos");
+                //}
+                ViewBag.Error = "Debes ingresar un usuario diferente.";
             }
             return View(cliente);
         }
 
+        [Authorize(Roles = nameof(Rol.Cliente))]
         // GET: Clientes/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
@@ -83,6 +101,7 @@ namespace tp_nt1.Controllers
             return View(cliente);
         }
 
+        [Authorize(Roles = nameof(Rol.Cliente))]
         // POST: Clientes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -118,6 +137,7 @@ namespace tp_nt1.Controllers
             return View(cliente);
         }
 
+        //[Authorize(Roles = nameof(Rol.Administrador))]
         // GET: Clientes/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
@@ -136,6 +156,7 @@ namespace tp_nt1.Controllers
             return View(cliente);
         }
 
+        //[Authorize(Roles = nameof(Rol.Administrador))]
         // POST: Clientes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
