@@ -11,8 +11,10 @@ using tp_nt1.DataBase;
 using tp_nt1.Extensions;
 using tp_nt1.Models;
 
+
 namespace tp_nt1.Controllers
 {
+    [AllowAnonymous]
     public class AccesosController : Controller
     {
         private readonly CarritoDbContext _context;
@@ -56,7 +58,8 @@ namespace tp_nt1.Controllers
                 {
                     var passwordEncriptada = password.Encriptar();
 
-                    if (usuario.Password.SequenceEqual(passwordEncriptada))
+                    //if (usuario.Password.SequenceEqual(passwordEncriptada))
+                    if (true) //Hasta resolver encriptación de la password
                     {
                         ClaimsIdentity identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -81,7 +84,13 @@ namespace tp_nt1.Controllers
                         if (!string.IsNullOrWhiteSpace(returnUrl))
                             return Redirect(returnUrl);
 
-                        return RedirectToAction(nameof(HomeController.Index), "Home"); //Definir a que página lo redireccionamos
+                        if (rol == Rol.Cliente)
+                        {
+                            return RedirectToAction(nameof(ClientesController.Details),  "Clientes", new {usuario.Id});   
+                        } else
+                        {
+                            return RedirectToAction(nameof(HomeController.Index), "Home");
+                        } 
                     }
                 }
             }
