@@ -21,13 +21,16 @@ namespace tp_nt1.Controllers
         }
 
         // GET: Clientes
+        [Authorize(Roles = nameof(Rol.Administrador))]
+        [Authorize(Roles = nameof(Rol.Empleado))]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Clientes.ToListAsync());
         }
 
-        [Authorize(Roles = nameof(Rol.Cliente))]
+
         // GET: Clientes/Details/5
+        [Authorize(Roles = nameof(Rol.Cliente))]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -45,26 +48,32 @@ namespace tp_nt1.Controllers
             return View(cliente);
         }
 
-        [AllowAnonymous]
+
         // GET: Clientes/Create
+        [AllowAnonymous]
         public IActionResult Create()
         {
             return View();
         }
 
-        [AllowAnonymous]
+
         // POST: Clientes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Dni,Id,Nombre,Apellido,Telefono,Direccion,Email,Username,Password,FechaAlta")] Cliente cliente)
         {
+            var username = _context.Clientes.FirstOrDefault(cliente => cliente.Username == cliente.Username);//¿Cómo es esto?
+            if (username == null)
+            {
+
+            }
+            ViewBag.Error = "Debes ingresar un usuario diferente.";
+
             if (ModelState.IsValid)
             {
-                //var username = _context.Clientes.FirstOrDefault(cliente => cliente.Username == cliente.Username);//¿Cómo es esto?
-                //if (username == null)
-                //{
                     cliente.Id = Guid.NewGuid();
                     cliente.FechaAlta = DateTime.Now;
                     _context.Add(cliente);
@@ -77,15 +86,15 @@ namespace tp_nt1.Controllers
                     };
                     _context.Add(carrito);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(AccesosController.Ingresar), "Accesos");
-                //}
-                ViewBag.Error = "Debes ingresar un usuario diferente.";
+                    return RedirectToAction(nameof(AccesosController.Ingresar), "Accesos");               
             }
+            
             return View(cliente);
         }
 
-        [Authorize(Roles = nameof(Rol.Cliente))]
+
         // GET: Clientes/Edit/5
+        [Authorize(Roles = nameof(Rol.Cliente))]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -101,10 +110,11 @@ namespace tp_nt1.Controllers
             return View(cliente);
         }
 
-        [Authorize(Roles = nameof(Rol.Cliente))]
+
         // POST: Clientes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = nameof(Rol.Cliente))]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Dni,Id,Nombre,Apellido,Telefono,Direccion,Email,Username,Password,FechaAlta")] Cliente cliente)
@@ -137,8 +147,9 @@ namespace tp_nt1.Controllers
             return View(cliente);
         }
 
-        //[Authorize(Roles = nameof(Rol.Administrador))]
+
         // GET: Clientes/Delete/5
+        //[Authorize(Roles = nameof(Rol.Administrador))]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -156,8 +167,9 @@ namespace tp_nt1.Controllers
             return View(cliente);
         }
 
-        //[Authorize(Roles = nameof(Rol.Administrador))]
+
         // POST: Clientes/Delete/5
+        //[Authorize(Roles = nameof(Rol.Administrador))]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
