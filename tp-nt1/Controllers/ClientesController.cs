@@ -65,12 +65,11 @@ namespace tp_nt1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Dni,Id,Nombre,Apellido,Telefono,Direccion,Email,Username,Password,FechaAlta")] Cliente cliente)
         {
-            var username = _context.Clientes.FirstOrDefault(cliente => cliente.Username == cliente.Username);//¿Cómo es esto?
-            if (username == null)
-            {
 
+            if (_context.Clientes.Any(c => c.Username == cliente.Username))
+            {
+                ModelState.AddModelError(nameof(cliente.Username), "Debes ingresar un usuario diferente.");
             }
-            ViewBag.Error = "Debes ingresar un usuario diferente.";
 
             if (ModelState.IsValid)
             {
@@ -88,7 +87,6 @@ namespace tp_nt1.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(AccesosController.Ingresar), "Accesos");               
             }
-            
             return View(cliente);
         }
 
