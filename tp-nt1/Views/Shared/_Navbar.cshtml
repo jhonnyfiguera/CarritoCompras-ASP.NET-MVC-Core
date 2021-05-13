@@ -15,6 +15,9 @@
                                         <a class="nav-link text-dark" asp-controller="Categorias" asp-action="Index">Productos</a>
                                     </li>
                                     <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-controller="Carritos" asp-action="Details">Mi Carrito</a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a class="nav-link text-dark" asp-controller="Clientes" asp-action="Details" asp-route-id=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Mis Datos</a>
                                     </li>
                                 }

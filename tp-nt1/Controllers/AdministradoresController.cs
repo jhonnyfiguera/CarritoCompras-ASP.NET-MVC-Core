@@ -11,24 +11,23 @@ using tp_nt1.Models;
 
 namespace tp_nt1.Controllers
 {
-    public class CarritosController : Controller
+    
+    public class AdministradoresController : Controller
     {
         private readonly CarritoDbContext _context;
 
-        public CarritosController(CarritoDbContext context)
+        public AdministradoresController(CarritoDbContext context)
         {
             _context = context;
         }
 
-        // GET: Carritos
+        // GET: Administradores
         public async Task<IActionResult> Index()
         {
-            var carritoDbContext = _context.Carritos.Include(c => c.Cliente);
-            return View(await carritoDbContext.ToListAsync());
+            return View(await _context.Administradores.ToListAsync());
         }
 
-        // GET: Carritos/Details/5
-        /*
+        // GET: Administradores/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -36,57 +35,48 @@ namespace tp_nt1.Controllers
                 return NotFound();
             }
 
-            var carrito = await _context.Carritos
-                .Include(c => c.Cliente)
+            var administrador = await _context.Administradores
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (carrito == null)
+            if (administrador == null)
             {
                 return NotFound();
             }
 
-            return View(carrito);
-        }*/
-
-        [Authorize(Roles = nameof(Rol.Cliente))]
-        [HttpGet]
-        public IActionResult Details()
-        {
-            var username = User.Identity.Name;
-            var cliente = _context.Clientes
-                .Include(cliente => cliente.Carritos).ThenInclude(clienteCarrito => clienteCarrito.Activo)
-                .FirstOrDefault(cliente => cliente.Username == username);
-            return View(cliente);
+            return View(administrador);
         }
 
-
-
-
-        // GET: Carritos/Create
+        // GET: Administradores/Create
         public IActionResult Create()
         {
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Apellido");
             return View();
         }
 
-        // POST: Carritos/Create
+        // POST: Administradores/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Activo,ClienteId,Subtotal")] Carrito carrito)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Apellido,Telefono,Direccion,Email,Username,FechaAlta")] Administrador administrador)
         {
             if (ModelState.IsValid)
             {
-                carrito.Id = Guid.NewGuid();
-                _context.Add(carrito);
+                administrador.Id = Guid.NewGuid();
+                administrador.Username = "Administrador";
+                administrador.Password = new byte[8]{1,2,3,4,5,6,7,8};
+                administrador.FechaAlta = DateTime.Now;
+                administrador.Nombre = "Sin Nombre";
+                administrador.Apellido = "Sin Apellido";
+                administrador.Telefono = "Sin Teléfono";
+                administrador.Direccion = "Sin Dirección, Sin Dirección, 0000";
+                administrador.Email = "SinAsignar@gmail.com";
+                _context.Add(administrador);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Apellido", carrito.ClienteId);
-            return View(carrito);
+            return View(administrador);
         }
 
-        // GET: Carritos/Edit/5
+        // GET: Administradores/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -94,23 +84,22 @@ namespace tp_nt1.Controllers
                 return NotFound();
             }
 
-            var carrito = await _context.Carritos.FindAsync(id);
-            if (carrito == null)
+            var administrador = await _context.Administradores.FindAsync(id);
+            if (administrador == null)
             {
                 return NotFound();
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Apellido", carrito.ClienteId);
-            return View(carrito);
+            return View(administrador);
         }
 
-        // POST: Carritos/Edit/5
+        // POST: Administradores/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Activo,ClienteId,Subtotal")] Carrito carrito)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Apellido,Telefono,Direccion,Email,Username,FechaAlta")] Administrador administrador)
         {
-            if (id != carrito.Id)
+            if (id != administrador.Id)
             {
                 return NotFound();
             }
@@ -119,12 +108,12 @@ namespace tp_nt1.Controllers
             {
                 try
                 {
-                    _context.Update(carrito);
+                    _context.Update(administrador);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CarritoExists(carrito.Id))
+                    if (!AdministradorExists(administrador.Id))
                     {
                         return NotFound();
                     }
@@ -135,11 +124,10 @@ namespace tp_nt1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Apellido", carrito.ClienteId);
-            return View(carrito);
+            return View(administrador);
         }
 
-        // GET: Carritos/Delete/5
+        // GET: Administradores/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -147,31 +135,30 @@ namespace tp_nt1.Controllers
                 return NotFound();
             }
 
-            var carrito = await _context.Carritos
-                .Include(c => c.Cliente)
+            var administrador = await _context.Administradores
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (carrito == null)
+            if (administrador == null)
             {
                 return NotFound();
             }
 
-            return View(carrito);
+            return View(administrador);
         }
 
-        // POST: Carritos/Delete/5
+        // POST: Administradores/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var carrito = await _context.Carritos.FindAsync(id);
-            _context.Carritos.Remove(carrito);
+            var administrador = await _context.Administradores.FindAsync(id);
+            _context.Administradores.Remove(administrador);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CarritoExists(Guid id)
+        private bool AdministradorExists(Guid id)
         {
-            return _context.Carritos.Any(e => e.Id == id);
+            return _context.Administradores.Any(e => e.Id == id);
         }
     }
 }
