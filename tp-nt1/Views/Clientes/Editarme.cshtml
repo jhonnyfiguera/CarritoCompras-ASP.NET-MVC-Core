@@ -1,10 +1,10 @@
-﻿@model tp_nt1.Models.Empleado
+﻿@model tp_nt1.Models.Cliente
 
 @{
-    ViewData["Title"] = "Registrar";
+    ViewData["Title"] = "Editar ";
 }
 
-<h3 class="text-center">Registrar</h3>
+<h3 class="text-center">Actualizar datos de mi cuenta:</h3>
 <hr />
 
 <div class="row">
@@ -12,22 +12,12 @@
         <div class="card">
             <div class="card-body">
 
-                <h5 class="card-title">Datos de la cuenta</h5>
+                <h5 class="card-title"> <label> @Model.Nombre</label> <label> @Model.Apellido</label></h5>
 
-                <form asp-action="Create" method="post">
+                <form asp-action="Editarme" method="post">
 
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                    <div class="form-group">
-                        <label asp-for="Nombre" class="control-label"></label>
-                        <input asp-for="Nombre" class="form-control" />
-                        <span asp-validation-for="Nombre" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Apellido" class="control-label"></label>
-                        <input asp-for="Apellido" class="form-control" />
-                        <span asp-validation-for="Apellido" class="text-danger"></span>
-                    </div>
                     <div class="form-group">
                         <label asp-for="Telefono" class="control-label"></label>
                         <input asp-for="Telefono" class="form-control" />
@@ -44,20 +34,14 @@
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Username" class="control-label"></label>
-                        <input asp-for="Username" class="form-control" />
-                        <span asp-validation-for="Username" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
                         <label for="password" class="control-label">Password</label>
-                        <input name="password" type="password" class="form-control" placeholder="Debe ser alfanumerica con al menos una letra mayuscula" />
+                        <input name="password" type="password" class="form-control" />
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <input type="submit" value="Registrar" class="btn btn-primary" />
-                        <button type="reset" class="btn btn-danger"> Restablecer  </button>
+                        <input type="submit" value="Actualizar" class="btn btn-primary" />
+                        <a class="btn btn-danger" asp-action="Index" asp-controller="Home"> Cancelar </a>
                     </div>
-
                 </form>
 
             </div>
@@ -66,8 +50,7 @@
 </div>
 
 <div class="text-center">
-    <a asp-action="Index">Ir a Lista Empleados</a> |
-    <a asp-controller="Home" asp-action="Index">Ir al Inicio</a> |
+    <a asp-action="Details" asp-route-id="@Model.Id">Volver</a>
 </div>
 
 @section Scripts {

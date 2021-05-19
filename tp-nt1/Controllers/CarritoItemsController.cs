@@ -12,12 +12,17 @@ namespace tp_nt1.Controllers
 {
     public class CarritoItemsController : Controller
     {
+
         private readonly CarritoDbContext _context;
+
+
 
         public CarritoItemsController(CarritoDbContext context)
         {
             _context = context;
         }
+
+
 
         // GET: CarritoItems
         public async Task<IActionResult> Index()

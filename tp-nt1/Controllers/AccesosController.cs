@@ -2,11 +2,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using tp_nt1.DataBase;
 using tp_nt1.Extensions;
 using tp_nt1.Models;
@@ -17,13 +14,17 @@ namespace tp_nt1.Controllers
     [AllowAnonymous]
     public class AccesosController : Controller
     {
+
         private readonly CarritoDbContext _context;
         private const string _Return_Url = "ReturnUrl";
+
 
         public AccesosController(CarritoDbContext context)
         {
             _context = context;
         }
+
+
 
         [HttpGet]
         public IActionResult Ingresar(string returnUrl)
@@ -31,6 +32,8 @@ namespace tp_nt1.Controllers
             TempData[_Return_Url] = returnUrl;
             return View();
         }
+
+
 
         [HttpPost]
         public IActionResult Ingresar(string username, string password, Rol rol)
@@ -44,35 +47,32 @@ namespace tp_nt1.Controllers
                 if (rol == Rol.Cliente)
                 {
                     usuario = _context.Clientes.FirstOrDefault(cliente => cliente.Username == username);
-                } 
+                }
+
                 else if (rol == Rol.Empleado)
                 {
-                        usuario = _context.Empleados.FirstOrDefault(empleado => empleado.Username == username);
-                } 
+                    usuario = _context.Empleados.FirstOrDefault(empleado => empleado.Username == username);
+                }
+
                 else if (rol == Rol.Administrador)
                 {
-                        usuario = _context.Administradores.FirstOrDefault(administrador => administrador.Username == username);
+                    usuario = _context.Administradores.FirstOrDefault(administrador => administrador.Username == username);
                 }
-                
+
                 if (usuario != null)
                 {
                     var passwordEncriptada = password.Encriptar();
 
-                    //if (usuario.Password.SequenceEqual(passwordEncriptada))
-                    if (true) //Hasta resolver encriptación de la password
+                    
+                    if ((usuario.Password.SequenceEqual(passwordEncriptada)))
                     {
                         ClaimsIdentity identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
 
                         identity.AddClaim(new Claim(ClaimTypes.Name, usuario.Username));
-
                         identity.AddClaim(new Claim(ClaimTypes.Role, usuario.Rol.ToString()));
-
                         identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()));
-
                         identity.AddClaim(new Claim(ClaimTypes.GivenName, usuario.Nombre));
-
                         identity.AddClaim(new Claim(ClaimTypes.Email, usuario.Email));
-
                         identity.AddClaim(new Claim(ClaimTypes.MobilePhone, usuario.Telefono));
 
                         ClaimsPrincipal principal = new ClaimsPrincipal(identity);
@@ -86,22 +86,25 @@ namespace tp_nt1.Controllers
 
                         if (rol == Rol.Cliente)
                         {
-                            return RedirectToAction(nameof(ClientesController.Details),  "Clientes", new {usuario.Id});   
-                        } else
+                            return RedirectToAction(nameof(ClientesController.Details), "Clientes", new { usuario.Id });
+                        }
+
+                        else
                         {
                             return RedirectToAction(nameof(HomeController.Index), "Home");
-                        } 
+                        }
                     }
                 }
             }
-
-            ViewBag.Error = "Usuario o contraseña incorrectos";
+            ViewBag.Error = "Usuario, Contraseña o Rol incorrecto";
             ViewBag.UserName = username;
+            ViewBag.Rol = rol;
             TempData[_Return_Url] = returnUrl;
 
             return View();
-
         }
+
+
 
         [Authorize]
         [HttpPost]
@@ -112,12 +115,13 @@ namespace tp_nt1.Controllers
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
+
+
         [Authorize]
         [HttpGet]
         public IActionResult NoAutorizado()
         {
             return View();
         }
-
     }
 }
