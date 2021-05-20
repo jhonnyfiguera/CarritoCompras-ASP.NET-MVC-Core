@@ -1,10 +1,10 @@
-﻿@model tp_nt1.Models.Cliente
+﻿@model tp_nt1.Models.Empleado
 
 @{
-    ViewData["Title"] = "Editar";
+    ViewData["Title"] = "Editar ";
 }
 
-<h3 class="text-center">Actualizar</h3>
+<h3 class="text-center">Actualizar datos de mi cuenta:</h3>
 <hr />
 
 <div class="row">
@@ -12,30 +12,12 @@
         <div class="card">
             <div class="card-body">
 
-                <h5 class="card-title">Datos de la cuenta <label> @Model.Nombre</label> <label> @Model.Apellido</label></h5>
+                <h5 class="card-title"> <label> @Model.Nombre</label> <label> @Model.Apellido</label></h5>
 
-                <form asp-action="Edit" method="post">
+                <form asp-action="Editarme" method="post">
 
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                    <input type="hidden" asp-for="Id" />
-                    <input type="hidden" asp-for="Username" />
-
-                    <div class="form-group">
-                        <label asp-for="Dni" class="control-label"></label>
-                        <input asp-for="Dni" class="form-control" />
-                        <span asp-validation-for="Dni" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Nombre" class="control-label"></label>
-                        <input asp-for="Nombre" class="form-control" />
-                        <span asp-validation-for="Nombre" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Apellido" class="control-label"></label>
-                        <input asp-for="Apellido" class="form-control" />
-                        <span asp-validation-for="Apellido" class="text-danger"></span>
-                    </div>
                     <div class="form-group">
                         <label asp-for="Telefono" class="control-label"></label>
                         <input asp-for="Telefono" class="form-control" />
@@ -68,7 +50,7 @@
 </div>
 
 <div class="text-center">
-    <a asp-action="Index">Regresar a Lista de Clientes</a>
+    <a asp-action="Details" asp-route-id="@Model.Id">Volver</a>
 </div>
 
 @section Scripts {

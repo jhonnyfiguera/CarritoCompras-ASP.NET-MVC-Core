@@ -43,11 +43,9 @@
                                     <div class="dropdown-menu" aria-labelledby="menuOpciones">
                                         <a class="dropdown-item" asp-controller="Compras" asp-action="Index">Compras del Mes</a>
                                         <hr />
-                                        <a class="dropdown-item" asp-controller="Clientes" asp-action="Index">Clientes</a>
                                         <a class="dropdown-item" asp-controller="Sucursales" asp-action="Index">Sucursales</a>
                                         <a class="dropdown-item" asp-controller="Categorias" asp-action="Index">Categorias</a>
                                         <a class="dropdown-item" asp-controller="Productos" asp-action="Index">Productos</a>
-                                        <a class="dropdown-item" asp-controller="Empleados" asp-action="Index">Empleados</a>
                                     </div>
                                 </li>
 
@@ -77,9 +75,19 @@
                                     </div>
                                 </li>
 
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Productos" asp-action="Index">Habilitar Productos</a>
+                                <li class="dropdown">
+
+                                    <button class="btn dropdown-toggle" type="button" id="menuOpciones" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Gestionar Productos <span class="caret ml-1"></span>
+                                    </button>
+
+                                    <div class="dropdown-menu" aria-labelledby="menuOpciones">
+                                        <a class="dropdown-item" asp-controller="Productos" asp-action="Index">Habilitar</a>
+                                        <a class="dropdown-item" asp-controller="Productos" asp-action="Index">Deshabilitar</a>
+                                    </div>
                                 </li>
+
+
                             }
 
                             @if (User.IsInRole(nameof(Rol.Administrador)))
