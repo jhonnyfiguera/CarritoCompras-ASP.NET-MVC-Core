@@ -172,6 +172,11 @@ namespace tp_nt1.Controllers
                 return NotFound();
             }
 
+            if (_context.Clientes.Any(cte => cte.Email == cliente.Email))
+            {
+                ModelState.AddModelError(nameof(cliente.Email), "El Email ya existe; debes ingresar uno diferente.");
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -183,8 +188,7 @@ namespace tp_nt1.Controllers
                     clienteDatabase.Apellido = cliente.Apellido;
                     clienteDatabase.Telefono = cliente.Telefono;
                     clienteDatabase.Direccion = cliente.Direccion;
-                    clienteDatabase.Username = cliente.Username;
-                    clienteDatabase.FechaAlta = cliente.FechaAlta;
+                    clienteDatabase.Email = cliente.Email;
 
                     if (!string.IsNullOrWhiteSpace(password))
                     {
@@ -242,6 +246,13 @@ namespace tp_nt1.Controllers
                     ModelState.AddModelError(nameof(Cliente.Password), ex.Message);
                 }
             }
+
+
+            if (_context.Clientes.Any(cte => cte.Email == cliente.Email))
+            {
+                ModelState.AddModelError(nameof(cliente.Email), "El Email ya existe; debes ingresar uno diferente.");
+            }
+
 
             if (ModelState.IsValid)
             {
