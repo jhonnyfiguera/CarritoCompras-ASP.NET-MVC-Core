@@ -1,14 +1,13 @@
 ﻿@model tp_nt1.Models.Empleado
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Mis datos";
 }
 
-<h1>Details</h1>
+<h3>Datos de la cuenta</h3>
+<hr />
 
 <div>
-    <h4>Empleado</h4>
-    <hr />
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Nombre)
@@ -66,7 +65,7 @@
         </dd>
     </dl>
 </div>
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Editar datos</a>
 </div>
