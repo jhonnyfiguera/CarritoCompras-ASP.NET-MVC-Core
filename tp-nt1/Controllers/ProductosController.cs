@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using tp_nt1.DataBase;
 using tp_nt1.Models;
 
@@ -12,21 +12,28 @@ namespace tp_nt1.Controllers
 {
     public class ProductosController : Controller
     {
+
         private readonly CarritoDbContext _context;
+
 
         public ProductosController(CarritoDbContext context)
         {
             _context = context;
         }
 
-        // GET: Productos
+
+        [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var carritoDbContext = _context.Productos.Include(p => p.Categoria);
+
             return View(await carritoDbContext.ToListAsync());
         }
 
-        // GET: Productos/Details/5
+
+        [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -37,6 +44,7 @@ namespace tp_nt1.Controllers
             var producto = await _context.Productos
                 .Include(p => p.Categoria)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (producto == null)
             {
                 return NotFound();
@@ -45,19 +53,21 @@ namespace tp_nt1.Controllers
             return View(producto);
         }
 
-        // GET: Productos/Create
+
+        [Authorize(Roles = "Administrador, Empleado")]
+        [HttpGet]
         public IActionResult Create()
         {
-            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "Id", "Descripcion");
+            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "Id", "Nombre");
+
             return View();
         }
 
-        // POST: Productos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+        [Authorize(Roles = "Administrador, Empleado")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion,PrecioVigente,Activo,CategoriaId")] Producto producto)
+        public async Task<IActionResult> Create(Producto producto)
         {
             if (ModelState.IsValid)
             {
@@ -66,7 +76,8 @@ namespace tp_nt1.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "Id", "Descripcion", producto.CategoriaId);
+            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "Id", "Nombre", producto.CategoriaId);
+
             return View(producto);
         }
 
@@ -79,11 +90,13 @@ namespace tp_nt1.Controllers
             }
 
             var producto = await _context.Productos.FindAsync(id);
+
             if (producto == null)
             {
                 return NotFound();
             }
-            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "Id", "Descripcion", producto.CategoriaId);
+            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "Id", "Nombre", producto.CategoriaId);
+
             return View(producto);
         }
 

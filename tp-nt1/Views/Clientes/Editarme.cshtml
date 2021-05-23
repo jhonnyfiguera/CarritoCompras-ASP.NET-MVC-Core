@@ -18,6 +18,13 @@
 
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="Dni" />
+                    <input type="hidden" asp-for="Nombre" />
+                    <input type="hidden" asp-for="Apellido" />
+                    <input type="hidden" asp-for="Username" />
+
+
                     <div class="form-group">
                         <label asp-for="Telefono" class="control-label"></label>
                         <input asp-for="Telefono" class="form-control" />
@@ -39,18 +46,14 @@
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <input type="submit" value="Actualizar" class="btn btn-primary" />
-                        <a class="btn btn-danger" asp-action="Index" asp-controller="Home"> Cancelar </a>
+                        <input type="submit" value="Actualizar" class="btn btn-outline-primary" />
+                        <a class="btn btn-outline-danger" asp-controller="Home" asp-action="Index"> Cancelar </a>
                     </div>
                 </form>
 
             </div>
         </div>
     </div>
-</div>
-
-<div class="text-center">
-    <a asp-action="Details" asp-route-id="@Model.Id">Volver</a>
 </div>
 
 @section Scripts {

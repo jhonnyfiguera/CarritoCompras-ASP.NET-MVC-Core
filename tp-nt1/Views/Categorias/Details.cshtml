@@ -1,30 +1,39 @@
 ﻿@model tp_nt1.Models.Categoria
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalle";
 }
 
-<h1>Details</h1>
+<h3>Detalle</h3>
+<hr />
 
 <div>
-    <h4>Categoria</h4>
-    <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Nombre)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Nombre)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Descripcion)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Descripcion)
         </dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+@if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
+{
+    <div>
+        <a class="btn btn-outline-warning" btn" asp-action="Edit" asp-route-id="@Model.Id">Editar</a>
+        <a asp-action="Index">Ir a Lista Categorías</a>
+    </div>
+}
+else
+{
+    <div>
+        <a asp-controller="Home" asp-action="Index">Ir al Inicio</a>
+    </div>
+}

@@ -3,154 +3,152 @@
 
         <div class="container">
 
-            <a class="navbar-brand" asp-controller="Home" asp-action="Index">Carrito de Compras</a>
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">Carrito de Compras</a>
 
-            <ul class="navbar-nav">
+                <ul class="navbar-nav">
 
-                @if (User.Identity.IsAuthenticated)
-                {
-                <li class="dropdown">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="dropdown">
 
-                    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
 
-                        <ul class="navbar-nav flex-grow-1">
+                                <ul class="navbar-nav flex-grow-1">
 
-                            <li class="nav-item">
-                                <p class="nav-link text-dark"> Bienvenido: @User.FindFirstValue(ClaimTypes.GivenName)</p>
-                            </li>
+                                    <li class="nav-item">
+                                        <p class="nav-link text-dark"> Bienvenido: @User.FindFirstValue(ClaimTypes.GivenName)</p>
+                                    </li>
 
-                            @if (User.IsInRole(nameof(Rol.Cliente)))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Categorias" asp-action="Index">Ver Productos</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Carritos" asp-action="Details" asp-route-id=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Mi Carrito</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Clientes" asp-action="Details" asp-route-id=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Mis Datos</a>
-                                </li>
-                            }
+                                    @if (User.IsInRole(nameof(Rol.Cliente)))
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link text-dark" asp-controller="Categorias" asp-action="Index">Ver Productos</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link text-dark" asp-controller="Carritos" asp-action="Details" asp-route-id=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Mi Carrito</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link text-dark" asp-controller="Clientes" asp-action="Details" asp-route-id=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Mis Datos</a>
+                                        </li>
+                                    }
 
-                            @if (User.IsInRole(nameof(Rol.Empleado)))
-                            {
-                                <li class="dropdown">
+                                    @if (User.IsInRole(nameof(Rol.Empleado)))
+                                    {
+                                        <li class="dropdown">
 
-                                    <button class="btn dropdown-toggle" type="button" id="menuOpciones" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Listar <span class="caret ml-1"></span>
-                                    </button>
+                                            <button class="btn dropdown-toggle" type="button" id="menuOpciones" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Listar <span class="caret ml-1"></span>
+                                            </button>
 
-                                    <div class="dropdown-menu" aria-labelledby="menuOpciones">
-                                        <a class="dropdown-item" asp-controller="Compras" asp-action="Index">Compras del Mes</a>
-                                        <hr />
-                                        <a class="dropdown-item" asp-controller="Sucursales" asp-action="Index">Sucursales</a>
-                                        <a class="dropdown-item" asp-controller="Categorias" asp-action="Index">Categorias</a>
-                                        <a class="dropdown-item" asp-controller="Productos" asp-action="Index">Productos</a>
-                                    </div>
-                                </li>
+                                            <div class="dropdown-menu" aria-labelledby="menuOpciones">
+                                                <a class="dropdown-item" asp-controller="Compras" asp-action="Index">Compras del Mes</a>
+                                                <hr />
+                                                <a class="dropdown-item" asp-controller="Sucursales" asp-action="Index">Sucursales</a>
+                                                <a class="dropdown-item" asp-controller="Categorias" asp-action="Index">Categorias</a>
+                                                <a class="dropdown-item" asp-controller="Productos" asp-action="Index">Productos</a>
+                                            </div>
+                                        </li>
 
-                                <li class="dropdown">
+                                        <li class="dropdown">
 
-                                    <button class="btn dropdown-toggle" type="button" id="menuOpciones" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Dar de Alta <span class="caret ml-1"></span>
-                                    </button>
+                                            <button class="btn dropdown-toggle" type="button" id="menuOpciones" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Dar de Alta <span class="caret ml-1"></span>
+                                            </button>
 
-                                    <div class="dropdown-menu" aria-labelledby="menuOpciones">
-                                        <a class="dropdown-item" asp-controller="Empleados" asp-action="Create">Nuevo Empleado</a>
-                                        <a class="dropdown-item" asp-controller="Sucursales" asp-action="Create">Nueva Sucursal</a>
-                                        <a class="dropdown-item" asp-controller="Categorias" asp-action="Create">Nueva Categoria</a>
-                                        <a class="dropdown-item" asp-controller="Productos" asp-action="Create">Nuevo Producto</a>
-                                    </div>
-                                </li>
+                                            <div class="dropdown-menu" aria-labelledby="menuOpciones">
+                                                <a class="dropdown-item" asp-controller="Empleados" asp-action="Create">Nuevo Empleado</a>
+                                                <a class="dropdown-item" asp-controller="Sucursales" asp-action="Create">Nueva Sucursal</a>
+                                                <a class="dropdown-item" asp-controller="Categorias" asp-action="Create">Nueva Categoria</a>
+                                                <a class="dropdown-item" asp-controller="Productos" asp-action="Create">Nuevo Producto</a>
+                                            </div>
+                                        </li>
 
-                                <li class="dropdown">
+                                        <li class="dropdown">
 
-                                    <button class="btn dropdown-toggle" type="button" id="menuOpciones" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Mi cuenta <span class="caret ml-1"></span>
-                                    </button>
+                                            <button class="btn dropdown-toggle" type="button" id="menuOpciones" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Mi cuenta <span class="caret ml-1"></span>
+                                            </button>
 
-                                    <div class="dropdown-menu" aria-labelledby="menuOpciones">
-                                        <a class="dropdown-item" asp-controller="Empleados" asp-action="Details" asp-route-id=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Mis datos</a>
-                                        <a class="dropdown-item" asp-controller="Empleados" asp-action="Edit" asp-route-id=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Actualizar Mis datos</a>
-                                    </div>
-                                </li>
+                                            <div class="dropdown-menu" aria-labelledby="menuOpciones">
+                                                <a class="dropdown-item" asp-controller="Empleados" asp-action="Details" asp-route-id=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Mis datos</a>
+                                                <a class="dropdown-item" asp-controller="Empleados" asp-action="Editarme">Actualizar Mis datos</a>
+                                            </div>
+                                        </li>
 
-                                <li class="dropdown">
+                                        <li class="dropdown">
 
-                                    <button class="btn dropdown-toggle" type="button" id="menuOpciones" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Gestionar Productos <span class="caret ml-1"></span>
-                                    </button>
+                                            <button class="btn dropdown-toggle" type="button" id="menuOpciones" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Gestionar Productos <span class="caret ml-1"></span>
+                                            </button>
 
-                                    <div class="dropdown-menu" aria-labelledby="menuOpciones">
-                                        <a class="dropdown-item" asp-controller="Productos" asp-action="Index">Habilitar</a>
-                                        <a class="dropdown-item" asp-controller="Productos" asp-action="Index">Deshabilitar</a>
-                                    </div>
-                                </li>
+                                            <div class="dropdown-menu" aria-labelledby="menuOpciones">
+                                                <a class="dropdown-item" asp-controller="Productos" asp-action="Index">Habilitar</a>
+                                                <a class="dropdown-item" asp-controller="Productos" asp-action="Index">Deshabilitar</a>
+                                            </div>
+                                        </li>
 
+                                    }
 
-                            }
+                                    @if (User.IsInRole(nameof(Rol.Administrador)))
+                                    {
+                                        <li class="dropdown">
 
-                            @if (User.IsInRole(nameof(Rol.Administrador)))
-                            {
-                                <li class="dropdown">
+                                            <button class="btn dropdown-toggle" type="button" id="menuOpciones" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Listar <span class="caret ml-1"></span>
+                                            </button>
 
-                                    <button class="btn dropdown-toggle" type="button" id="menuOpciones" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Listar <span class="caret ml-1"></span>
-                                    </button>
+                                            <div class="dropdown-menu" aria-labelledby="menuOpciones">
+                                                <a class="dropdown-item" asp-controller="Clientes" asp-action="Index">Clientes</a>
+                                                <a class="dropdown-item" asp-controller="Empleados" asp-action="Index">Empleados</a>
+                                                <a class="dropdown-item" asp-controller="Sucursales" asp-action="Index">Sucursales</a>
+                                                <a class="dropdown-item" asp-controller="Categorias" asp-action="Index">Categorias</a>
+                                                <a class="dropdown-item" asp-controller="Productos" asp-action="Index">Productos</a>
+                                                <a class="dropdown-item" asp-controller="Compras" asp-action="Index">Compras</a>
+                                            </div>
+                                        </li>
 
-                                    <div class="dropdown-menu" aria-labelledby="menuOpciones">
-                                        <a class="dropdown-item" asp-controller="Clientes" asp-action="Index">Clientes</a>
-                                        <a class="dropdown-item" asp-controller="Empleados" asp-action="Index">Empleados</a>
-                                        <a class="dropdown-item" asp-controller="Sucursales" asp-action="Index">Sucursales</a>
-                                        <a class="dropdown-item" asp-controller="Categorias" asp-action="Index">Categorias</a>
-                                        <a class="dropdown-item" asp-controller="Productos" asp-action="Index">Productos</a>
-                                        <a class="dropdown-item" asp-controller="Compras" asp-action="Index">Compras</a>
-                                    </div>
-                                </li>
+                                        <li class="dropdown">
 
-                                <li class="dropdown">
+                                            <button class="btn dropdown-toggle" type="button" id="menuOpciones" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Mi cuenta <span class="caret ml-1"></span>
+                                            </button>
 
-                                    <button class="btn dropdown-toggle" type="button" id="menuOpciones" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Mi cuenta <span class="caret ml-1"></span>
-                                    </button>
+                                            <div class="dropdown-menu" aria-labelledby="menuOpciones">
+                                                <a class="dropdown-item" asp-controller="Administradores" asp-action="Details" asp-route-id=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Mis datos</a>
+                                                <a class="dropdown-item" asp-controller="Administradores" asp-action="Edit" asp-route-id=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Actualizar Mis datos</a>
+                                            </div>
+                                        </li>
+                                    }
 
-                                    <div class="dropdown-menu" aria-labelledby="menuOpciones">
-                                        <a class="dropdown-item" asp-controller="Administradores" asp-action="Details" asp-route-id=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Mis datos</a>
-                                        <a class="dropdown-item" asp-controller="Administradores" asp-action="Edit" asp-route-id=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Actualizar Mis datos</a>
-                                    </div>
-                                </li>
-                            }
+                                    <li class="nav-item">
+                                        <div>
+                                            <form id="logoutForm" method="post" asp-controller="Accesos" asp-action="Salir">
+                                                <button type="submit" class="dropdown-item">Salir</button>
+                                            </form>
 
-                            <li class="nav-item">
-                                <div>
-                                    <form id="logoutForm" method="post" asp-controller="Accesos" asp-action="Salir">
-                                        <button type="submit" class="dropdown-item">Salir</button>
-                                    </form>
+                                        </div>
+                                    </li>
 
-                                </div>
-                            </li>
-                        </ul>
-
-                    </div>
-
-                </li>
-                }
-                else
-                {
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Categorias" asp-action="Index">Productos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Accesos" asp-action="Ingresar">Ingresar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Clientes" asp-action="Create">Registrate</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Contactanos</a>
-                    </li>
-                }
-            </ul>
+                                </ul>
+                            </div>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Categorias" asp-action="Index">Productos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Sucursales" asp-action="Index">Sucursales</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Accesos" asp-action="Ingresar">Ingresar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Clientes" asp-action="Create">Registrate</a>
+                        </li>
+                    }
+                </ul>
         </div>
     </nav>
 </header>
