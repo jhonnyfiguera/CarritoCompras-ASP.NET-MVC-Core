@@ -2,11 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using tp_nt1.DataBase;
 using tp_nt1.Models;
+
+//Sucursal
+//Cada sucursal tendrá su propio stock y sus datos de locación y contacto.
+//Por el mercado tan volátil las sucursales pueden crearse y eliminarse en todo momento.
+//Para poder eliminar una sucursal, la misma no tiene que tener productos en su stock.
 
 namespace tp_nt1.Controllers
 {
@@ -14,18 +20,23 @@ namespace tp_nt1.Controllers
     {
         private readonly CarritoDbContext _context;
 
+        public object WiewBag { get; private set; }
+
         public SucursalesController(CarritoDbContext context)
         {
             _context = context;
         }
 
-        // GET: Sucursales
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Sucursal.ToListAsync());
         }
 
-        // GET: Sucursales/Details/5
+
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -43,30 +54,36 @@ namespace tp_nt1.Controllers
             return View(sucursal);
         }
 
-        // GET: Sucursales/Create
+
+        [Authorize(Roles = "Administrador, Empleado")]
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Sucursales/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Telefono,Direccion,Email")] Sucursal sucursal)
+        [Authorize(Roles = "Administrador, Empleado")]
+        public async Task<IActionResult> Create(Sucursal sucursal)
         {
             if (ModelState.IsValid)
             {
                 sucursal.Id = Guid.NewGuid();
                 _context.Add(sucursal);
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
+
+
             }
             return View(sucursal);
         }
 
-        // GET: Sucursales/Edit/5
+
+        [HttpGet]
+        [Authorize(Roles = "Administrador, Empleado")]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -82,12 +99,11 @@ namespace tp_nt1.Controllers
             return View(sucursal);
         }
 
-        // POST: Sucursales/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Telefono,Direccion,Email")] Sucursal sucursal)
+        [Authorize(Roles = "Administrador, Empleado")]
+        public async Task<IActionResult> Edit(Guid id, Sucursal sucursal)
         {
             if (id != sucursal.Id)
             {
@@ -117,7 +133,9 @@ namespace tp_nt1.Controllers
             return View(sucursal);
         }
 
-        // GET: Sucursales/Delete/5
+
+        [HttpGet]
+        [Authorize(Roles = "Administrador, Empleado")]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -135,16 +153,30 @@ namespace tp_nt1.Controllers
             return View(sucursal);
         }
 
-        // POST: Sucursales/Delete/5
+
+        [HttpPost]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador, Empleado")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
+
         {
             var sucursal = await _context.Sucursal.FindAsync(id);
-            _context.Sucursal.Remove(sucursal);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            if (sucursal.StockItems.Count == 0)
+            {
+                _context.Sucursal.Remove(sucursal);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewBag.Error = "No se puede eliminar la Sucursal ya que hay productos en Stock";
+
+            return View(sucursal);
+
         }
+
 
         private bool SucursalExists(Guid id)
         {
