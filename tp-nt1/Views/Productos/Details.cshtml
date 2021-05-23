@@ -1,10 +1,10 @@
 ﻿@model tp_nt1.Models.Producto
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Producto";
 }
 
-<h1>Details</h1>
+<h1>Datos del Producto</h1>
 
 <div>
     <h4>Producto</h4>
@@ -43,6 +43,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@Model.Id">Editar datos</a> |
+    <a class="btn btn-outline-info" asp-action="Index">Lista Productos</a>
 </div>

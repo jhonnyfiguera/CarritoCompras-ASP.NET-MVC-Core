@@ -1,13 +1,14 @@
 ﻿@model IEnumerable<tp_nt1.Models.Producto>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Lista de Productos";
 }
 
-<h1>Index</h1>
+<h3 class="text-center">Lista de Productos</h3>
+<hr />
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Nuevo Producto</a>
 </p>
 <table class="table">
     <thead>
@@ -15,9 +16,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Nombre)
             </th>
-            <th>
+            @*<th>
                 @Html.DisplayNameFor(model => model.Descripcion)
-            </th>
+            </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.PrecioVigente)
             </th>
@@ -31,29 +32,30 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Descripcion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PrecioVigente)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Activo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Categoria.Descripcion)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.Descripcion)
+                </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.PrecioVigente)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Activo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Categoria.Descripcion)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalle</a> |
+                    @*<a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>*@
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
