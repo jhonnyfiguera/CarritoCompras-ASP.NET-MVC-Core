@@ -27,7 +27,7 @@ namespace tp_nt1.Controllers
             _context = context;
         }
 
-        [Authorize]
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Index()
         {

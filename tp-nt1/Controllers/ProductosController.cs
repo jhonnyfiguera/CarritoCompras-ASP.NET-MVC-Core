@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using tp_nt1.DataBase;
 using tp_nt1.Models;
 
+//No se puede eliminarse del sistema.
+//Solo los productos pueden dehabilitarse.
+
 namespace tp_nt1.Controllers
 {
     public class ProductosController : Controller
@@ -58,7 +61,7 @@ namespace tp_nt1.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "Id", "Nombre");
+            ViewData["Categoria"] = new SelectList(_context.Categorias, "Id", "Nombre");
 
             return View();
         }
@@ -76,12 +79,13 @@ namespace tp_nt1.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "Id", "Nombre", producto.CategoriaId);
+            ViewData["Categoria"] = new SelectList(_context.Categorias, "Id", "Nombre", producto.CategoriaId);
 
             return View(producto);
         }
 
-        // GET: Productos/Edit/5
+        [Authorize(Roles = "Administrador, Empleado")]
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -100,12 +104,10 @@ namespace tp_nt1.Controllers
             return View(producto);
         }
 
-        // POST: Productos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Descripcion,PrecioVigente,Activo,CategoriaId")] Producto producto)
+        public async Task<IActionResult> Edit(Guid id, Producto producto)
         {
             if (id != producto.Id)
             {
@@ -137,34 +139,34 @@ namespace tp_nt1.Controllers
         }
 
         // GET: Productos/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Delete(Guid? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var producto = await _context.Productos
-                .Include(p => p.Categoria)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (producto == null)
-            {
-                return NotFound();
-            }
+        //    var producto = await _context.Productos
+        //        .Include(p => p.Categoria)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (producto == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(producto);
-        }
+        //    return View(producto);
+        //}
 
         // POST: Productos/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            var producto = await _context.Productos.FindAsync(id);
-            _context.Productos.Remove(producto);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(Guid id)
+        //{
+        //    var producto = await _context.Productos.FindAsync(id);
+        //    _context.Productos.Remove(producto);
+        //    await _context.SaveChangesAsync();
+        //    return RedirectToAction(nameof(Index));
+        //}
 
         private bool ProductoExists(Guid id)
         {
