@@ -72,15 +72,20 @@
 @if (User.IsInRole(nameof(Rol.Administrador)))
 {
     <div class="text-center">
-        <a asp-action="Index">Ir a Lista Clientes</a>
+        <a class="btn btn-outline-info" asp-action="Index">Lista Clientes</a>
     </div>
 }
 else
 {
+    <br />
     <div class="text-center">
-        <a asp-controller="Accesos" asp-action="Ingresar">¿Ya tienes una cuenta? <b>Ingresá ahora</b> </a> |
-        <a class="btn btn-outline-info" asp-controller="Home" asp-action="Index">Inicio</a> |
+        <a asp-controller="Accesos" asp-action="Ingresar">¿Ya tienes una cuenta? <b>Ingresá ahora</b> </a>
     </div>
+    <br />
+    <div class="text-center">
+        <a class="btn btn-outline-info" asp-controller="Home" asp-action="Index">Inicio</a>
+    </div>
+
 }
 
 @section Scripts {

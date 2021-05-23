@@ -4,10 +4,12 @@
     ViewData["Title"] = "Detalle";
 }
 
-<h3>Datos de la cuenta</h3>
+<h3>Detalles</h3>
 <hr />
 
 <div>
+    <h5>Datos de la cuenta</h5>
+    <br />
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Nombre)
@@ -64,13 +66,13 @@
 {
     <div>
         <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@Model.Id">Editar Datos </a>
-        <a asp-action="Index">Ir a Lista Empleados</a>
+        <a class="btn btn-outline-info" asp-action="Index">Lista Empleados</a>
     </div>
 }
 else
 {
     <div>
-        <a class="btn btn-outline-warning" asp-action="Editarme" asp-route-id="@Model.Id">Editar Datos</a> |
+        <a class="btn btn-outline-warning" asp-action="Editarme" asp-route-id="@Model.Id">Editar Datos</a>
         <a class="btn btn-outline-info" asp-controller="Home" asp-action="Index">Inicio</a>
     </div>
 }
