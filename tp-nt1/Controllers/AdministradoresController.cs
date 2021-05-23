@@ -131,13 +131,13 @@ namespace tp_nt1.Controllers
                 }
             }
 
-            if (_context.Administradores.Any(a => a.Username == administrador.Username))
+            var auxAdministrador = _context.Administradores.FirstOrDefaultAsync(e => e.Email == administrador.Email).Result;
+            if (_context.Administradores.Any(a => a.Username == administrador.Username) && auxAdministrador.Username != administrador.Username)
             {
                 ModelState.AddModelError(nameof(administrador.Username), "El Nombre de Usuario ya existe; debes ingresar uno diferente.");
             }
 
-            //Pendiente
-            if (_context.Administradores.Any(a => a.Email == administrador.Email))
+            if (_context.Administradores.Any(e => e.Email == administrador.Email) && auxAdministrador.Username != administrador.Username)
             {
                 ModelState.AddModelError(nameof(administrador.Email), "El Email ya existe; debes ingresar uno diferente.");
             }

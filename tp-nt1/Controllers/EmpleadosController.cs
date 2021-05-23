@@ -143,8 +143,8 @@ namespace tp_nt1.Controllers
                 }
             }
 
-            //Pendiente
-            if (_context.Empleados.Any(e => e.Email == empleado.Email))
+            var auxEmpleado = _context.Empleados.FirstOrDefaultAsync(e => e.Email == empleado.Email).Result;
+            if (_context.Empleados.Any(e => e.Email == empleado.Email) && auxEmpleado.Username != empleado.Username)
             {
                 ModelState.AddModelError(nameof(empleado.Email), "El Email ya existe; debes ingresar uno diferente.");
             }
@@ -221,8 +221,8 @@ namespace tp_nt1.Controllers
                 }
             }
 
-            //Pendiente
-            if (_context.Empleados.Any(e => e.Email == empleado.Email))
+            var auxEmpleado = _context.Empleados.FirstOrDefaultAsync(e => e.Email == empleado.Email).Result;
+            if (_context.Empleados.Any(e => e.Email == empleado.Email) && auxEmpleado.Username != empleado.Username)
             {
                 ModelState.AddModelError(nameof(empleado.Email), "El Email ya existe; debes ingresar uno diferente.");
             }
