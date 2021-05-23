@@ -57,8 +57,8 @@
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <input type="submit" value="Actualizar" class="btn btn-primary" />
-                        <a class="btn btn-danger" asp-action="Index" asp-controller="Home"> Cancelar </a>
+                        <input type="submit" value="Actualizar" class="btn btn-outline-primary" />
+                        <a class="btn btn-outline-danger" asp-action="Index"> Cancelar </a>
                     </div>
                 </form>
 
@@ -68,7 +68,8 @@
 </div>
 
 <div class="text-center">
-    <a asp-action="Index">Regresar a Lista de Clientes</a>
+    <br>
+    <a class="btn btn-outline-info" asp-controller="Home" asp-action="Index">Inicio</a>
 </div>
 
 @section Scripts {

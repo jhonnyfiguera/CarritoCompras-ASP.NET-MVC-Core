@@ -1,7 +1,7 @@
 ﻿@model tp_nt1.Models.Cliente
 
 @{
-    ViewData["Title"] = "Mis Datos";
+    ViewData["Title"] = "Detalle";
 }
 
 <h3>Datos de la cuenta</h3>
@@ -66,17 +66,23 @@
     </dl>
 </div>
 
-@if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
+@if (User.IsInRole(nameof(Rol.Administrador)))
 {
     <div>
-        <a asp-action="Edit" asp-route-id="@Model.Id">Editar Datos </a> |
-        <a asp-action="Index">Regresar a Lista de Clientes</a>
+        <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@Model.Id">Editar Datos </a> 
+        <a asp-action="Index">Ir a Lista Clientes</a> |
+    </div>
+}
+else if (User.IsInRole(nameof(Rol.Empleado)))
+{
+    <div>
+        <a class="btn btn-outline-info" asp-controller="Home" asp-action="Index">Inicio</a>
     </div>
 }
 else
 {
     <div>
-        <a asp-action="Editarme" asp-route-id="@Model.Id">Editar Mis Datos</a> |
-        <a asp-controller="Home" asp-action="Index">Ir al Inicio</a>
+        <a class="btn btn-outline-warning" asp-action="Editarme" asp-route-id="@Model.Id">Editar Datos</a> |
+        <a class="btn btn-outline-info" asp-controller="Home" asp-action="Index">Inicio</a> |
     </div>
 }

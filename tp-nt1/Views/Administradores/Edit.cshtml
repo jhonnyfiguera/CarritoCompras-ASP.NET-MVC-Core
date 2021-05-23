@@ -19,12 +19,32 @@
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                     <input type="hidden" asp-for="Id" />
-                    <input type="hidden" asp-for="Nombre" />
-                    <input type="hidden" asp-for="Apellido" />
-                    <input type="hidden" asp-for="Telefono" />
-                    <input type="hidden" asp-for="Direccion" />
-                    <input type="hidden" asp-for="Email" />
 
+                    <div class="form-group">
+                        <label asp-for="Nombre" class="control-label"></label>
+                        <input asp-for="Nombre" class="form-control" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Apellido" class="control-label"></label>
+                        <input asp-for="Apellido" class="form-control" />
+                        <span asp-validation-for="Apellido" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Telefono" class="control-label"></label>
+                        <input asp-for="Telefono" class="form-control" />
+                        <span asp-validation-for="Telefono" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Direccion" class="control-label"></label>
+                        <input asp-for="Direccion" class="form-control" />
+                        <span asp-validation-for="Direccion" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
                     <div class="form-group">
                         <label asp-for="Username" class="control-label"></label>
                         <input asp-for="Username" class="form-control" />
@@ -35,16 +55,20 @@
                         <input name="password" type="password" class="form-control" />
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
-
                     <div class="form-group">
-                        <input type="submit" value="Actualizar" class="btn btn-primary" />
-                        <a class="btn btn-danger" asp-action="Index" asp-controller="Home"> Cancelar </a>
+                        <input type="submit" value="Actualizar" class="btn btn-outline-primary" />
+                        <a class="btn btn-outline-danger" asp-action="Index"> Cancelar </a>
                     </div>
                 </form>
 
             </div>
         </div>
     </div>
+</div>
+
+<div class="text-center">
+    <br>
+    <a class="btn btn-outline-info" asp-controller="Home" asp-action="Index">Inicio</a>
 </div>
 
 @section Scripts {

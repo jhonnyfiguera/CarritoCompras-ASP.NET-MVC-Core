@@ -1,7 +1,7 @@
 ﻿@model tp_nt1.Models.Empleado
 
 @{
-    ViewData["Title"] = "Mis datos";
+    ViewData["Title"] = "Detalle";
 }
 
 <h3>Datos de la cuenta</h3>
@@ -46,12 +46,6 @@
             @Html.DisplayFor(model => model.Username)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Password)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Password)
-        </dd>
-        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Rol)
         </dt>
         <dd class="col-sm-10">
@@ -66,6 +60,17 @@
     </dl>
 </div>
 
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Editar datos</a>
-</div>
+@if (User.IsInRole(nameof(Rol.Administrador)))
+{
+    <div>
+        <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@Model.Id">Editar Datos </a>
+        <a asp-action="Index">Ir a Lista Empleados</a>
+    </div>
+}
+else
+{
+    <div>
+        <a class="btn btn-outline-warning" asp-action="Editarme" asp-route-id="@Model.Id">Editar Datos</a> |
+        <a class="btn btn-outline-info" asp-controller="Home" asp-action="Index">Inicio</a>
+    </div>
+}

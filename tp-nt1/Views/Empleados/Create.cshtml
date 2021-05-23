@@ -54,8 +54,8 @@
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <input type="submit" value="Registrar" class="btn btn-primary" />
-                        <button type="reset" class="btn btn-danger"> Restablecer  </button>
+                        <input type="submit" value="Registrar" class="btn btn-outline-primary" />
+                        <button type="reset" class="btn btn-outline-danger"> Restablecer  </button>
                     </div>
 
                 </form>
@@ -65,9 +65,15 @@
     </div>
 </div>
 
+@if (User.IsInRole(nameof(Rol.Administrador)))
+{
+    <div class="text-center">
+        <a asp-action="Index">Ir a Lista Empleados</a>
+    </div>
+}
+
 <div class="text-center">
-    <a asp-action="Index">Ir a Lista Empleados</a> |
-    <a asp-controller="Home" asp-action="Index">Ir al Inicio</a> |
+    <a class="btn btn-outline-info" asp-controller="Home" asp-action="Index">Inicio</a>
 </div>
 
 @section Scripts {

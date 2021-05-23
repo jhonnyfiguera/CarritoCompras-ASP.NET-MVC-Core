@@ -1,14 +1,17 @@
 ﻿@model IEnumerable<tp_nt1.Models.Categoria>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Lista Categorías";
 }
 
-<h1>Index</h1>
+<h3 class="text-center">Lista de Categorías</h3>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
+{
+    <hr />
+    <p><a asp-action="Create"><b>Nueva Categoría</b></a></p>
+}
+
 <table class="table">
     <thead>
         <tr>
@@ -22,20 +25,24 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Descripcion)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descripcion)
+                </td>
+                @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
+                {
+                    <td>
+                        <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@item.Id">Ver Detalle</a>
+                        <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                        <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                    </td>
+                }
+            </tr>
+        }
     </tbody>
 </table>

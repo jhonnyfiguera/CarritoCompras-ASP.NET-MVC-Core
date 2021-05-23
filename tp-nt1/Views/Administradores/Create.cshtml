@@ -4,13 +4,32 @@
     ViewData["Title"] = "Registrar";
 }
 
-<h4 class="text-center alert-danger">Advertencia: Eres único administrador del sistema, solo puedes actualizar la contraseña</h4>
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>Advertencia:</strong> Eres único administrador del sistema, puedes actualizar los datos.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 
-<div class="text-center"> <a asp-action="Edit" asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)">Actualizar Datos</a></div>
+<a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)">Actualizar Datos</a>
 <hr />
 
-<h6 class="text-center">Si deseas registrar otro administrador, se tomará un segundo perfil con los mismos datos pero con diferente contraseña</h6>
-<hr />
+<div>
+
+    <h6 class="text-danger">Deseas registrar otro administrador? Tener en cuenta: </h6>
+
+    <ul>
+        <li>
+            <p class=" text-danger"> Los datos se crean por default del sistema. </p>
+        </li>
+        <li>
+            <p class=" text-danger"> Debes ingresar  Nombre de Usuario: " administrador " y la contraseña que coloques a continuación.</p>
+        </li>
+        <li>
+            <p class=" text-danger"> Luego iniciar sesión para actualizar tus datos.</p>
+        </li>
+    </ul>
+</div>
 
 <div class="row">
     <div class="col-md-6 offset-md-3">
@@ -26,7 +45,7 @@
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <input type="submit" value="Crear" class="btn btn-primary" />
+                        <input type="submit" value="Registrar" class="btn btn-outline-primary" />
                     </div>
 
                 </form>
@@ -36,7 +55,8 @@
 </div>
 
 <div class="text-center">
-    <a asp-controller="Home" asp-action="Index">Ir al Inicio</a>
+    <br>
+    <a class="btn btn-outline-info" asp-controller="Home" asp-action="Index">Inicio</a>
 </div>
 
 @section Scripts {

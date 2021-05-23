@@ -1,24 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace tp_nt1.Extensions
 {
     public static class StringExtensions
     {
+
         /// <summary>
         /// Función para encriptar un texto utilizando el algoritmo de hash <see cref="SHA256Managed"/>.
         /// </summary>
         /// <param name="texto">Texto a encriptar</param>
         /// <returns>Retorna un <see cref="byte[]"/> con el texto encriptado.</returns>
+        
         public static byte[] Encriptar(this string texto)
         {
             return new SHA256Managed().ComputeHash(Encoding.ASCII.GetBytes(texto));
         }
+
 
         public static void ValidarPassword(this string password)
         {
@@ -43,6 +43,5 @@ namespace tp_nt1.Extensions
                 throw new Exception("La contraseña debe contener al menos un número, una minúscula y una mayúscula.");
             }
         }
-
     }
 }

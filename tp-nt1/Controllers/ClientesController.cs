@@ -28,31 +28,25 @@ namespace tp_nt1.Controllers
     public class ClientesController : Controller
     {
 
-
-        // Propiedad 
         private readonly CarritoDbContext _context;
 
 
-
-        // Constructor: ClientesController
         public ClientesController(CarritoDbContext context)
         {
             _context = context;
         }
 
 
-
-        // GET: Clientes/Index
-        [Authorize(Roles = "Administrador, Empleado")]
+        [Authorize(Roles = nameof(Rol.Administrador))]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Clientes.ToListAsync());
         }
 
 
-
-        // GET: Clientes/Details/5
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -72,23 +66,19 @@ namespace tp_nt1.Controllers
         }
 
 
-
-        // GET: Clientes/Create
         [AllowAnonymous]
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-
-
-        // POST: Clientes/Create
+        
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Cliente cliente , string password)
         {
-
             try
             {
                 password.ValidarPassword();
@@ -98,12 +88,12 @@ namespace tp_nt1.Controllers
                 ModelState.AddModelError(nameof(Cliente.Password), ex.Message);
             }
 
-            if (_context.Clientes.Any(cte => cte.Username == cliente.Username))
+            if (_context.Clientes.Any(c => c.Username == cliente.Username))
             {
                 ModelState.AddModelError(nameof(cliente.Username), "El Nombre de Usuario ya existe; debes ingresar uno diferente o Iniciar sesión.");
             }
 
-            if (_context.Clientes.Any(cte => cte.Email == cliente.Email))
+            if (_context.Clientes.Any(c => c.Email == cliente.Email))
             {
                 ModelState.AddModelError(nameof(cliente.Email), "El Email ya existe; debes ingresar uno diferente o Iniciar sesión.");
             }
@@ -114,6 +104,7 @@ namespace tp_nt1.Controllers
                 cliente.FechaAlta = DateTime.Now;
                 cliente.Password = password.Encriptar();
                 _context.Add(cliente);
+
                 Carrito carrito = new Carrito
                 {
                     Id = Guid.NewGuid(),
@@ -122,16 +113,18 @@ namespace tp_nt1.Controllers
                     Subtotal = 0
                 };
                 _context.Add(carrito);
+
                 _context.SaveChanges();
+
                 return RedirectToAction(nameof(AccesosController.Ingresar), "Accesos");
             }
+
             return View(cliente);
         }
 
 
-
-        // GET: Clientes/Edit/5
         [Authorize(Roles = nameof(Rol.Administrador))]
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -140,6 +133,7 @@ namespace tp_nt1.Controllers
             }
 
             var cliente = await _context.Clientes.FindAsync(id);
+
             if (cliente == null)
             {
                 return NotFound();
@@ -148,12 +142,10 @@ namespace tp_nt1.Controllers
         }
 
 
-
-        // POST: Clientes/Edit/5
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Dni,Id,Nombre,Apellido,Telefono,Direccion,Email,Username,Password,FechaAlta")] Cliente cliente, string password)
+        public async Task<IActionResult> Edit(Guid id, Cliente cliente, string password)
         {
             if (!string.IsNullOrWhiteSpace(password))
             {
@@ -167,14 +159,15 @@ namespace tp_nt1.Controllers
                 }
             }
 
+            //Pendiente
+            if (_context.Clientes.Any(c => c.Email == cliente.Email))
+            {
+                ModelState.AddModelError(nameof(cliente.Email), "El Email ya existe; debes ingresar uno diferente.");
+            }
+
             if (id != cliente.Id)
             {
                 return NotFound();
-            }
-
-            if (_context.Clientes.Any(cte => cte.Email == cliente.Email))
-            {
-                ModelState.AddModelError(nameof(cliente.Email), "El Email ya existe; debes ingresar uno diferente.");
             }
 
             if (ModelState.IsValid)
@@ -189,13 +182,15 @@ namespace tp_nt1.Controllers
                     clienteDatabase.Telefono = cliente.Telefono;
                     clienteDatabase.Direccion = cliente.Direccion;
                     clienteDatabase.Email = cliente.Email;
-
+                 
                     if (!string.IsNullOrWhiteSpace(password))
                     {
                         clienteDatabase.Password = password.Encriptar();
                     }
 
                     await _context.SaveChangesAsync();
+
+                    TempData["EditIn"] = true;
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -210,31 +205,28 @@ namespace tp_nt1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             return View(cliente);
         }
 
 
-
         #region Acciones del Cliente
-        // GET: Clientes/EditMe
         [Authorize(Roles = nameof(Rol.Cliente))]
         [HttpGet]
         public IActionResult Editarme()
         {
             var username = User.Identity.Name;
-            var cliente = _context.Clientes.FirstOrDefault(cliente => cliente.Username == username);
+            var cliente = _context.Clientes.FirstOrDefault(c => c.Username == username);
 
             return View(cliente);
         }
 
 
 
-        // Post: Clientes/EditMe/(Object,123)
         [Authorize(Roles = nameof(Rol.Cliente))]
         [HttpPost]
         public IActionResult Editarme(Cliente cliente, string password)
         {
-
             if (!string.IsNullOrWhiteSpace(password))
             {
                 try
@@ -247,17 +239,16 @@ namespace tp_nt1.Controllers
                 }
             }
 
-
-            if (_context.Clientes.Any(cte => cte.Email == cliente.Email))
+            //Pendiente
+            if (_context.Clientes.Any(c => c.Email == cliente.Email))
             {
                 ModelState.AddModelError(nameof(cliente.Email), "El Email ya existe; debes ingresar uno diferente.");
             }
 
-
             if (ModelState.IsValid)
             {
                 var username = User.Identity.Name;
-                var clienteDatabase = _context.Clientes.FirstOrDefault(cliente => cliente.Username == username);
+                var clienteDatabase = _context.Clientes.FirstOrDefault(c => c.Username == username);
 
                 clienteDatabase.Telefono = cliente.Telefono;
                 clienteDatabase.Direccion = cliente.Direccion;
@@ -270,6 +261,8 @@ namespace tp_nt1.Controllers
 
                 _context.SaveChanges();
 
+                TempData["EditIn"] = true;
+
                 return RedirectToAction(nameof(Details), new { cliente.Id });
             }
 
@@ -278,9 +271,8 @@ namespace tp_nt1.Controllers
         #endregion
 
 
-
-        // GET: Clientes/Delete/5
         [Authorize(Roles = nameof(Rol.Administrador))]
+        [HttpGet]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -290,6 +282,7 @@ namespace tp_nt1.Controllers
 
             var cliente = await _context.Clientes
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (cliente == null)
             {
                 return NotFound();
@@ -300,7 +293,6 @@ namespace tp_nt1.Controllers
 
 
 
-        // POST: Clientes/Delete/5
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -313,8 +305,6 @@ namespace tp_nt1.Controllers
         }
 
 
-
-        // Metodo Privado
         private bool ClienteExists(Guid id)
         {
             return _context.Clientes.Any(e => e.Id == id);

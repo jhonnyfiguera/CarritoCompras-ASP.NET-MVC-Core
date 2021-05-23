@@ -14,9 +14,7 @@ namespace tp_nt1.Controllers
     public class AdministradoresController : Controller
     {
 
-
         private readonly CarritoDbContext _context;
-
 
 
         public AdministradoresController(CarritoDbContext context)
@@ -25,16 +23,14 @@ namespace tp_nt1.Controllers
         }
 
 
-
-        // GET: Administradores
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Administradores.ToListAsync());
         }
 
-
-
-        // GET: Administradores/Details/5
+ 
+        [HttpGet]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -44,6 +40,7 @@ namespace tp_nt1.Controllers
 
             var administrador = await _context.Administradores
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (administrador == null)
             {
                 return NotFound();
@@ -53,16 +50,13 @@ namespace tp_nt1.Controllers
         }
 
 
-
-        // GET: Administradores/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
 
-
-        // POST: Administradores/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(string password)
@@ -94,14 +88,15 @@ namespace tp_nt1.Controllers
 
                 _context.Add(administrador);
                 _context.SaveChanges();
+
                 return RedirectToAction(nameof(AccesosController.Ingresar), "Accesos");
             }
+
             return View(administrador);
         }
 
 
-
-        // GET: Administradores/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -110,19 +105,19 @@ namespace tp_nt1.Controllers
             }
 
             var administrador = await _context.Administradores.FindAsync(id);
+
             if (administrador == null)
             {
                 return NotFound();
             }
+
             return View(administrador);
         }
 
 
-
-        // POST: Administradores/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Apellido,Telefono,Direccion,Email,Username,FechaAlta")] Administrador administrador, string password)
+        public async Task<IActionResult> Edit(Guid id, Administrador administrador, string password)
         {
             if (!string.IsNullOrWhiteSpace(password))
             {
@@ -132,8 +127,19 @@ namespace tp_nt1.Controllers
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(nameof(Cliente.Password), ex.Message);
+                    ModelState.AddModelError(nameof(Administrador.Password), ex.Message);
                 }
+            }
+
+            if (_context.Administradores.Any(a => a.Username == administrador.Username))
+            {
+                ModelState.AddModelError(nameof(administrador.Username), "El Nombre de Usuario ya existe; debes ingresar uno diferente.");
+            }
+
+            //Pendiente
+            if (_context.Administradores.Any(a => a.Email == administrador.Email))
+            {
+                ModelState.AddModelError(nameof(administrador.Email), "El Email ya existe; debes ingresar uno diferente.");
             }
 
             if (id != administrador.Id)
@@ -147,14 +153,21 @@ namespace tp_nt1.Controllers
                 {
                     var admDatabase = _context.Administradores.Find(id);
 
+                    admDatabase.Nombre = administrador.Nombre;
+                    admDatabase.Apellido = administrador.Apellido;
+                    admDatabase.Telefono = administrador.Telefono;
+                    admDatabase.Direccion = administrador.Direccion;
+                    admDatabase.Email = administrador.Email;
                     admDatabase.Username = administrador.Username;
-                   
+
                     if (!string.IsNullOrWhiteSpace(password))
                     {
                         admDatabase.Password = password.Encriptar();
                     }
 
                     await _context.SaveChangesAsync();
+
+                    TempData["EditIn"] = true;
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -169,12 +182,13 @@ namespace tp_nt1.Controllers
                 }
                 return RedirectToAction(nameof(Details), new { id });
             }
+
             return View(administrador);
         }
 
 
-
-        //// GET: Administradores/Delete/5
+        #region No puede Eliminarse un Administrador
+        //[HttpGet]
         //public async Task<IActionResult> Delete(Guid? id)
         //{
         //    if (id == null)
@@ -184,6 +198,7 @@ namespace tp_nt1.Controllers
 
         //    var administrador = await _context.Administradores
         //        .FirstOrDefaultAsync(m => m.Id == id);
+
         //    if (administrador == null)
         //    {
         //        return NotFound();
@@ -193,8 +208,6 @@ namespace tp_nt1.Controllers
         //}
 
 
-
-        //// POST: Administradores/Delete/5
         //[HttpPost, ActionName("Delete")]
         //[ValidateAntiForgeryToken]
         //public async Task<IActionResult> DeleteConfirmed(Guid id)
@@ -204,7 +217,7 @@ namespace tp_nt1.Controllers
         //    await _context.SaveChangesAsync();
         //    return RedirectToAction(nameof(Index));
         //}
-
+        #endregion
 
 
         private bool AdministradorExists(Guid id)

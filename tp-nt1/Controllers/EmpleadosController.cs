@@ -26,24 +26,21 @@ namespace tp_nt1.Controllers
         private readonly CarritoDbContext _context;
 
 
-
         public EmpleadosController(CarritoDbContext context)
         {
             _context = context;
         }
 
 
-
-        // GET: Empleados
         [Authorize(Roles = nameof(Rol.Administrador))]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Empleados.ToListAsync());
         }
 
 
-
-        // GET: Empleados/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -53,6 +50,7 @@ namespace tp_nt1.Controllers
 
             var empleado = await _context.Empleados
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (empleado == null)
             {
                 return NotFound();
@@ -62,36 +60,32 @@ namespace tp_nt1.Controllers
         }
 
 
-
-        // GET: Empleados/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
 
-
-        // POST: Empleados/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Empleado empleado, string password)
         {
-
             try
             {
                 password.ValidarPassword();
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(nameof(Cliente.Password), ex.Message);
+                ModelState.AddModelError(nameof(Empleado.Password), ex.Message);
             }
 
-            if (_context.Clientes.Any(e => e.Username == empleado.Username))
+            if (_context.Empleados.Any(e => e.Username == empleado.Username))
             {
                 ModelState.AddModelError(nameof(empleado.Username), "El Nombre de Usuario ya existe; debes ingresar uno diferente o Iniciar sesión.");
             }
 
-            if (_context.Clientes.Any(e => e.Email == empleado.Email))
+            if (_context.Empleados.Any(e => e.Email == empleado.Email))
             {
                 ModelState.AddModelError(nameof(empleado.Email), "El Email ya existe; debes ingresar uno diferente o Iniciar sesión.");
             }
@@ -101,17 +95,19 @@ namespace tp_nt1.Controllers
                 empleado.Id = Guid.NewGuid();
                 empleado.FechaAlta = DateTime.Now;
                 empleado.Password = password.Encriptar();
+
                 _context.Add(empleado);
                 _context.SaveChanges();
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+
+                return RedirectToAction(nameof(Details), new { empleado.Id});
             }
+
             return View(empleado);
         }
 
 
-
-        // GET: Empleados/Edit/5
         [Authorize(Roles = nameof(Rol.Administrador))]
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -120,20 +116,20 @@ namespace tp_nt1.Controllers
             }
 
             var empleado = await _context.Empleados.FindAsync(id);
+
             if (empleado == null)
             {
                 return NotFound();
             }
+
             return View(empleado);
         }
 
-
-
-        // POST: Empleados/Edit/5
+     
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Apellido,Telefono,Direccion,Email,Username,Password,FechaAlta")] Empleado empleado, string password)
+        public async Task<IActionResult> Edit(Guid id, Empleado empleado, string password)
         {
             if (!string.IsNullOrWhiteSpace(password))
             {
@@ -147,7 +143,8 @@ namespace tp_nt1.Controllers
                 }
             }
 
-            if (_context.Empleados.Any(cte => cte.Email == empleado.Email))
+            //Pendiente
+            if (_context.Empleados.Any(e => e.Email == empleado.Email))
             {
                 ModelState.AddModelError(nameof(empleado.Email), "El Email ya existe; debes ingresar uno diferente.");
             }
@@ -161,7 +158,6 @@ namespace tp_nt1.Controllers
             {
                 try
                 {
-
                     var empleadoDatabase = _context.Empleados.Find(id);
 
                     empleadoDatabase.Nombre = empleado.Nombre;
@@ -176,6 +172,8 @@ namespace tp_nt1.Controllers
                     }
 
                     await _context.SaveChangesAsync();
+
+                    TempData["EditIn"] = true;
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -190,30 +188,27 @@ namespace tp_nt1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             return View(empleado);
         }
 
 
         #region Acciones del Empleado
-        // GET: Empleados/EditMe
         [Authorize(Roles = nameof(Rol.Empleado))]
         [HttpGet]
         public IActionResult Editarme()
         {
             var username = User.Identity.Name;
-            var empleado = _context.Empleados.FirstOrDefault(empleado => empleado.Username == username);
+            var empleado = _context.Empleados.FirstOrDefault(e => e.Username == username);
 
             return View(empleado);
         }
 
 
-
-        // Post: Empleados/EditMe/(Object,123)
         [Authorize(Roles = nameof(Rol.Empleado))]
         [HttpPost]
         public IActionResult Editarme(Empleado empleado, string password)
         {
-
             if (!string.IsNullOrWhiteSpace(password))
             {
                 try
@@ -226,7 +221,8 @@ namespace tp_nt1.Controllers
                 }
             }
 
-            if (_context.Empleados.Any(cte => cte.Email == empleado.Email))
+            //Pendiente
+            if (_context.Empleados.Any(e => e.Email == empleado.Email))
             {
                 ModelState.AddModelError(nameof(empleado.Email), "El Email ya existe; debes ingresar uno diferente.");
             }
@@ -234,7 +230,7 @@ namespace tp_nt1.Controllers
             if (ModelState.IsValid)
             {
                 var username = User.Identity.Name;
-                var empleadoDatabase = _context.Empleados.FirstOrDefault(empleado => empleado.Username == username);
+                var empleadoDatabase = _context.Empleados.FirstOrDefault(e => e.Username == username);
 
                 empleadoDatabase.Telefono = empleado.Telefono;
                 empleadoDatabase.Direccion = empleado.Direccion;
@@ -247,6 +243,8 @@ namespace tp_nt1.Controllers
 
                 _context.SaveChanges();
 
+                TempData["EditIn"] = true;
+
                 return RedirectToAction(nameof(Details), new { empleado.Id });
             }
 
@@ -255,8 +253,8 @@ namespace tp_nt1.Controllers
         #endregion
 
 
-        // GET: Empleados/Delete/5
         [Authorize(Roles = nameof(Rol.Administrador))]
+        [HttpGet]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -266,6 +264,7 @@ namespace tp_nt1.Controllers
 
             var empleado = await _context.Empleados
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (empleado == null)
             {
                 return NotFound();
@@ -275,8 +274,6 @@ namespace tp_nt1.Controllers
         }
 
 
-
-        // POST: Empleados/Delete/5
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -287,7 +284,6 @@ namespace tp_nt1.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
 
 
         private bool EmpleadoExists(Guid id)
