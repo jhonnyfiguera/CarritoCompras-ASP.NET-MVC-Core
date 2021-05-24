@@ -1,21 +1,19 @@
 ﻿@model tp_nt1.Models.Carrito
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Mi Carrito";
 }
 
-<h1>Details</h1>
-
 <div>
-    <h4>Carrito</h4>
+    <h4>Estás a un paso de finalizar tu compra:</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        @*<dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Activo)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Activo)
-        </dd>
+        </dd>*@
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Cliente)
         </dt>
@@ -32,6 +30,8 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    @*<a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |*@
+    <a class="btn btn-outline-info" asp-Controller="Productos" asp-action="Index">Seguir Comprando</a>
+    <a class="btn btn-outline-success" asp-action="Index">Finalizar Compra</a>
+    <a class="btn btn-outline-danger" asp-controller="CarritoItems" asp-action="Delete" asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)">Vaciar Carrito</a>
 </div>
