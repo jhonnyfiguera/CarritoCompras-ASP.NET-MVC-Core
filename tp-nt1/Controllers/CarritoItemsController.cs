@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +12,7 @@ using tp_nt1.Models;
 
 namespace tp_nt1.Controllers
 {
+    [Authorize(Roles = nameof(Rol.Cliente))]
     public class CarritoItemsController : Controller
     {
 
@@ -52,11 +55,39 @@ namespace tp_nt1.Controllers
         }
 
         // GET: CarritoItems/Create
-        public IActionResult Create()
+        public IActionResult Create(Guid? id)
         {
-            ViewData["CarritoId"] = new SelectList(_context.Carritos, "Id", "Id");
-            ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Descripcion");
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var producto = _context.Productos.Find(id);
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            var cId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var carrito =  _context.Carritos
+            .Include(c => c.Cliente)
+            .FirstOrDefault(m => m.ClienteId == cId);
+            if (carrito == null)
+            {
+                return NotFound();
+            }
+
+            var carritoItem = new CarritoItem
+            {
+                Id = Guid.NewGuid(),
+                CarritoId = carrito.Id,
+                ProductoId = producto.Id,
+                ValorUnitario = producto.PrecioVigente,
+                Cantidad = 1,
+                Subtotal = producto.PrecioVigente * 1,
+            };
+
+            return View(carritoItem);
         }
 
         // POST: CarritoItems/Create
@@ -64,18 +95,41 @@ namespace tp_nt1.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CarritoId,ProductoId,ValorUnitario,Cantidad,Subtotal")] CarritoItem carritoItem)
+        public async Task<IActionResult> Create(CarritoItem carritoItemAux, Guid? id)
         {
-            if (ModelState.IsValid)
+
+            if (id == null || carritoItemAux.Id == null)
             {
-                carritoItem.Id = Guid.NewGuid();
-                _context.Add(carritoItem);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            ViewData["CarritoId"] = new SelectList(_context.Carritos, "Id", "Id", carritoItem.CarritoId);
-            ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Descripcion", carritoItem.ProductoId);
-            return View(carritoItem);
+
+            var producto = _context.Productos.Find(id);
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            var cId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var carrito = _context.Carritos
+            .Include(c => c.Cliente)
+            .FirstOrDefault(m => m.ClienteId == cId);
+            if (carrito == null)
+            {
+                return NotFound();
+            }
+
+            var carritoItem = new CarritoItem
+            {
+                Id = Guid.NewGuid(),
+                ProductoId = producto.Id,
+                CarritoId = carrito.Id,
+                ValorUnitario = producto.PrecioVigente,
+                Cantidad = carritoItemAux.Cantidad,
+                Subtotal = producto.PrecioVigente * carritoItemAux.Cantidad,
+            };
+            _context.Add(carritoItem);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: CarritoItems/Edit/5
