@@ -1,20 +1,21 @@
 ﻿@model IEnumerable<tp_nt1.Models.CarritoItem>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Mi Compra";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<h1>Mi Compra</h1>
+<div>
+    <a class="btn btn-outline-info" asp-Controller="Carritos" asp-action="Details" asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)">Ver Total</a>
+    <a class="btn btn-outline-info" asp-Controller="Productos" asp-action="Index">Seguir Comprando</a>
+</div>
+<br />
 <table class="table">
     <thead>
         <tr>
-            <th>
+            @*<th>
                 @Html.DisplayNameFor(model => model.Carrito)
-            </th>
+            </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.Producto)
             </th>
@@ -31,29 +32,30 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Carrito.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Producto.Descripcion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ValorUnitario)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cantidad)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Subtotal)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.Carrito.Cliente)
+                </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.Producto.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ValorUnitario)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cantidad)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Subtotal)
+                </td>
+                <td>
+                    <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

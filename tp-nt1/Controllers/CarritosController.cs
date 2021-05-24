@@ -50,6 +50,16 @@ namespace tp_nt1.Controllers
                 return NotFound();
             }
 
+            var listaProductos = _context.CarritoItems.Select(c => c.Subtotal).ToList();
+            var precioTotal = (decimal) 0;
+            foreach (var aux in listaProductos)
+            {
+                precioTotal += aux;
+            }
+
+            carrito.Subtotal = precioTotal;
+            await _context.SaveChangesAsync();
+
             return View(carrito);
         }
 
@@ -151,28 +161,28 @@ namespace tp_nt1.Controllers
 
 
         // GET: Carritos/Create
-        public IActionResult Create()
-        {
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Apellido");
-            return View();
-        }
+        //public IActionResult Create()
+        //{
+        //    ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Apellido");
+        //    return View();
+        //}
 
 
 
-        // POST: Carritos/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Activo,ClienteId,Subtotal")] Carrito carrito)
-        {
-            if (ModelState.IsValid)
-            {
-                carrito.Id = Guid.NewGuid();
-                _context.Add(carrito);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Apellido", carrito.ClienteId);
-            return View(carrito);
-        }
+        //// POST: Carritos/Create
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("Id,Activo,ClienteId,Subtotal")] Carrito carrito)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        carrito.Id = Guid.NewGuid();
+        //        _context.Add(carrito);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Apellido", carrito.ClienteId);
+        //    return View(carrito);
+        //}
     }
 }
