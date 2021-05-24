@@ -42,7 +42,7 @@
                     @Html.DisplayFor(modelItem => item.Descripcion)
                 </td>*@
                 <td>
-                    @Html.DisplayFor(modelItem => item.PrecioVigente)
+                    @String.Format("{0:C}", item.PrecioVigente)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Activo)
@@ -51,9 +51,20 @@
                     @Html.DisplayFor(modelItem => item.Categoria.Descripcion)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalle</a> |
-                    @*<a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>*@
+                    @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
+                    {
+                        <div>
+                            <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.Id">Editar Datos</a>
+                            <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@item.Id">Detalle</a>
+                            @*<a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>*@
+                        </div>
+                    }
+                    else
+                    {
+                        <div>
+                            <a class="btn btn-outline-info" asp-controller="CarritoItems" asp-action="Create" asp-route-id="@item.Id">Agregar</a>
+                        </div>
+                    }
                 </td>
             </tr>
         }
