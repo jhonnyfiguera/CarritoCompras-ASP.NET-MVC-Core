@@ -33,5 +33,5 @@
     @*<a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |*@
     <a class="btn btn-outline-info" asp-Controller="Productos" asp-action="Index">Seguir Comprando</a>
     <a class="btn btn-outline-success" asp-action="Index">Finalizar Compra</a>
-    <a class="btn btn-outline-danger" asp-controller="CarritoItems" asp-action="Delete" asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)">Vaciar Carrito</a>
+    <a class="btn btn-outline-danger" asp-controller="Carritos" asp-action="VaciarCarrito" asp-route-id="@Model.Id">Vaciar Carrito</a>
 </div>

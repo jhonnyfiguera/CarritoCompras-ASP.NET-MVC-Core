@@ -78,18 +78,6 @@
                                             </div>
                                         </li>
 
-                                        <li class="dropdown">
-
-                                            <button class="btn dropdown-toggle" type="button" id="menuOpciones" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                Gestionar Productos <span class="caret ml-1"></span>
-                                            </button>
-
-                                            <div class="dropdown-menu" aria-labelledby="menuOpciones">
-                                                <a class="dropdown-item" asp-controller="Productos" asp-action="Index">Habilitar</a>
-                                                <a class="dropdown-item" asp-controller="Productos" asp-action="Index">Deshabilitar</a>
-                                            </div>
-                                        </li>
-
                                     }
 
                                     @if (User.IsInRole(nameof(Rol.Administrador)))
