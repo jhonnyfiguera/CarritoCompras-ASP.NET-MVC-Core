@@ -1,52 +1,62 @@
 ﻿@model tp_nt1.Models.CarritoItem
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar";
 }
 
-<h1>Edit</h1>
 
-<h4>CarritoItem</h4>
+<h3 class="text-center">Editar Cantidad</h3>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="CarritoId" class="control-label"></label>
-                <select asp-for="CarritoId" class="form-control" asp-items="ViewBag.CarritoId"></select>
-                <span asp-validation-for="CarritoId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ProductoId" class="control-label"></label>
-                <select asp-for="ProductoId" class="form-control" asp-items="ViewBag.ProductoId"></select>
-                <span asp-validation-for="ProductoId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ValorUnitario" class="control-label"></label>
-                <input asp-for="ValorUnitario" class="form-control" />
-                <span asp-validation-for="ValorUnitario" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cantidad" class="control-label"></label>
-                <input asp-for="Cantidad" class="form-control" />
-                <span asp-validation-for="Cantidad" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Subtotal" class="control-label"></label>
-                <input asp-for="Subtotal" class="form-control" />
-                <span asp-validation-for="Subtotal" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="ProductoId" />
+                    <input type="hidden" asp-for="CarritoId" />
+                    <input type="hidden" asp-for="ValorUnitario" />
+                    <input type="hidden" asp-for="Subtotal" />
+
+                    <div class="form-group">
+                        @Html.DisplayNameFor(model => model.Producto)
+                        <label class="control-label"> : @Model.Producto.Nombre</label>
+                        <span asp-validation-for="Producto.Nombre" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.DisplayNameFor(model => model.Producto.PrecioVigente)
+                        <label class="control-label"> : @Model.Producto.PrecioVigente</label>
+                        <span asp-validation-for="Producto.PrecioVigente" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.DisplayNameFor(model => model.Cantidad)
+                        <label class="control-label"> : @Model.Cantidad</label>
+                        <span asp-validation-for="Cantidad" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.DisplayNameFor(model => model.Subtotal)
+                        <label class="control-label"> : @Model.Subtotal</label>
+                        <span asp-validation-for="Subtotal" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Cantidad" class="control-label"><b>Nueva Cantidad</b></label>
+                        <input asp-for="Cantidad" class="form-control" />
+                        <span asp-validation-for="Cantidad" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Actualizar" class="btn btn-outline-primary" />
+                        <a class="btn btn-outline-danger" asp-action="Index">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

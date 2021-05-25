@@ -1,0 +1,32 @@
+﻿@model tp_nt1.Models.CarritoItem
+
+@{
+    ViewData["Title"] = "Agregar";
+}
+
+<h4>Comprando</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <h5>Estas comprando el producto: @Model.Producto.Nombre</h5>
+        <form asp-action="Agregar" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Cantidad" class="control-label"></label>
+                <input asp-for="Cantidad" class="form-control" />
+                <span asp-validation-for="Cantidad" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Agregar" class="btn btn-outline-primary"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

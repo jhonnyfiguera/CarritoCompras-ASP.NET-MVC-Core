@@ -27,14 +27,14 @@ namespace tp_nt1.Controllers
 
 
 
-        // GET: CarritoItems
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var carritoDbContext = _context.CarritoItems.Include(c => c.Carrito).Include(c => c.Producto);
             return View(await carritoDbContext.ToListAsync());
         }
 
-        // GET: CarritoItems/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -54,8 +54,8 @@ namespace tp_nt1.Controllers
             return View(carritoItem);
         }
 
-        // GET: CarritoItems/Create
-        public IActionResult Create(Guid? id)
+        [HttpGet]
+        public IActionResult Agregar(Guid? id)
         {
             if (id == null)
             {
@@ -63,7 +63,7 @@ namespace tp_nt1.Controllers
             }
 
             var producto = _context.Productos.Find(id);
-            if (producto == null)
+            if (producto == null || producto.Activo == false)
             {
                 return NotFound();
             }
@@ -82,6 +82,8 @@ namespace tp_nt1.Controllers
                 Id = Guid.NewGuid(),
                 CarritoId = carrito.Id,
                 ProductoId = producto.Id,
+                Producto = producto,
+                Carrito = carrito,
                 ValorUnitario = producto.PrecioVigente,
                 Cantidad = 1,
                 Subtotal = producto.PrecioVigente * 1,
@@ -90,21 +92,18 @@ namespace tp_nt1.Controllers
             return View(carritoItem);
         }
 
-        // POST: CarritoItems/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CarritoItem carritoItemAux, Guid? id)
+        public async Task<IActionResult> Agregar(int cantidad, Guid? id)
         {
 
-            if (id == null || carritoItemAux.Id == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
             var producto = _context.Productos.Find(id);
-            if (producto == null)
+            if (producto == null || producto.Activo == false)
             {
                 return NotFound();
             }
@@ -135,9 +134,9 @@ namespace tp_nt1.Controllers
                 var miCarrito2 = _context.CarritoItems.FirstOrDefault(y => y.ProductoId == id);
                 var carritoItemDataBase = _context.CarritoItems.Find(miCarrito2.Id);
                 var listaCantidad = _context.CarritoItems.Where(p => p.Producto.Nombre == producto.Nombre).Select(c => c.Cantidad).ToList();
-                var nuevaCantidad = listaCantidad[0] + carritoItemAux.Cantidad;
+                var nuevaCantidad = listaCantidad[0] + cantidad;
                 var listaSubtotal = _context.CarritoItems.Where(p => p.Producto.Nombre == producto.Nombre).Select(c => c.Subtotal).ToList();
-                var nuevoSubtotal = listaSubtotal[0] + (producto.PrecioVigente * carritoItemAux.Cantidad);
+                var nuevoSubtotal = listaSubtotal[0] + (producto.PrecioVigente * cantidad);
                 carritoItemDataBase.Cantidad = nuevaCantidad;
                 carritoItemDataBase.Subtotal = nuevoSubtotal;
                 await _context.SaveChangesAsync();
@@ -150,8 +149,10 @@ namespace tp_nt1.Controllers
                     ProductoId = producto.Id,
                     CarritoId = carrito.Id,
                     ValorUnitario = producto.PrecioVigente,
-                    Cantidad = carritoItemAux.Cantidad,
-                    Subtotal = producto.PrecioVigente * carritoItemAux.Cantidad,
+                    Cantidad = cantidad,
+                    Subtotal = producto.PrecioVigente * cantidad,
+                    Producto = producto,
+                    Carrito = carrito,
                 };
                 _context.Add(carritoItem);
                 await _context.SaveChangesAsync();
@@ -160,7 +161,7 @@ namespace tp_nt1.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: CarritoItems/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -168,19 +169,30 @@ namespace tp_nt1.Controllers
                 return NotFound();
             }
 
-            var carritoItem = await _context.CarritoItems.FindAsync(id);
-            if (carritoItem == null)
+            var carritoItemAux = await _context.CarritoItems.FindAsync(id);
+            if (carritoItemAux == null)
             {
                 return NotFound();
             }
-            ViewData["CarritoId"] = new SelectList(_context.Carritos, "Id", "Id", carritoItem.CarritoId);
-            ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Descripcion", carritoItem.ProductoId);
+
+            var producto = _context.Productos.Include(p => p.Categoria).FirstOrDefault(p => p.Id == carritoItemAux.ProductoId);
+
+            var carritoItem = new CarritoItem
+            {
+                Id = carritoItemAux.Id,
+                CarritoId = carritoItemAux.CarritoId,
+                ProductoId = carritoItemAux.ProductoId,
+                Producto = producto,
+                ValorUnitario = producto.PrecioVigente,
+                Cantidad = carritoItemAux.Cantidad,
+                Subtotal = carritoItemAux.Subtotal,
+            };
+
+            //ViewData["CarritoId"] = new SelectList(_context.Carritos, "Id", "Id", carritoItem.CarritoId);
+            //ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Descripcion", carritoItem.ProductoId);
             return View(carritoItem);
         }
 
-        // POST: CarritoItems/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,CarritoId,ProductoId,ValorUnitario,Cantidad,Subtotal")] CarritoItem carritoItem)
@@ -215,7 +227,7 @@ namespace tp_nt1.Controllers
             return View(carritoItem);
         }
 
-        // GET: CarritoItems/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -223,12 +235,10 @@ namespace tp_nt1.Controllers
                 return NotFound();
             }
 
-            var miCarrito = _context.Carritos.FirstOrDefault(c => c.ClienteId == id);
-
             var carritoItem = await _context.CarritoItems
                 .Include(c => c.Carrito)
                 .Include(c => c.Producto)
-                .FirstOrDefaultAsync(m => m.Id == id || m.CarritoId == miCarrito.Id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (carritoItem == null)
             {
                 return NotFound();
@@ -237,7 +247,6 @@ namespace tp_nt1.Controllers
             return View(carritoItem);
         }
 
-        // POST: CarritoItems/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
@@ -248,6 +257,7 @@ namespace tp_nt1.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        
         private bool CarritoItemExists(Guid id)
         {
             return _context.CarritoItems.Any(e => e.Id == id);
