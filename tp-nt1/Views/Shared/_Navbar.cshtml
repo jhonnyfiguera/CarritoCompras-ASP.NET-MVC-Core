@@ -21,18 +21,27 @@
 
                                     @if (User.IsInRole(nameof(Rol.Cliente)))
                                     {
-                                        <li class="nav-item">
-                                            <a class="nav-link text-dark" asp-controller="Categorias" asp-action="Index">Ver Productos</a>
+                                        <li class="dropdown">
+
+                                            <button class="btn dropdown-toggle" type="button" id="menuOpciones" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Mi cuenta <span class="caret ml-1"></span>
+                                            </button>
+
+                                            <div class="dropdown-menu" aria-labelledby="menuOpciones">
+                                                <a class="dropdown-item" asp-controller="Clientes" asp-action="Details" asp-route-id=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Ver mis datos</a>
+                                                <a class="dropdown-item" asp-controller="Clientes" asp-action="Editarme">Actualizar Mis datos</a>
+                                            </div>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link text-dark" asp-controller="CarritoItems" asp-action="Index">Mi Compra</a>
+                                            <a class="nav-link text-dark" asp-controller="Productos" asp-action="Index"><b class="text-info">Comprar</b></a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link text-dark" asp-controller="Compras" asp-action="Index">Compras Realizadas</a>
+                                            <a class="nav-link text-dark" asp-controller="CarritoItems" asp-action="MisItems">Mi Carrito</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link text-dark" asp-controller="Clientes" asp-action="Details" asp-route-id=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Mis Datos</a>
+                                            <a class="nav-link text-dark" asp-controller="Compras" asp-action="Index">Mis Compras Realizadas</a>
                                         </li>
+
                                     }
 
                                     @if (User.IsInRole(nameof(Rol.Empleado)))

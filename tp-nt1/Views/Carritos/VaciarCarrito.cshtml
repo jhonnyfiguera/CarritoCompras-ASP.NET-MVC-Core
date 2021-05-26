@@ -1,42 +1,39 @@
-﻿@model tp_nt1.Models.Carrito
+﻿@model List<CarritoItem>
 
 @{
     ViewData["Title"] = "VaciarCarrito";
 }
 
-<h4 class="text-center">Estas por Vaciar el Carrito:</h4>
+<h4 class="text-center text-danger">Estas por Vaciar el Carrito</h4>
 <br />
+
 <div class="row">
     <div class="col-md-7 offset-md-2">
         <div class="card">
             <div class="card-body">
 
-                <h5 class="card-title">Total de la Compra</h5>
-                <div>
-                    <dl class="row">
-                        <dt class="col-sm-2">
-                            @Html.DisplayNameFor(model => model.Cliente)
-                        </dt>
-                        <dd class="col-sm-10">
-                            @Html.DisplayFor(model => model.Cliente.Nombre)
-                            @Html.DisplayFor(model => model.Cliente.Apellido)
-                        </dd>
-                        <dt class="col-sm-2">
-                            @Html.DisplayNameFor(model => model.Subtotal)
-                        </dt>
-                        <dd class="col-sm-10">
-                            @Html.DisplayFor(model => model.Subtotal)
-                        </dd>
-                    </dl>
+                <h5 class="card-title">Resumen </h5>
+                <hr />
 
-                    <form asp-action="VaciarCarrito">
-                        <input type="hidden" asp-for="Id" />
-                        <input type="submit" value="Vaciar Carrito" class="btn btn-outline-danger" />
-                        <a class="btn btn-outline-warning" asp-controller="CarritoItems" asp-action="Index">Cancelar</a>
-                    </form>
+                <h6 class="card-title"> Cuenta: <b>@User.Identity.Name</b> </h6>
+                <h6 class="card-title"> Nombre: <b>@User.FindFirstValue(ClaimTypes.GivenName) </b> </h6>
+                <hr />
+
+                <div>
+                    Items : <b> @Model.Count </b>
                 </div>
+                <div>
+                    Cantidad de Productos : <b>@Model.Sum(m => m.Cantidad)</b>
+                </div>
+                <div>
+                    SubTotal de todas tus compras : <b>$@Model.Sum(s => s.Subtotal)</b>
+                </div>
+                <br />
+                <form asp-action="VaciarCarrito">
+                    <input type="submit" value="Vaciar Carrito" class="btn btn-outline-danger" />
+                    <a class="btn btn-outline-warning" asp-controller="CarritoItems" asp-action="MisItems">Cancelar</a>
+                </form>
             </div>
         </div>
     </div>
 </div>
-                

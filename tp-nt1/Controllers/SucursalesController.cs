@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using tp_nt1.DataBase;
 using tp_nt1.Models;
 
@@ -18,14 +16,14 @@ namespace tp_nt1.Controllers
 {
     public class SucursalesController : Controller
     {
-        private readonly CarritoDbContext _context;
 
-        public object WiewBag { get; private set; }
+        private readonly CarritoDbContext _context;
 
         public SucursalesController(CarritoDbContext context)
         {
             _context = context;
         }
+
 
         [AllowAnonymous]
         [HttpGet]
@@ -45,7 +43,9 @@ namespace tp_nt1.Controllers
             }
 
             var sucursal = await _context.Sucursal
+                .Include(s => s.StockItems)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (sucursal == null)
             {
                 return NotFound();
@@ -63,27 +63,25 @@ namespace tp_nt1.Controllers
         }
 
 
+        [Authorize(Roles = "Administrador, Empleado")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrador, Empleado")]
         public async Task<IActionResult> Create(Sucursal sucursal)
         {
             if (ModelState.IsValid)
             {
                 sucursal.Id = Guid.NewGuid();
                 _context.Add(sucursal);
-
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-
-
             }
+           
             return View(sucursal);
         }
 
 
-        [HttpGet]
         [Authorize(Roles = "Administrador, Empleado")]
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -91,18 +89,22 @@ namespace tp_nt1.Controllers
                 return NotFound();
             }
 
-            var sucursal = await _context.Sucursal.FindAsync(id);
+            var sucursal = await _context.Sucursal
+               .Include(s => s.StockItems)
+               .FirstOrDefaultAsync(m => m.Id == id);
+
             if (sucursal == null)
             {
                 return NotFound();
             }
+
             return View(sucursal);
         }
 
 
+        [Authorize(Roles = "Administrador, Empleado")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrador, Empleado")]
         public async Task<IActionResult> Edit(Guid id, Sucursal sucursal)
         {
             if (id != sucursal.Id)
@@ -130,6 +132,7 @@ namespace tp_nt1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             return View(sucursal);
         }
 
@@ -144,7 +147,9 @@ namespace tp_nt1.Controllers
             }
 
             var sucursal = await _context.Sucursal
+                .Include(s => s.StockItems)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (sucursal == null)
             {
                 return NotFound();
@@ -154,27 +159,28 @@ namespace tp_nt1.Controllers
         }
 
 
-        [HttpPost]
+        [Authorize(Roles = "Administrador, Empleado")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrador, Empleado")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
-
         {
-            var sucursal = await _context.Sucursal.FindAsync(id);
+            var sucursal = await _context.Sucursal
+                .Include(s => s.StockItems)
+                .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (sucursal.StockItems.Count == 0)
+            var stock = sucursal.StockItems.Sum(s => s.Cantidad);
+  
+            if (stock == 0)
             {
                 _context.Sucursal.Remove(sucursal);
                 await _context.SaveChangesAsync();
-
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Error = "No se puede eliminar la Sucursal ya que hay productos en Stock";
+            ViewBag.MensajeError = "No se puede eliminar Sucursal, total productos en Stock : ";
+            ViewBag.stock = stock;
 
             return View(sucursal);
-
         }
 
 

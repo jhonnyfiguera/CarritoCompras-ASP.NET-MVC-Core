@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using tp_nt1.DataBase;
 using tp_nt1.Models;
@@ -14,9 +15,7 @@ namespace tp_nt1.Controllers
     public class CarritosController : Controller
     {
 
-
         private readonly CarritoDbContext _context;
-
 
 
         public CarritosController(CarritoDbContext context)
@@ -25,14 +24,12 @@ namespace tp_nt1.Controllers
         }
 
 
-
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             var carritoDbContext = _context.Carritos.Include(c => c.Cliente);
             return View(await carritoDbContext.ToListAsync());
         }
-
 
 
         [HttpGet]
@@ -84,7 +81,6 @@ namespace tp_nt1.Controllers
         }
 
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Activo,ClienteId,Subtotal")] Carrito carrito)
@@ -119,7 +115,6 @@ namespace tp_nt1.Controllers
         }
 
 
-
         [HttpGet]
         public async Task<IActionResult> Delete(Guid? id)
         {
@@ -150,78 +145,50 @@ namespace tp_nt1.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        /// <summary>
-        /// //////////////////////////
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> VaciarCarrito(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var carrito = await _context.Carritos
+        [HttpGet]
+        public IActionResult VaciarCarrito()
+        {
+            var idClienteLogueado = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var carrito =
+                _context.Carritos
+                .Include(c => c.CarritosItems).ThenInclude(m => m.Producto)
                 .Include(c => c.Cliente)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefault(m => m.ClienteId == idClienteLogueado && m.Activo == true);
 
             if (carrito == null)
             {
                 return NotFound();
             }
 
-            return View(carrito);
+            return View(carrito.CarritosItems);
         }
 
         [HttpPost, ActionName("VaciarCarrito")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> VaciarCarrito(Guid id)
+        public IActionResult VaciarCarritoConfirmar()
         {
+            var idClienteLoqueado = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            var carrito = await _context.Carritos.FindAsync(id);
-            _context.Carritos.Select(c => c.CarritosItems).ToList();
+            var carrito =
+                _context.Carritos
+                .Include(m => m.CarritosItems)
+                .Include(m => m.Cliente)
+                .FirstOrDefault(m => m.ClienteId == idClienteLoqueado && m.Activo == true);
+
             if (carrito.CarritosItems != null)
             {
                 carrito.CarritosItems.Clear();
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
 
-            return RedirectToAction(nameof(Index), "Productos");
-
+            return RedirectToAction("MisItems", "CarritoItems");
         }
-
 
         private bool CarritoExists(Guid id)
         {
             return _context.Carritos.Any(e => e.Id == id);
         }
-
-
-
-        // GET: Carritos/Create
-        //public IActionResult Create()
-        //{
-        //    ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Apellido");
-        //    return View();
-        //}
-
-
-        //// POST: Carritos/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("Id,Activo,ClienteId,Subtotal")] Carrito carrito)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        carrito.Id = Guid.NewGuid();
-        //        _context.Add(carrito);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Apellido", carrito.ClienteId);
-        //    return View(carrito);
-        //}
     }
 }
