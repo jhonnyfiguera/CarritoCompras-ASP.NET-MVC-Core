@@ -1,5 +1,4 @@
-﻿
-@model tp_nt1.Models.Sucursal
+﻿@model tp_nt1.Models.Sucursal
 
 @{
     ViewData["Title"] = "Editar";
@@ -8,16 +7,19 @@
 <h3 class="text-center">Actualizar</h3>
 <hr />
 
-
 <div class="row">
     <div class="col-md-6 offset-md-3">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Datos de la Sucursal<label> @Model.Nombre</label> </h5>
+
+                <h5 class="card-title"> <label> @Model.Nombre</label> </h5>
 
                 <form asp-action="Edit">
+
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
                     <input type="hidden" asp-for="Id" />
+
                     <div class="form-group">
                         <label asp-for="Nombre" class="control-label"></label>
                         <input asp-for="Nombre" class="form-control" />
@@ -39,20 +41,19 @@
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <input type="submit" value="Actualizar" class="btn btn-outline-warning" />
-                        <a class="btn btn-outline-danger" asp-controller="Home" asp-action="Index">Cancelar</a>
+                        <input type="submit" value="Actualizar" class="btn btn-outline-primary" />
+                        <a class="btn btn-outline-danger" asp-action="Index">Cancelar</a>
                     </div>
 
                 </form>
-
             </div>
         </div>
     </div>
 </div>
 
-
 <div class="text-center">
-    <a class="btn btn-outline-info" asp-action="Index">Lista de Sucursales</a>
+    <br>
+    <a class="btn btn-outline-info" asp-controller="Home" asp-action="Index">Inicio</a>
 </div>
 
 @section Scripts {

@@ -1,14 +1,17 @@
 ﻿@model IEnumerable<tp_nt1.Models.Sucursal>
 
 @{
-    ViewData["Title"] = "Lista de Sucursales";
+    ViewData["Title"] = "Sucursales";
 }
 
-<h3 class="text-center">Lista de Sucursales</h3>
-<hr />
-
-<p><a asp-action="Create"><b>Nueva Sucursal</b></a></p>
-
+<h3 class="text-center">Sucursales</h3>
+@if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
+{
+    <hr />
+    <a class="btn btn-outline-dark" asp-action="Create"><b>Nueva Sucursal</b></a>
+    <br />
+    <br />
+}
 <table class="table">
     <thead>
         <tr>
@@ -43,11 +46,14 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Email)
                 </td>
-                <td>
-                    <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
-                    @*<a asp-action="Details" asp-route-id="@item.Id">Detalle</a>*@
-                    <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
-                </td>
+                @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
+                {
+                    <td>
+                        @*<a class="btn btn-outline-info" asp-action="Details" asp-route-id="@item.Id"> Ver Detalle</a>*@
+                        <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                        <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                    </td>
+                }
             </tr>
         }
     </tbody>

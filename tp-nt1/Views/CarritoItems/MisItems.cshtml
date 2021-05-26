@@ -1,0 +1,77 @@
+﻿@model List<CarritoItem>
+
+@{
+    ViewData["Title"] = "MisItems";
+}
+
+<div class="row">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Resumen de Tu Carrito :  </h5>
+            <div>
+                Items Agregados: <b> @Model.Count </b>
+            </div>
+            <div>
+                Cantidad de Productos : <b>@Model.Sum(m => m.Cantidad)</b>
+            </div>
+            <div>
+                SubTotal de todas tus compras : <b>$@Model.Sum(s => s.Subtotal)</b>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+
+<div>
+    <a class="btn btn-outline-info" asp-Controller="Productos" asp-action="Index">Seguir Comprando</a>
+    <a class="btn btn-outline-success" asp-Controller="Carritos" asp-action="Details" asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)">Finalizar Compra</a>
+    <a class="btn btn-outline-danger" asp-controller="Carritos" asp-action="VaciarCarrito">Vaciar Carrito</a>
+</div>
+<br />
+
+<h6>Detalles de tus compras </h6>
+<br />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Nombre Producto
+            </th>
+            <th>
+                Valor Unitario
+            </th>
+            <th>
+                Cantidad
+            </th>
+            <th>
+                Subtotal
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (CarritoItem misItems in Model)
+        {
+            <tr>
+                <td>
+                    @misItems.Producto.Nombre
+                </td>
+                <td>
+                    @misItems.Producto.PrecioVigente
+                </td>
+                <td>
+                    @misItems.Cantidad
+                </td>
+                <td>
+                    @misItems.Subtotal
+                </td>
+                <td>
+                    <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@misItems.Id">Ver Detalle</a>
+                    <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@misItems.Id">Editar</a>
+                    <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@misItems.Id">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

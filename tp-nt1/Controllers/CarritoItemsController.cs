@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using tp_nt1.DataBase;
 using tp_nt1.Models;
 
@@ -19,20 +17,39 @@ namespace tp_nt1.Controllers
         private readonly CarritoDbContext _context;
 
 
-
         public CarritoItemsController(CarritoDbContext context)
         {
             _context = context;
         }
 
 
-
+        [Authorize(Roles = "Administrador, Empleado")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var carritoDbContext = _context.CarritoItems.Include(c => c.Carrito).Include(c => c.Producto);
+            var carritoDbContext = 
+                _context.CarritoItems
+                .Include(c => c.Carrito)
+                .Include(c => c.Producto);
+
             return View(await carritoDbContext.ToListAsync());
         }
+
+
+        [HttpGet]
+        public IActionResult MisItems()
+        {
+            var idClienteLogueado = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var carrito =
+                _context.Carritos
+                .Include(c => c.CarritosItems).ThenInclude(m => m.Producto)
+                .Include(c => c.Cliente)
+                .FirstOrDefault(m => m.ClienteId == idClienteLogueado);
+
+            return View(carrito.CarritosItems);
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> Details(Guid? id)
@@ -42,10 +59,12 @@ namespace tp_nt1.Controllers
                 return NotFound();
             }
 
-            var carritoItem = await _context.CarritoItems
+            var carritoItem = await 
+                _context.CarritoItems
                 .Include(c => c.Carrito)
                 .Include(c => c.Producto)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (carritoItem == null)
             {
                 return NotFound();
@@ -53,6 +72,7 @@ namespace tp_nt1.Controllers
 
             return View(carritoItem);
         }
+
 
         [HttpGet]
         public IActionResult Agregar(Guid? id)
@@ -63,27 +83,31 @@ namespace tp_nt1.Controllers
             }
 
             var producto = _context.Productos.Find(id);
+
             if (producto == null || producto.Activo == false)
             {
                 return NotFound();
             }
 
-            var cId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var carrito =  _context.Carritos
-            .Include(c => c.Cliente)
-            .FirstOrDefault(m => m.ClienteId == cId);
+            var idClienteLoqueado = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var carrito =  
+                _context.Carritos
+                .Include(c => c.Cliente)
+                .FirstOrDefault(m => m.ClienteId == idClienteLoqueado);
+
             if (carrito == null)
             {
                 return NotFound();
             }
 
-            var carritoItem = new CarritoItem
+            CarritoItem carritoItem = new CarritoItem
             {
                 Id = Guid.NewGuid(),
                 CarritoId = carrito.Id,
+                Carrito = carrito,
                 ProductoId = producto.Id,
                 Producto = producto,
-                Carrito = carrito,
                 ValorUnitario = producto.PrecioVigente,
                 Cantidad = 1,
                 Subtotal = producto.PrecioVigente * 1,
@@ -92,112 +116,116 @@ namespace tp_nt1.Controllers
             return View(carritoItem);
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Agregar(int cantidad, Guid? id)
+        public IActionResult Agregar(int cantidad, Guid? id)
         {
-
             if (id == null)
             {
                 return NotFound();
             }
 
-            var producto = _context.Productos.Find(id);
+            var producto = 
+                _context.Productos
+                .Include(c => c.Categoria)
+                .FirstOrDefault(m => m.Id == id);
+
             if (producto == null || producto.Activo == false)
             {
                 return NotFound();
             }
 
-            var cId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var carrito = _context.Carritos
-            .Include(c => c.Cliente)
-            .FirstOrDefault(m => m.ClienteId == cId);
+            var idClienteLogueado = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var carrito = 
+                _context.Carritos
+                .Include(c => c.CarritosItems)
+                .Include(c => c.Cliente)
+                .FirstOrDefault(m => m.ClienteId == idClienteLogueado && m.Activo == true);
+
             if (carrito == null)
             {
                 return NotFound();
             }
 
-            var listaProductos = _context.CarritoItems.Select(p => p.Producto.Nombre).ToList();
-            var indice = 0;
-            var encontro = false;            
-            while (!encontro && indice < listaProductos.Count)
+            var miCarritoItems = carrito.CarritosItems.FirstOrDefault(m => m.ProductoId == id);
+           
+            if (miCarritoItems != null)
             {
-               if (listaProductos[indice].Equals(producto.Nombre))
-                {
-                    encontro = true;
-                }
-                indice++;
+               miCarritoItems.Cantidad += cantidad;
+               miCarritoItems.Subtotal += (producto.PrecioVigente * cantidad);
+               _context.SaveChanges();
             }
-
-            if (encontro)
+            else
             {
-                var miCarrito2 = _context.CarritoItems.FirstOrDefault(y => y.ProductoId == id);
-                var carritoItemDataBase = _context.CarritoItems.Find(miCarrito2.Id);
-                var listaCantidad = _context.CarritoItems.Where(p => p.Producto.Nombre == producto.Nombre).Select(c => c.Cantidad).ToList();
-                var nuevaCantidad = listaCantidad[0] + cantidad;
-                var listaSubtotal = _context.CarritoItems.Where(p => p.Producto.Nombre == producto.Nombre).Select(c => c.Subtotal).ToList();
-                var nuevoSubtotal = listaSubtotal[0] + (producto.PrecioVigente * cantidad);
-                carritoItemDataBase.Cantidad = nuevaCantidad;
-                carritoItemDataBase.Subtotal = nuevoSubtotal;
-                await _context.SaveChangesAsync();
-            } 
-            else 
-            {
-                var carritoItem = new CarritoItem
+                CarritoItem carritoItem = new CarritoItem
                 {
                     Id = Guid.NewGuid(),
                     ProductoId = producto.Id,
+                    Producto = producto,
                     CarritoId = carrito.Id,
+                    Carrito = carrito,
                     ValorUnitario = producto.PrecioVigente,
                     Cantidad = cantidad,
                     Subtotal = producto.PrecioVigente * cantidad,
-                    Producto = producto,
-                    Carrito = carrito,
                 };
                 _context.Add(carritoItem);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
-
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MisItems));
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> Edit(Guid? id)
+        public IActionResult Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var carritoItemAux = await _context.CarritoItems.FindAsync(id);
-            if (carritoItemAux == null)
+            var miCarritoItem = _context.CarritoItems.Find(id);
+
+            if (miCarritoItem == null)
             {
                 return NotFound();
             }
 
-            var producto = _context.Productos.Include(p => p.Categoria).FirstOrDefault(p => p.Id == carritoItemAux.ProductoId);
+            var producto = 
+                _context.Productos
+                .Include(m => m.Categoria)
+                .FirstOrDefault(m => m.Id == miCarritoItem.ProductoId);
 
-            var carritoItem = new CarritoItem
+            var idClienteLogueado = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var carrito = 
+                _context.Carritos
+                .Include(m => m.CarritosItems)
+                .Include(m => m.Cliente)
+                .FirstOrDefault(m => m.Id == idClienteLogueado);
+
+            CarritoItem carritoItem = new CarritoItem
             {
-                Id = carritoItemAux.Id,
-                CarritoId = carritoItemAux.CarritoId,
-                ProductoId = carritoItemAux.ProductoId,
+                Id = miCarritoItem.Id,
+                CarritoId = miCarritoItem.CarritoId,
+                Carrito = carrito,
+                ProductoId = miCarritoItem.ProductoId,
                 Producto = producto,
                 ValorUnitario = producto.PrecioVigente,
-                Cantidad = carritoItemAux.Cantidad,
-                Subtotal = carritoItemAux.Subtotal,
+                Cantidad = miCarritoItem.Cantidad,
+                Subtotal = miCarritoItem.Subtotal,
             };
 
-            //ViewData["CarritoId"] = new SelectList(_context.Carritos, "Id", "Id", carritoItem.CarritoId);
-            //ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Descripcion", carritoItem.ProductoId);
             return View(carritoItem);
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,CarritoId,ProductoId,ValorUnitario,Cantidad,Subtotal")] CarritoItem carritoItem)
+        public IActionResult Edit(Guid id, CarritoItem carritoItem)
         {
-            if (id != carritoItem.Id)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -207,7 +235,7 @@ namespace tp_nt1.Controllers
                 try
                 {
                     _context.Update(carritoItem);
-                    await _context.SaveChangesAsync();
+                     _context.SaveChanges();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -220,12 +248,12 @@ namespace tp_nt1.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MisItems));
             }
-            ViewData["CarritoId"] = new SelectList(_context.Carritos, "Id", "Id", carritoItem.CarritoId);
-            ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Descripcion", carritoItem.ProductoId);
+
             return View(carritoItem);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Delete(Guid? id)
@@ -236,9 +264,10 @@ namespace tp_nt1.Controllers
             }
 
             var carritoItem = await _context.CarritoItems
-                .Include(c => c.Carrito)
                 .Include(c => c.Producto)
+                .Include(c => c.Carrito)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (carritoItem == null)
             {
                 return NotFound();
@@ -247,6 +276,7 @@ namespace tp_nt1.Controllers
             return View(carritoItem);
         }
 
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
@@ -254,10 +284,10 @@ namespace tp_nt1.Controllers
             var carritoItem = await _context.CarritoItems.FindAsync(id);
             _context.CarritoItems.Remove(carritoItem);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MisItems));
         }
 
-        
+
         private bool CarritoItemExists(Guid id)
         {
             return _context.CarritoItems.Any(e => e.Id == id);
