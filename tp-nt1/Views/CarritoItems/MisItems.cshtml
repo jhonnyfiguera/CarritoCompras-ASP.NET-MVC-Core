@@ -39,7 +39,7 @@
                 Nombre Producto
             </th>
             <th>
-                Valor Unitario
+                Precio Unitario
             </th>
             <th>
                 Cantidad
@@ -58,13 +58,13 @@
                     @misItems.Producto.Nombre
                 </td>
                 <td>
-                    @misItems.Producto.PrecioVigente
+                    $ @misItems.Producto.PrecioVigente
                 </td>
                 <td>
                     @misItems.Cantidad
                 </td>
                 <td>
-                    @misItems.Subtotal
+                    $ @misItems.Subtotal
                 </td>
                 <td>
                     <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@misItems.Id">Editar</a>

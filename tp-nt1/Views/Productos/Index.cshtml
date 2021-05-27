@@ -22,11 +22,8 @@
             <th>
                 @Html.DisplayNameFor(model => model.Nombre)
             </th>
-            @*<th>
-                    @Html.DisplayNameFor(model => model.Descripcion)
-                </th>*@
             <th>
-                @Html.DisplayNameFor(model => model.PrecioVigente)
+                Precio
             </th>
             @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
             {
@@ -49,9 +46,6 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Nombre)
                     </td>
-                    @*<td>
-                            @Html.DisplayFor(modelItem => item.Descripcion)
-                        </td>*@
                     <td>
                         @String.Format("{0:C}", item.PrecioVigente)
                     </td>
