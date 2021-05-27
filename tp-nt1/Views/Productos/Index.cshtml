@@ -85,9 +85,10 @@
                     <td>
                         @if (User.IsInRole(nameof(Rol.Cliente)))
                         {
-                            <div>
-                                <a class="btn btn-outline-info" asp-controller="CarritoItems" asp-action="Agregar" asp-route-id="@item.Id">Agregar</a>
-                            </div>
+                        <div>
+                            <a class="btn btn-outline-primary" asp-controller="CarritoItems" asp-action="Agregar" asp-route-id="@item.Id">Agregar</a>
+                            <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@item.Id">Detalle</a>
+                        </div>
                         }
                     </td>
                 </tr>

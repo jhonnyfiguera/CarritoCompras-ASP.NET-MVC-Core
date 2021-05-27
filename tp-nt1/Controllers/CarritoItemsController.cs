@@ -203,7 +203,7 @@ namespace tp_nt1.Controllers
                 _context.Carritos
                 .Include(m => m.CarritosItems)
                 .Include(m => m.Cliente)
-                .FirstOrDefault(m => m.Id == idClienteLogueado);
+                .FirstOrDefault(m => m.Id == idClienteLogueado && m.Activo == true);
 
             CarritoItem carritoItem = new CarritoItem
             {
@@ -223,40 +223,34 @@ namespace tp_nt1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Guid id, CarritoItem carritoItem)
+        public IActionResult Edit(Guid id, int cantidad)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var miCarritoItems = 
+                _context.CarritoItems
+                .Include(m => m.Producto)
+                .FirstOrDefault(c => c.Id == id);
+
+            if (miCarritoItems != null)
             {
-                try
-                {
-                    _context.Update(carritoItem);
-                     _context.SaveChanges();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CarritoItemExists(carritoItem.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                miCarritoItems.Cantidad = cantidad;
+                miCarritoItems.Subtotal = (miCarritoItems.Producto.PrecioVigente * cantidad);
+                _context.SaveChanges();
+                TempData["EditIn"] = true;
                 return RedirectToAction(nameof(MisItems));
             }
+      
 
-            return View(carritoItem);
+            return View(miCarritoItems);
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> Delete(Guid? id)
+        public async Task<IActionResult> Eliminar(Guid? id)
         {
             if (id == null)
             {
@@ -277,9 +271,9 @@ namespace tp_nt1.Controllers
         }
 
 
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("Eliminar")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> EliminarConfirmar(Guid id)
         {
             var carritoItem = await _context.CarritoItems.FindAsync(id);
             _context.CarritoItems.Remove(carritoItem);
