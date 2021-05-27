@@ -13,28 +13,27 @@
             <div class="card-body">
 
                 <h5>Estas agregando el siguiente Item:</h5>
-
+                <br />
 
                 <dl class="row">
-                    <dt class="col-sm-2">
+                    <dt class="col-sm-3">
                         @Html.DisplayNameFor(model => model.Producto.Nombre)
                     </dt>
-                    <dd class="col-sm-10">
+                    <dd class="col-sm-9">
                         @Html.DisplayFor(model => model.Producto.Nombre)
                     </dd>
                 </dl>
 
                 <dl class="row">
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => model.Producto.PrecioVigente)
+                    <dt class="col-sm-3">
+                        Precio
                     </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => model.Producto.PrecioVigente)
+                    <dd class="col-sm-9">
+                        $ @Html.DisplayFor(model => model.Producto.PrecioVigente)
                     </dd>
                 </dl>
 
-                @*<h5>Estas agregando el producto:</h5>
-                <h5>@Model.Producto.Nombre</h5>*@
+
 
                 <form asp-action="Agregar" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -44,20 +43,15 @@
                         <span asp-validation-for="Cantidad" class="text-danger"></span>
                     </div>
                     <div class="form-group">
+
                         <input type="submit" value="Agregar" class="btn btn-outline-primary" />
+                        <a class="btn btn-outline-info" asp-controller="Productos" asp-action="Index">Volver</a>
                     </div>
                 </form>
 
             </div>
         </div>
     </div>
-</div>
-
-
-
-
-<div>
-    <a class="btn btn-outline-info" asp-action="MisItems">Mi Carrito</a>
 </div>
 
 @section Scripts {

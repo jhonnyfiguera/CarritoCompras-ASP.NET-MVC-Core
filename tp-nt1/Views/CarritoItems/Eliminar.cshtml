@@ -1,0 +1,55 @@
+﻿@model tp_nt1.Models.CarritoItem
+
+@{
+    ViewData["Title"] = "Eliminar";
+}
+
+<h3 class="text-center">Eliminar</h3>
+<br />
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+
+                <h4 class="card-title">Item del Carrito</h4>
+                <hr />
+
+                <dl class="row">
+
+                    <dt class="col-sm-3">
+                        @Html.DisplayNameFor(model => model.Producto)
+                    </dt>
+                    <dd class="col-sm-9">
+                        @Html.DisplayFor(model => model.Producto.Nombre)
+                    </dd>
+                    <dt class="col-sm-3">
+                        Precio
+                    </dt>
+                    <dd class="col-sm-9">
+                       $ @Html.DisplayFor(model => model.ValorUnitario)
+                    </dd>
+                    <dt class="col-sm-3">
+                        @Html.DisplayNameFor(model => model.Cantidad)
+                    </dt>
+                    <dd class="col-sm-9">
+                        @Html.DisplayFor(model => model.Cantidad)
+                    </dd>
+                    <dt class="col-sm-3">
+                        @Html.DisplayNameFor(model => model.Subtotal)
+                    </dt>
+                    <dd class="col-sm-9">
+                       $ @Html.DisplayFor(model => model.Subtotal)
+                    </dd>
+                </dl>
+
+                <form asp-action="Eliminar">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="submit" value="Eliminar" class="btn btn-outline-danger" />
+                    <a class="btn btn-outline-dark" asp-action="MisItems"> Cancelar </a>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
