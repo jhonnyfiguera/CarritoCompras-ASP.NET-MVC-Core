@@ -158,9 +158,13 @@ namespace tp_nt1.Controllers
                     ModelState.AddModelError(nameof(Cliente.Password), ex.Message);
                 }
             }
+    
+            if (_context.Clientes.Any(c => c.Username == cliente.Username && c.Id != id))
+            {
+                ModelState.AddModelError(nameof(cliente.Username), "El Nombre de Usuario ya existe; debes ingresar uno diferente.");
+            }
 
-            var auxCliente = _context.Clientes.FirstOrDefaultAsync(e => e.Email == cliente.Email).Result;
-            if (_context.Clientes.Any(e => e.Email == cliente.Email) && auxCliente.Username != cliente.Username)
+            if (_context.Clientes.Any(c => c.Email == cliente.Email && c.Id != id))
             {
                 ModelState.AddModelError(nameof(cliente.Email), "El Email ya existe; debes ingresar uno diferente.");
             }
@@ -182,7 +186,8 @@ namespace tp_nt1.Controllers
                     clienteDatabase.Telefono = cliente.Telefono;
                     clienteDatabase.Direccion = cliente.Direccion;
                     clienteDatabase.Email = cliente.Email;
-                 
+                    clienteDatabase.Username = cliente.Username;
+
                     if (!string.IsNullOrWhiteSpace(password))
                     {
                         clienteDatabase.Password = password.Encriptar();
@@ -210,7 +215,6 @@ namespace tp_nt1.Controllers
         }
 
 
-        #region Acciones del Cliente
         [Authorize(Roles = nameof(Rol.Cliente))]
         [HttpGet]
         public IActionResult Editarme()
@@ -220,7 +224,6 @@ namespace tp_nt1.Controllers
 
             return View(cliente);
         }
-
 
 
         [Authorize(Roles = nameof(Rol.Cliente))]
@@ -240,6 +243,7 @@ namespace tp_nt1.Controllers
             }
 
             var auxCliente = _context.Clientes.FirstOrDefaultAsync(e => e.Email == cliente.Email).Result;
+
             if (_context.Clientes.Any(e => e.Email == cliente.Email) && auxCliente.Username != cliente.Username)
             {
                 ModelState.AddModelError(nameof(cliente.Email), "El Email ya existe; debes ingresar uno diferente.");
@@ -268,7 +272,6 @@ namespace tp_nt1.Controllers
 
             return View(cliente);
         }
-        #endregion
 
 
         [Authorize(Roles = nameof(Rol.Administrador))]

@@ -7,7 +7,7 @@
 <div class="row">
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Resumen de Tu Carrito :  </h5>
+            <h5 class="card-title">Resumen de tu Carrito :  </h5>
             <div>
                 Items Agregados: <b> @Model.Count </b>
             </div>
@@ -23,17 +23,17 @@
 <br />
 
 <div>
-    <a class="btn btn-outline-info" asp-Controller="Productos" asp-action="Index">Seguir Comprando</a>
+    <a class="btn btn-outline-info" asp-Controller="Productos" asp-action="Index">Comprar</a>
     <a class="btn btn-outline-success" asp-Controller="Carritos" asp-action="Details" asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)">Finalizar Compra</a>
     <a class="btn btn-outline-danger" asp-controller="Carritos" asp-action="VaciarCarrito">Vaciar Carrito</a>
 </div>
 <br />
 
-<h6>Detalles de tus compras </h6>
+<h5><b>Detalles de tus compras</b></h5>
 <br />
 
 <table class="table">
-    <thead>
+    <thead class="thead-dark">
         <tr>
             <th>
                 Nombre Producto

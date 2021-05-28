@@ -143,8 +143,12 @@ namespace tp_nt1.Controllers
                 }
             }
 
-            var auxEmpleado = _context.Empleados.FirstOrDefaultAsync(e => e.Email == empleado.Email).Result;
-            if (_context.Empleados.Any(e => e.Email == empleado.Email) && auxEmpleado.Username != empleado.Username)
+            if (_context.Empleados.Any(e => e.Username == empleado.Username && e.Id != id))
+            {
+                ModelState.AddModelError(nameof(empleado.Username), "El Nombre de Usuario ya existe; debes ingresar uno diferente.");
+            }
+
+            if (_context.Empleados.Any(e => e.Email == empleado.Email && e.Id != id))
             {
                 ModelState.AddModelError(nameof(empleado.Email), "El Email ya existe; debes ingresar uno diferente.");
             }
@@ -165,6 +169,7 @@ namespace tp_nt1.Controllers
                     empleadoDatabase.Telefono = empleado.Telefono;
                     empleadoDatabase.Direccion = empleado.Direccion;
                     empleadoDatabase.Email = empleado.Email;
+                    empleadoDatabase.Username = empleado.Username;
 
                     if (!string.IsNullOrWhiteSpace(password))
                     {
@@ -192,8 +197,7 @@ namespace tp_nt1.Controllers
             return View(empleado);
         }
 
-
-        #region Acciones del Empleado
+       
         [Authorize(Roles = nameof(Rol.Empleado))]
         [HttpGet]
         public IActionResult Editarme()
@@ -222,6 +226,7 @@ namespace tp_nt1.Controllers
             }
 
             var auxEmpleado = _context.Empleados.FirstOrDefaultAsync(e => e.Email == empleado.Email).Result;
+
             if (_context.Empleados.Any(e => e.Email == empleado.Email) && auxEmpleado.Username != empleado.Username)
             {
                 ModelState.AddModelError(nameof(empleado.Email), "El Email ya existe; debes ingresar uno diferente.");
@@ -250,7 +255,6 @@ namespace tp_nt1.Controllers
 
             return View(empleado);
         }
-        #endregion
 
 
         [Authorize(Roles = nameof(Rol.Administrador))]

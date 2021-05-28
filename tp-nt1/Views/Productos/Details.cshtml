@@ -1,60 +1,72 @@
 ﻿@model tp_nt1.Models.Producto
 
 @{
-    ViewData["Title"] = "Producto";
+    ViewData["Title"] = "Detalle";
 }
 
-<h1>Datos del Producto</h1>
+<h4 class="text-center"><b>Producto</b></h4>
+<br />
 
-<div>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Nombre)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Descripcion)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Descripcion)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.PrecioVigente)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.PrecioVigente)
-        </dd>
-        @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
-        {
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Activo)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Activo)
-            </dd>
-        }
+<div class="col-md-6 offset-md-3">
+    <div class="card">
+        <div class="card-body">
 
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Categoria)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Categoria.Nombre)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Categoria.Descripcion)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Categoria.Descripcion)
-        </dd>
-    </dl>
+            <dl class="row">
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Nombre)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Nombre)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Descripcion)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Descripcion)
+                </dd>
+                <dt class="col-sm-3">
+                    Precio
+                </dt>
+                <dd class="col-sm-7">
+                    $@Html.DisplayFor(model => model.PrecioVigente)
+                </dd>
+                @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
+                {
+                    <dt class="col-sm-3">
+                        @Html.DisplayNameFor(model => model.Activo)
+                    </dt>
+                    <dd class="col-sm-7">
+                        @Html.DisplayFor(model => model.Activo)
+                    </dd>
+                }
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Categoria)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Categoria.Nombre)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Categoria.Descripcion)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Categoria.Descripcion)
+                </dd>
+            </dl>
+        </div>
+    </div>
 </div>
-<div>
-    @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
-    { 
-      <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@Model.Id">Editar datos</a>
-    }
-     <a class="btn btn-outline-info" asp-action="Index">Lista Productos</a>
-</div>
+
+@if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
+{
+    <div class="text-center">
+        <br />
+        <a class="btn btn-outline-info" asp-action="Index">Productos</a>
+    </div>
+}
+else
+{
+    <div class="text-center">
+        <br />
+        <a class="btn btn-outline-info" asp-controller="CarritoItems" asp-action="MisItems">Mi Carrito</a>
+    </div>
+}

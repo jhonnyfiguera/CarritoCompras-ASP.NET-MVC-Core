@@ -84,6 +84,7 @@ namespace tp_nt1.Controllers
             return View(producto);
         }
 
+
         [Authorize(Roles = "Administrador, Empleado")]
         [HttpGet]
         public async Task<IActionResult> Edit(Guid? id)
@@ -99,7 +100,7 @@ namespace tp_nt1.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "Id", "Nombre", producto.CategoriaId);
+            ViewData["Categoria"] = new SelectList(_context.Categorias, "Id", "Nombre", producto.CategoriaId);
 
             return View(producto);
         }
@@ -134,39 +135,46 @@ namespace tp_nt1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "Id", "Descripcion", producto.CategoriaId);
+            ViewData["Categoria"] = new SelectList(_context.Categorias, "Id", "Nombre", producto.CategoriaId);
             return View(producto);
         }
 
-        // GET: Productos/Delete/5
-        //public async Task<IActionResult> Delete(Guid? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    var producto = await _context.Productos
-        //        .Include(p => p.Categoria)
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-        //    if (producto == null)
-        //    {
-        //        return NotFound();
-        //    }
+        #region No se puede Eliminar un Producto
+        [Authorize(Roles = nameof(Rol.Administrador))]
+        [HttpGet]
+        public async Task<IActionResult> Delete(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //    return View(producto);
-        //}
+            var producto = await _context.Productos
+                .Include(p => p.Categoria)
+                .FirstOrDefaultAsync(m => m.Id == id);
 
-        // POST: Productos/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(Guid id)
-        //{
-        //    var producto = await _context.Productos.FindAsync(id);
-        //    _context.Productos.Remove(producto);
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            return View(producto);
+        }
+
+
+        [Authorize(Roles = nameof(Rol.Administrador))]
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        {
+            var producto = await _context.Productos.FindAsync(id);
+            _context.Productos.Remove(producto);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        #endregion
+
 
         private bool ProductoExists(Guid id)
         {

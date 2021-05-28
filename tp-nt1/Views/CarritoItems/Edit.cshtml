@@ -4,9 +4,8 @@
     ViewData["Title"] = "Editar";
 }
 
-
-<h3 class="text-center">Editar Cantidad</h3>
-<hr />
+<h4 class="text-center"><b>Editar Cantidad</b></h4>
+<br />
 
 <div class="row">
     <div class="col-md-6 offset-md-3">
@@ -14,6 +13,7 @@
             <div class="card-body">
 
                 <form asp-action="Edit" method="post">
+
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="Id" />
                     <input type="hidden" asp-for="ProductoId" />
@@ -23,36 +23,36 @@
 
                     <div class="form-group">
                         @Html.DisplayNameFor(model => model.Producto)
-                        <label class="control-label"> : @Model.Producto.Nombre</label>
+                        <label class="control-label">: @Model.Producto.Nombre</label>
                         <span asp-validation-for="Producto.Nombre" class="text-danger"></span>
                     </div>
 
                     <div class="form-group">
                         @Html.DisplayNameFor(model => model.Producto.PrecioVigente)
-                        <label class="control-label"> : @Model.Producto.PrecioVigente</label>
+                        <label class="control-label">: $@Model.Producto.PrecioVigente</label>
                         <span asp-validation-for="Producto.PrecioVigente" class="text-danger"></span>
                     </div>
 
                     <div class="form-group">
                         @Html.DisplayNameFor(model => model.Cantidad)
-                        <label class="control-label"> : @Model.Cantidad</label>
+                        <label class="control-label">: @Model.Cantidad</label>
                         <span asp-validation-for="Cantidad" class="text-danger"></span>
                     </div>
 
                     <div class="form-group">
                         @Html.DisplayNameFor(model => model.Subtotal)
-                        <label class="control-label"> : @Model.Subtotal</label>
+                        <label class="control-label">: @Model.Subtotal</label>
                         <span asp-validation-for="Subtotal" class="text-danger"></span>
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="Cantidad" class="control-label"><b>Nueva Cantidad</b></label>
+                        <label asp-for="Cantidad" class="control-label"><b class="text-success">Nueva Cantidad</b></label>
                         <input asp-for="Cantidad" class="form-control" />
                         <span asp-validation-for="Cantidad" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <input type="submit" value="Actualizar" class="btn btn-outline-primary" />
-                        <a class="btn btn-outline-danger" asp-action="Index">Cancelar</a>
+                        <a class="btn btn-outline-danger" asp-action="MisItems">Cancelar</a>
                     </div>
                 </form>
             </div>

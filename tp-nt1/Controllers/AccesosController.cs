@@ -72,6 +72,7 @@ namespace tp_nt1.Controllers
                         identity.AddClaim(new Claim(ClaimTypes.Role, usuario.Rol.ToString()));
                         identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()));
                         identity.AddClaim(new Claim(ClaimTypes.GivenName, usuario.Nombre));
+                        identity.AddClaim(new Claim(ClaimTypes.Surname, usuario.Apellido));
 
                         ClaimsPrincipal principal = new ClaimsPrincipal(identity);
 

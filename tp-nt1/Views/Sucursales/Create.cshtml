@@ -4,15 +4,18 @@
     ViewData["Title"] = "Registrar";
 }
 
+<h4 class="text-center"><b>Nueva Sucursal</b></h4>
+<br />
+
 <div class="row">
     <div class="col-md-6 offset-md-3">
         <div class="card">
             <div class="card-body">
 
-                <h5 class="card-title">Datos de la Sucursal</h5>
-
                 <form asp-action="Create">
+
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
                     <div class="form-group">
                         <label asp-for="Nombre" class="control-label"></label>
                         <input asp-for="Nombre" class="form-control" />
@@ -38,7 +41,6 @@
                         <button type="reset" class="btn btn-outline-danger">Restablecer</button>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>
@@ -47,6 +49,7 @@
 <div class="text-center">
     <br />
     <a class="btn btn-outline-info" asp-action="Index">Sucursales</a>
+    <a class="btn btn-outline-info" asp-controller="Home" asp-action="Index">Inicio</a>
 </div>
 
 @section Scripts {

@@ -1,55 +1,62 @@
-﻿@*@model tp_nt1.Models.Producto
+﻿@model tp_nt1.Models.Producto
 
 @{
     ViewData["Title"] = "Eliminar";
 }
 
-<h3>Esta seguro de realizar esta accion? </h3>
+<h4 class="text-center"><b>Eliminar Producto</b></h4>
 <br />
-<div>
-    <h4>Producto</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Nombre)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Descripcion)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Descripcion)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.PrecioVigente)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.PrecioVigente)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Activo)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Activo)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Categoria)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Categoria.Descripcion)
-        </dd>
-    </dl>
 
+<div class="col-md-6 offset-md-3">
+    <div class="card">
+        <div class="card-body">
+
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong> ¿Deseas continuar?</strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <dl class="row">
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Nombre)
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.Nombre)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Descripcion)
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.Descripcion)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.PrecioVigente)
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.PrecioVigente)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Activo)
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.Activo)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Categoria)
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.Categoria.Nombre)
+                </dd>
+            </dl>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                <input type="submit" value="Eliminar" class="btn btn-outline-danger" />
+                <a class="btn btn-outline-dark" asp-action="Index"> Cancelar </a>
+            </form>
+
+        </div>
+    </div>
 </div>
-<div class="text-center">
-    <br />
-    <a class="btn btn-outline-info" asp-controller="Home" asp-action="Index">Inicio</a>
-
-</div>
-@section Scripts {
-
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
-}*@
