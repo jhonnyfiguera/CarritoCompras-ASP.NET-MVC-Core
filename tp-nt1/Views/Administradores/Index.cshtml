@@ -1,16 +1,16 @@
 ﻿@model IEnumerable<tp_nt1.Models.Administrador>
 
 @{
-    ViewData["Title"] = "Lista Administradores";
+    ViewData["Title"] = "Administradores";
 }
 
-<h3 class="text-center">Lista Administradores del Sistema</h3>
+<a class="btn btn-outline-dark"asp-action="Create"><b>Nuevo Administrador</b></a>
 <hr />
 
-<p><a asp-action="Create"><b>Nuevo Administrador</b></a></p>
+<h4><b>Administradores</b></h4>
 
 <table class="table">
-    <thead>
+    <thead class="thead-dark">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Nombre)

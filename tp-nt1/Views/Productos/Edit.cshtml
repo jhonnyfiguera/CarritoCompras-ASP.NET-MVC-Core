@@ -4,17 +4,20 @@
     ViewData["Title"] = "Editar";
 }
 
-<h3 class="text-center">Actualizar</h3>
-<hr />
+<h4 class="text-center"><b>Actualizar Producto</b></h4>
+<br />
 
 <div class="row">
     <div class="col-md-6 offset-md-3">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Datos del Producto<label> @Model.Nombre</label> </h5>
+
                 <form asp-action="Edit">
+
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
                     <input type="hidden" asp-for="Id" />
+
                     <div class="form-group">
                         <label asp-for="Nombre" class="control-label"></label>
                         <input asp-for="Nombre" class="form-control" />
@@ -37,7 +40,7 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="CategoriaId" class="control-label"></label>
-                        <select asp-for="CategoriaId" class="form-control" asp-items="ViewBag.CategoriaId"></select>
+                        <select asp-for="CategoriaId" class="form-control" asp-items="ViewBag.Categoria"></select>
                         <span asp-validation-for="CategoriaId" class="text-danger"></span>
                     </div>
                     <div class="form-group">
@@ -48,11 +51,6 @@
             </div>
         </div>
     </div>
-</div>
-
-<div class="text-center">
-    <br />
-    <a class="btn btn-outline-info" asp-action="Index">Lista Productos</a>
 </div>
 
 @section Scripts {

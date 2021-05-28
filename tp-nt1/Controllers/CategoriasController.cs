@@ -140,37 +140,37 @@ namespace tp_nt1.Controllers
 
 
         #region No se puede Eliminar una Categoria
-        //[Authorize(Roles = nameof(Rol.Administrador))]
-        //[HttpGet]
-        //public async Task<IActionResult> Delete(Guid? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [Authorize(Roles = nameof(Rol.Administrador))]
+        [HttpGet]
+        public async Task<IActionResult> Delete(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //    var categoria = await _context.Categorias
-        //        .FirstOrDefaultAsync(m => m.Id == id);
+            var categoria = await _context.Categorias
+                .FirstOrDefaultAsync(m => m.Id == id);
 
-        //    if (categoria == null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (categoria == null)
+            {
+                return NotFound();
+            }
 
-        //    return View(categoria);
-        //}
+            return View(categoria);
+        }
 
 
-        //[Authorize(Roles = nameof(Rol.Administrador))]
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(Guid id)
-        //{
-        //    var categoria = await _context.Categorias.FindAsync(id);
-        //    _context.Categorias.Remove(categoria);
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
+        [Authorize(Roles = nameof(Rol.Administrador))]
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        {
+            var categoria = await _context.Categorias.FindAsync(id);
+            _context.Categorias.Remove(categoria);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
         #endregion
 
 

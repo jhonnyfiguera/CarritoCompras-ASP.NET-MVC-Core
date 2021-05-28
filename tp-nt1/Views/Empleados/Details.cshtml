@@ -4,75 +4,78 @@
     ViewData["Title"] = "Detalle";
 }
 
-<h3>Detalles</h3>
-<hr />
+<h4 class="text-center"><b>Empleado</b></h4>
+<br />
 
-<div>
-    <h5>Datos de la cuenta</h5>
-    <br />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Nombre)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Apellido)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Apellido)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Telefono)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Telefono)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Direccion)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Direccion)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Username)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Username)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Rol)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Rol)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaAlta)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.FechaAlta)
-        </dd>
-    </dl>
+<div class="col-md-6 offset-md-3">
+    <div class="card">
+        <div class="card-body">
+
+            <dl class="row">
+                <dt class="col-sm-3">
+                    Cuenta
+                </dt>
+                <dd class="col-sm-7">
+                    <b class="text-info">@Html.DisplayFor(model => model.Username) </b>
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Nombre)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Nombre)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Apellido)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Apellido)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Telefono)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Telefono)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Direccion)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Direccion)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Email)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Email)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Rol)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Rol)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.FechaAlta)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.FechaAlta)
+                </dd>
+            </dl>
+        </div>
+    </div>
 </div>
 
 @if (User.IsInRole(nameof(Rol.Administrador)))
 {
-    <div>
-        <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@Model.Id">Editar Datos </a>
-        <a class="btn btn-outline-info" asp-action="Index">Lista Empleados</a>
+    <div class="text-center">
+        <br />
+        <a class="btn btn-outline-info" asp-action="Index">Empleados</a>
     </div>
 }
 else
 {
-    <div>
-        <a class="btn btn-outline-warning" asp-action="Editarme" asp-route-id="@Model.Id">Editar Datos</a>
+    <div class="text-center">
+        <br />
         <a class="btn btn-outline-info" asp-controller="Home" asp-action="Index">Inicio</a>
     </div>
 }

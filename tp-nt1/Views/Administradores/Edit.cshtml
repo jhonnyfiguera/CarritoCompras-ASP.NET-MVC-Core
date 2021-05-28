@@ -4,15 +4,13 @@
     ViewData["Title"] = "Editar";
 }
 
-<h3 class="text-center">Actualizar</h3>
-<hr />
+<h4 class="text-center"><b>Actualizar Datos Administrador</b></h4>
+<br />
 
 <div class="row">
     <div class="col-md-6 offset-md-3">
         <div class="card">
             <div class="card-body">
-
-                <h5 class="card-title">Datos de la cuenta <label> @Model.Nombre</label> </h5>
 
                 <form asp-action="Edit">
 
@@ -64,11 +62,6 @@
             </div>
         </div>
     </div>
-</div>
-
-<div class="text-center">
-    <br>
-    <a class="btn btn-outline-info" asp-action="Index">Lista Adms</a>
 </div>
 
 @section Scripts {

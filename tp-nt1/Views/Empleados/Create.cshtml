@@ -4,15 +4,13 @@
     ViewData["Title"] = "Registrar";
 }
 
-<h3 class="text-center">Registrar</h3>
-<hr />
+<h4 class="text-center"><b>Nuevo Empleado</b></h4>
+<br />
 
 <div class="row">
     <div class="col-md-6 offset-md-3">
         <div class="card">
             <div class="card-body">
-
-                <h5 class="card-title">Datos de la cuenta</h5>
 
                 <form asp-action="Create" method="post">
 
@@ -57,7 +55,6 @@
                         <input type="submit" value="Registrar" class="btn btn-outline-primary" />
                         <button type="reset" class="btn btn-outline-danger"> Restablecer  </button>
                     </div>
-
                 </form>
 
             </div>
@@ -68,13 +65,18 @@
 @if (User.IsInRole(nameof(Rol.Administrador)))
 {
     <div class="text-center">
-        <a asp-action="Index">Ir a Lista Empleados</a>
+        <br />
+        <a class="btn btn-outline-info" asp-action="Index">Empleados</a>
     </div>
 }
 
-<div class="text-center">
-    <a class="btn btn-outline-info" asp-controller="Home" asp-action="Index">Inicio</a>
-</div>
+@if (User.IsInRole(nameof(Rol.Empleado)))
+{
+    <div class="text-center">
+        <br />
+        <a class="btn btn-outline-info" asp-controller="Home" asp-action="Index">Inicio</a>
+    </div>
+}
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
