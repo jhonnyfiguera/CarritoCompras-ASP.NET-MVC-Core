@@ -12,10 +12,10 @@
                 Items Agregados: <b> @Model.Count </b>
             </div>
             <div>
-                Cantidad de Productos : <b>@Model.Sum(m => m.Cantidad)</b>
+                Cantidad de Productos: <b>@Model.Sum(m => m.Cantidad)</b>
             </div>
             <div>
-                SubTotal de todas tus compras : <b>$@Model.Sum(s => s.Subtotal)</b>
+                SubTotal de los productos seleccionados: <b>$@Model.Sum(s => s.Subtotal)</b>
             </div>
         </div>
     </div>
@@ -24,12 +24,17 @@
 
 <div>
     <a class="btn btn-outline-info" asp-Controller="Productos" asp-action="Index">Comprar</a>
-    <a class="btn btn-outline-success" asp-Controller="Carritos" asp-action="Details" asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)">Finalizar Compra</a>
+    <a class="btn btn-outline-success" asp-Controller="Compras" asp-action="Create">Finalizar Compra</a>
     <a class="btn btn-outline-danger" asp-controller="Carritos" asp-action="VaciarCarrito">Vaciar Carrito</a>
 </div>
 <br />
+<div class="form-group">
+    <span class="text-danger">@ViewBag.Error</span> 
+</div>
 
-<h5><b>Detalles de tus compras</b></h5>
+<br />
+
+<h5><b>Detalles de tu Compra</b></h5>
 <br />
 
 <table class="table">
