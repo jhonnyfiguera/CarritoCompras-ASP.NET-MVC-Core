@@ -1,36 +1,82 @@
-﻿@model tp_nt1.Models.Compra
+﻿@model Tuple<Compra, Sucursal>
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalle";
 }
 
-<h1>Details</h1>
+<h3 class="text-center" style="color: #008f39">¡Gracias por comprar en Carnicería Los Amigos!</h3>
+<br />
+
+<div class="row">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Resumen de tu Compra:  </h5>
+            <div>
+                Cliente: <b> @Model.Item1.Cliente.Nombre </b>
+            </div>
+            <div>
+                ID de Compra: <b> @Model.Item1.Id </b>
+            </div>
+            <div>
+                Cantidad de Productos: <b>@Model.Item1.Carrito.CarritosItems.Sum(m => m.Cantidad)</b>
+            </div>
+            <div>
+                Total: <b>$@Model.Item1.Carrito.CarritosItems.Sum(s => s.Subtotal)</b> @*Cambiar cuando arreglemos el atributo Subtotal del carrito*@
+            </div>
+            <div>
+                Sucursal: <b>@Model.Item2.Nombre</b>
+            </div>
+            <div>
+                Dirección de Sucursal: <b>@Model.Item2.Direccion</b>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+
+<h5><b>Detalles de tu Compra</b></h5>
+<br />
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+                Nombre Producto
+            </th>
+            <th>
+                Precio Unitario
+            </th>
+            <th>
+                Cantidad
+            </th>
+            <th>
+                Subtotal
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (CarritoItem misItems in Model.Item1.Carrito.CarritosItems)
+        {
+            <tr>
+                <td>
+                    @misItems.Producto.Nombre
+                </td>
+                <td>
+                    $ @misItems.Producto.PrecioVigente
+                </td>
+                <td>
+                    @misItems.Cantidad
+                </td>
+                <td>
+                    $ @misItems.Subtotal
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 
 <div>
-    <h4>Compra</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Total)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Total)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cliente)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cliente.Apellido)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Carrito)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Carrito.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a class="btn btn-outline-info" asp-action="Index">Compras Realizadas</a>
 </div>

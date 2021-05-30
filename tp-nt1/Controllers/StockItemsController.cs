@@ -49,7 +49,7 @@ namespace tp_nt1.Controllers
         // GET: StockItems/Create
         public IActionResult Create()
         {
-            ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Descripcion");
+            ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Nombre");
             ViewData["SucursalId"] = new SelectList(_context.Sucursal, "Id", "Direccion");
             return View();
         }
@@ -68,7 +68,7 @@ namespace tp_nt1.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Descripcion", stockItem.ProductoId);
+            ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Nombre", stockItem.ProductoId);
             ViewData["SucursalId"] = new SelectList(_context.Sucursal, "Id", "Direccion", stockItem.SucursalId);
             return View(stockItem);
         }

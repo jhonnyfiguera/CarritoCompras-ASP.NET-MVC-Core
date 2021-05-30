@@ -45,7 +45,12 @@ namespace tp_nt1.Controllers
                 _context.Carritos
                 .Include(c => c.CarritosItems).ThenInclude(m => m.Producto)
                 .Include(c => c.Cliente)
-                .FirstOrDefault(m => m.ClienteId == idClienteLogueado);
+                .FirstOrDefault(m => m.ClienteId == idClienteLogueado && m.Activo == true);
+
+            if (carrito.CarritosItems.Count == 0)
+            {
+                ViewBag.Error = "Para Finalizar tu compra el Carrito no puede estar Vacio.";
+            }
 
             return View(carrito.CarritosItems);
         }
@@ -94,7 +99,7 @@ namespace tp_nt1.Controllers
             var carrito =  
                 _context.Carritos
                 .Include(c => c.Cliente)
-                .FirstOrDefault(m => m.ClienteId == idClienteLoqueado);
+                .FirstOrDefault(m => m.ClienteId == idClienteLoqueado && m.Activo == true);
 
             if (carrito == null)
             {
@@ -112,7 +117,7 @@ namespace tp_nt1.Controllers
                 Cantidad = 1,
                 Subtotal = producto.PrecioVigente * 1,
             };
-
+       
             return View(carritoItem);
         }
 
@@ -173,6 +178,8 @@ namespace tp_nt1.Controllers
                 _context.Add(carritoItem);
                 _context.SaveChanges();
             }
+            //carrito.Subtotal = carrito.CarritosItems.Sum(s => s.Subtotal);
+            //_context.SaveChanges();
             return RedirectToAction(nameof(MisItems));
         }
 
@@ -232,35 +239,37 @@ namespace tp_nt1.Controllers
 
             var miCarritoItems = 
                 _context.CarritoItems
+                .Include(m => m.Carrito)
                 .Include(m => m.Producto)
-                .FirstOrDefault(c => c.Id == id);
+                .FirstOrDefault(c => c.Id == id);        
 
             if (miCarritoItems != null)
             {
                 miCarritoItems.Cantidad = cantidad;
                 miCarritoItems.Subtotal = (miCarritoItems.Producto.PrecioVigente * cantidad);
                 _context.SaveChanges();
+                //miCarritoItems.Carrito.Subtotal = miCarritoItems.Carrito.CarritosItems.Sum(s => s.Subtotal);
+                //_context.SaveChanges();
                 TempData["EditIn"] = true;
                 return RedirectToAction(nameof(MisItems));
             }
-      
 
             return View(miCarritoItems);
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> Eliminar(Guid? id)
+        public IActionResult Eliminar(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var carritoItem = await _context.CarritoItems
+            var carritoItem = _context.CarritoItems
                 .Include(c => c.Producto)
                 .Include(c => c.Carrito)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefault(m => m.Id == id);
 
             if (carritoItem == null)
             {
@@ -273,11 +282,16 @@ namespace tp_nt1.Controllers
 
         [HttpPost, ActionName("Eliminar")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EliminarConfirmar(Guid id)
+        public IActionResult EliminarConfirmar(Guid id)
         {
-            var carritoItem = await _context.CarritoItems.FindAsync(id);
+            var carritoItem =
+             _context.CarritoItems
+            .Include(m => m.Carrito)
+            .Include(m => m.Producto)
+            .FirstOrDefault(c => c.Id == id);
             _context.CarritoItems.Remove(carritoItem);
-            await _context.SaveChangesAsync();
+            //carritoItem.Carrito.Subtotal = carritoItem.Carrito.CarritosItems.Sum(s => s.Subtotal);
+            _context.SaveChanges();
             return RedirectToAction(nameof(MisItems));
         }
 

@@ -180,9 +180,9 @@ namespace tp_nt1.Controllers
             if (carrito.CarritosItems != null)
             {
                 carrito.CarritosItems.Clear();
+                carrito.Subtotal = 0;
                 _context.SaveChanges();
             }
-
             return RedirectToAction("MisItems", "CarritoItems");
         }
 
