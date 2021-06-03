@@ -31,12 +31,20 @@
     <script src="~/lib/alertifyjs/alertify.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
-   
+
     @if (TempData["EditIn"] as bool? ?? false)
     {
         <script>
-            alertify.set('notifier', 'position', 'top-center','text-white');
+            alertify.set('notifier', 'position', 'top-center', 'text-white');
             alertify.success("Datos actualizados correctamente !!!");
+        </script>
+    }
+
+    @if (TempData["Vacio"] as bool? ?? false)
+    {
+        <script>
+            alertify.set('notifier', 'position', 'top-center', 'text-white');
+            alertify.error("Carrito sin productos agregados");
         </script>
     }
 

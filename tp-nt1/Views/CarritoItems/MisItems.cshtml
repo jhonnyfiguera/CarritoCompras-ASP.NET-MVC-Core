@@ -7,7 +7,7 @@
 <div class="row">
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Resumen de tu Carrito :  </h5>
+            <h5 class="card-title">Resumen de tu Carrito: </h5>
             <div>
                 Items Agregados: <b> @Model.Count </b>
             </div>
@@ -27,11 +27,6 @@
     <a class="btn btn-outline-success" asp-Controller="Compras" asp-action="Create">Finalizar Compra</a>
     <a class="btn btn-outline-danger" asp-controller="Carritos" asp-action="VaciarCarrito">Vaciar Carrito</a>
 </div>
-<br />
-<div class="form-group">
-    <span class="text-danger">@ViewBag.Error</span> 
-</div>
-
 <br />
 
 <h5><b>Detalles de tu Compra</b></h5>

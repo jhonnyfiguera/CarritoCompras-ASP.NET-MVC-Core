@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -31,6 +32,7 @@ namespace tp_nt1.Controllers
         public IActionResult Ingresar(string returnUrl)
         {
             TempData[_Return_Url] = returnUrl;
+            ViewBag.Roles = new SelectList(typeof(Rol).GetEnumValues());
             return View();
         }
 
@@ -87,9 +89,10 @@ namespace tp_nt1.Controllers
                     }
                 }
             }
+
             ViewBag.Error = "Usuario, Contraseña o Rol incorrecto";
             ViewBag.UserName = username;
-            ViewBag.Rol = rol; 
+            ViewBag.Roles = new SelectList(typeof(Rol).GetEnumValues(), rol);
             TempData[_Return_Url] = returnUrl;
 
             return View();

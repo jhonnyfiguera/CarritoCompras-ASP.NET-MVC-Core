@@ -162,8 +162,15 @@ namespace tp_nt1.Controllers
                 return NotFound();
             }
 
+            if (carrito.CarritosItems.Count == 0)
+            {
+                TempData["Vacio"] = true;
+                return RedirectToAction(nameof(CarritoItemsController.MisItems), "CarritoItems");
+            }
+
             return View(carrito.CarritosItems);
         }
+
 
         [HttpPost, ActionName("VaciarCarrito")]
         [ValidateAntiForgeryToken]
