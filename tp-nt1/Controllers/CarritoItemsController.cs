@@ -47,11 +47,6 @@ namespace tp_nt1.Controllers
                 .Include(c => c.Cliente)
                 .FirstOrDefault(m => m.ClienteId == idClienteLogueado && m.Activo == true);
 
-            if (carrito.CarritosItems.Count == 0)
-            {
-                ViewBag.Error = "Para Finalizar tu compra el Carrito no puede estar Vacio.";
-            }
-
             return View(carrito.CarritosItems);
         }
 
@@ -160,7 +155,6 @@ namespace tp_nt1.Controllers
             {
                miCarritoItems.Cantidad += cantidad;
                miCarritoItems.Subtotal += (producto.PrecioVigente * cantidad);
-               _context.SaveChanges();
             }
             else
             {
@@ -176,10 +170,10 @@ namespace tp_nt1.Controllers
                     Subtotal = producto.PrecioVigente * cantidad,
                 };
                 _context.Add(carritoItem);
-                _context.SaveChanges();
             }
-            //carrito.Subtotal = carrito.CarritosItems.Sum(s => s.Subtotal);
-            //_context.SaveChanges();
+            carrito.Subtotal = carrito.CarritosItems.Sum(s => s.Subtotal);
+            _context.SaveChanges();
+
             return RedirectToAction(nameof(MisItems));
         }
 
@@ -239,7 +233,7 @@ namespace tp_nt1.Controllers
 
             var miCarritoItems = 
                 _context.CarritoItems
-                .Include(m => m.Carrito)
+                .Include(m => m.Carrito).ThenInclude(m => m.CarritosItems)
                 .Include(m => m.Producto)
                 .FirstOrDefault(c => c.Id == id);        
 
@@ -247,9 +241,8 @@ namespace tp_nt1.Controllers
             {
                 miCarritoItems.Cantidad = cantidad;
                 miCarritoItems.Subtotal = (miCarritoItems.Producto.PrecioVigente * cantidad);
+                miCarritoItems.Carrito.Subtotal = miCarritoItems.Carrito.CarritosItems.Sum(s => s.Subtotal);
                 _context.SaveChanges();
-                //miCarritoItems.Carrito.Subtotal = miCarritoItems.Carrito.CarritosItems.Sum(s => s.Subtotal);
-                //_context.SaveChanges();
                 TempData["EditIn"] = true;
                 return RedirectToAction(nameof(MisItems));
             }
@@ -286,12 +279,15 @@ namespace tp_nt1.Controllers
         {
             var carritoItem =
              _context.CarritoItems
-            .Include(m => m.Carrito)
+            .Include(m => m.Carrito).ThenInclude(m => m.CarritosItems)
             .Include(m => m.Producto)
             .FirstOrDefault(c => c.Id == id);
+
+            carritoItem.Carrito.Subtotal = carritoItem.Carrito.CarritosItems.Sum(s => s.Subtotal) - carritoItem.Subtotal;
             _context.CarritoItems.Remove(carritoItem);
-            //carritoItem.Carrito.Subtotal = carritoItem.Carrito.CarritosItems.Sum(s => s.Subtotal);
+
             _context.SaveChanges();
+
             return RedirectToAction(nameof(MisItems));
         }
 

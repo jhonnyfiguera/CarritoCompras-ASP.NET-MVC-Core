@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using tp_nt1.DataBase;
@@ -27,11 +28,17 @@ namespace tp_nt1.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var carritoDbContext = _context.Productos.Include(p => p.Categoria);
+            var carritoDbContext = _context.Productos.Include(p => p.Categoria).ToList();
 
-            return View(await carritoDbContext.ToListAsync());
+            var sucursales =
+                _context.Sucursal
+                .Include(m => m.StockItems).ThenInclude(m => m.Producto).ToList();
+
+            Tuple<List<Producto>, List<Sucursal>> modelo = new Tuple<List<Producto>, List<Sucursal>>(carritoDbContext, sucursales);
+
+            return View(modelo);
         }
 
 

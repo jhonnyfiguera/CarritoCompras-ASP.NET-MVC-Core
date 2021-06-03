@@ -4,8 +4,8 @@
     ViewData["Title"] = "Agregar";
 }
 
-<h3 class="text-center">Agregar</h3>
-<hr />
+<h3 class="text-center"><b>Agregar</b></h3>
+<br />  
 
 <div class="row">
     <div class="col-md-6 offset-md-3">
@@ -33,17 +33,16 @@
                     </dd>
                 </dl>
 
-
-
                 <form asp-action="Agregar" method="post">
+
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
                     <div class="form-group">
                         <label asp-for="Cantidad" class="control-label"></label>
                         <input asp-for="Cantidad" class="form-control" />
                         <span asp-validation-for="Cantidad" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-
                         <input type="submit" value="Agregar" class="btn btn-outline-primary" />
                         <a class="btn btn-outline-info" asp-controller="Productos" asp-action="Index">Volver</a>
                     </div>

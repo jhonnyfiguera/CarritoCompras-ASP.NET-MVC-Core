@@ -1,10 +1,10 @@
 ﻿@model Tuple<Compra, Sucursal>
 
 @{
-    ViewData["Title"] = "Detalle";
+    ViewData["Title"] = "CrearCompra";
 }
 
-<h3 class="text-center" style="color: #008f39">¡Gracias por comprar en Carnicería Los Amigos!</h3>
+<h3 class="text-center text-success"><b>¡Gracias por comprar en Carnicería Los Amigos!</b></h3>
 <br />
 
 <div class="row">
@@ -12,7 +12,7 @@
         <div class="card-body">
             <h5 class="card-title">Resumen de tu Compra:  </h5>
             <div>
-                Cliente: <b> @Model.Item1.Cliente.Nombre </b>
+                Cliente: <b> @Model.Item1.Cliente.Nombre  @Model.Item1.Cliente.Apellido</b>
             </div>
             <div>
                 ID de Compra: <b> @Model.Item1.Id </b>
@@ -21,7 +21,7 @@
                 Cantidad de Productos: <b>@Model.Item1.Carrito.CarritosItems.Sum(m => m.Cantidad)</b>
             </div>
             <div>
-                Total: <b>$@Model.Item1.Carrito.CarritosItems.Sum(s => s.Subtotal)</b> @*Cambiar cuando arreglemos el atributo Subtotal del carrito*@
+                Total: <b>$@Model.Item1.Carrito.Subtotal</b>
             </div>
             <div>
                 Sucursal: <b>@Model.Item2.Nombre</b>
@@ -75,7 +75,6 @@
         }
     </tbody>
 </table>
-
 
 <div>
     <a class="btn btn-outline-info" asp-action="Index">Compras Realizadas</a>

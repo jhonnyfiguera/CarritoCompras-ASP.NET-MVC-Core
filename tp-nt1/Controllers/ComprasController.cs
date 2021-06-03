@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -13,13 +14,17 @@ namespace tp_nt1.Controllers
 {
     public class ComprasController : Controller
     {
+
         private readonly CarritoDbContext _context;
+
 
         public ComprasController(CarritoDbContext context)
         {
             _context = context;
         }
 
+
+        [Authorize(Roles = nameof(Rol.Cliente))]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -27,42 +32,11 @@ namespace tp_nt1.Controllers
             return View(await carritoDbContext.ToListAsync());
         }
 
-        [HttpGet]
-        public IActionResult Details(Sucursal sucursalSeleccionada)
-        {
-            if (sucursalSeleccionada == null)
-            {
-                return NotFound();
-            }
 
-            var idClienteLogueado = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var cliente = _context.Clientes
-                .Include(c => c.Compras)
-                .FirstOrDefault(i => i.Id == idClienteLogueado);
-            var ultimaCompra = cliente.Compras[0];
-            var compra = _context.Compras.FirstOrDefault(c => c.Id == ultimaCompra.Id);
-            var carrito = _context.Carritos
-                .Include(i => i.CarritosItems).ThenInclude(p => p.Producto)
-                .FirstOrDefault(c => c.Id == compra.CarritoId);
-
-            Compra compraAux = new Compra
-            {
-                Id = compra.Id,
-                Total = compra.Total,
-                ClienteId = compra.ClienteId,
-                Cliente = cliente,
-                CarritoId = compra.CarritoId,
-                Carrito = carrito
-            };
-
-            Tuple<Compra, Sucursal> modelAux = new Tuple<Compra, Sucursal>(compra, sucursalSeleccionada);
-            return View(modelAux);
-        }
-
+        [Authorize(Roles = nameof(Rol.Cliente))]
         [HttpGet]
         public IActionResult Create()
         {
-
             var idClienteLogueado = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             var carrito =
@@ -73,6 +47,7 @@ namespace tp_nt1.Controllers
 
             if (carrito.CarritosItems.Count == 0)
             {
+                TempData["Vacio"] = true;
                 return RedirectToAction(nameof(CarritoItemsController.MisItems), "CarritoItems");
             }
 
@@ -81,60 +56,41 @@ namespace tp_nt1.Controllers
             return View();
         }
 
+
+        [Authorize(Roles = nameof(Rol.Cliente))]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Guid? sucursalId)
+        public IActionResult CrearCompra(Guid? sucursalId)
         {
             if (sucursalId == null)
             {
                 return NotFound();
             }
 
-            var sucursalSeleccionada =
-            _context.Sucursal
-            .Include(s => s.StockItems).ThenInclude(m => m.Producto)
-            .FirstOrDefault(m => m.Id == sucursalId);
-
             var idClienteLogueado = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             var carrito =
                 _context.Carritos
                 .Include(c => c.CarritosItems).ThenInclude(m => m.Producto)
-                .Include(c => c.Cliente).ThenInclude(m => m.Compras) //nuevo
+                .Include(c => c.Cliente).ThenInclude(m => m.Compras)
                 .FirstOrDefault(m => m.ClienteId == idClienteLogueado && m.Activo == true);
 
-            if (sucursalSeleccionada == null || carrito == null)
+            var miSucursal = _context.Sucursal.Find(sucursalId);
+
+            if (miSucursal == null || carrito == null)
             {
                 return NotFound();
             }
 
-            #region Metodo Privado para validar stock, metodo recibe sucural y la lista de los items del carrito y devuelve boolean 
-            var sinStock = false;
-            var indice = 0;
-            while (!sinStock && indice < carrito.CarritosItems.Count)
+            if (!SinStockEnSucursal(miSucursal.Id, carrito.CarritosItems))
             {
-                var itemCarrito = carrito.CarritosItems[indice];
-                var validoStock = sucursalSeleccionada.StockItems.FirstOrDefault(p => p.ProductoId == itemCarrito.ProductoId && p.Cantidad >= itemCarrito.Cantidad);
-                if (validoStock == null)
-                {
-                    sinStock = true;
-                }
-                indice++;
-            }
-            #endregion
-
-            if (!sinStock) 
-            {
-                #region Metodo de restar stock en sucursal
                 foreach (var item in carrito.CarritosItems)
                 {
-                    var itemStock = sucursalSeleccionada.StockItems.FirstOrDefault(p => p.ProductoId == item.ProductoId);
-                    itemStock.Cantidad -= item.Cantidad;
+                    var stockItemSucursal = miSucursal.StockItems.FirstOrDefault(p => p.ProductoId == item.ProductoId);
+                    stockItemSucursal.Cantidad -= item.Cantidad;
                     _context.SaveChanges();
                 }
-                #endregion
 
-                #region Metodo para crear la compra
                 Compra compra = new Compra
                 {
                     Id = Guid.NewGuid(),
@@ -142,15 +98,11 @@ namespace tp_nt1.Controllers
                     Cliente = carrito.Cliente,
                     CarritoId = carrito.Id,
                     Carrito = carrito,
-                    Total = carrito.CarritosItems.Sum(s => s.Subtotal), // Cuando carrito tenga el subtotal actualizado cambiar esta linea
+                    Total = carrito.Subtotal,
                 };
                 _context.Add(compra);
 
-                #endregion
-
-                #region Metodo para inactivar carrito y crear
                 carrito.Activo = false;
-                carrito.Subtotal = carrito.CarritosItems.Sum(s => s.Subtotal);
                 Carrito nuevoCarrito = new Carrito
                 {
                     Id = Guid.NewGuid(),
@@ -159,108 +111,68 @@ namespace tp_nt1.Controllers
                     Subtotal = 0
                 };
                 _context.Add(nuevoCarrito);
-                #endregion
 
-                 _context.SaveChanges();
-                return RedirectToAction(nameof(Details), sucursalSeleccionada) ;
+                _context.SaveChanges();
+
+                Tuple<Compra, Sucursal> modelo = new Tuple<Compra, Sucursal>(compra, miSucursal);
+
+                return View(modelo);
             }
             else
             {
-                //recorro sucursales
-                //Retorno varios botones con diferentes vista
-            }
+                var otrasSucursales = _context.Sucursal.Where(m => m.Id != miSucursal.Id).ToList();
 
+                var sucursalesConStock = new List<Sucursal>();
 
-
-            ViewData["SucursalId"] = new SelectList(_context.Sucursal, "Id", "Direccion");
-            return View();
-        }
-
-        // GET: Compras/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var compra = await _context.Compras.FindAsync(id);
-            if (compra == null)
-            {
-                return NotFound();
-            }
-            ViewData["CarritoId"] = new SelectList(_context.Carritos, "Id", "Id", compra.CarritoId);
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Apellido", compra.ClienteId);
-            return View(compra);
-        }
-
-        // POST: Compras/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Total,ClienteId,CarritoId")] Compra compra)
-        {
-            if (id != compra.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                foreach (var sucursal in otrasSucursales)
                 {
-                    _context.Update(compra);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CompraExists(compra.Id))
+                    if (!SinStockEnSucursal(sucursal.Id, carrito.CarritosItems))
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
+                        sucursalesConStock.Add(sucursal);
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                if (sucursalesConStock.Count > 0)
+                {
+                    ViewBag.MensajeSinStock = "En la " + miSucursal.Nombre + ", no contamos con stock en algunos productos que seleccionastes";
+
+                    ViewBag.MensajeContinuarCompra = "En las siguientes sucursales, si contamos con stock de todos tus productos, para finalizar tu compra selecciona alguna de ellas";
+                    ViewData["SucursalId"] = new SelectList(sucursalesConStock, "Id", "Direccion");
+
+                    return View(nameof(Create));
+                }
             }
-            ViewData["CarritoId"] = new SelectList(_context.Carritos, "Id", "Id", compra.CarritoId);
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Apellido", compra.ClienteId);
-            return View(compra);
+
+            ViewBag.MensajeNohayStock = "En ninguna sucursal contamos con stock de algunos productos que seleccionastes";
+
+            return View(nameof(Create));
         }
 
-        // GET: Compras/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+
+        private bool SinStockEnSucursal(Guid? id, List<CarritoItem> carritosItems)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var sucursal =
+            _context.Sucursal
+            .Include(s => s.StockItems).ThenInclude(m => m.Producto)
+            .FirstOrDefault(m => m.Id == id);
 
-            var compra = await _context.Compras
-                .Include(c => c.Carrito)
-                .Include(c => c.Cliente)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (compra == null)
-            {
-                return NotFound();
-            }
+            var sinStock = false;
+            var indice = 0;
 
-            return View(compra);
+            while (!sinStock && indice < carritosItems.Count)
+            {
+                var itemCarrito = carritosItems[indice];
+                var itemSucursal = sucursal.StockItems.FirstOrDefault(m => m.ProductoId == itemCarrito.ProductoId && m.Cantidad >= itemCarrito.Cantidad);
+
+                if (itemSucursal == null)
+                {
+                    sinStock = true;
+                }
+                indice++;
+            }
+            return sinStock;
         }
 
-        // POST: Compras/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            var compra = await _context.Compras.FindAsync(id);
-            _context.Compras.Remove(compra);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
 
         private bool CompraExists(Guid id)
         {
