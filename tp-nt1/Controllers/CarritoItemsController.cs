@@ -23,19 +23,6 @@ namespace tp_nt1.Controllers
         }
 
 
-        [Authorize(Roles = "Administrador, Empleado")]
-        [HttpGet]
-        public async Task<IActionResult> Index()
-        {
-            var carritoDbContext = 
-                _context.CarritoItems
-                .Include(c => c.Carrito)
-                .Include(c => c.Producto);
-
-            return View(await carritoDbContext.ToListAsync());
-        }
-
-
         [HttpGet]
         public IActionResult MisItems()
         {

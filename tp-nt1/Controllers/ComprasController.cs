@@ -27,7 +27,7 @@ namespace tp_nt1.Controllers
             throw new NotImplementedException();
         }
 
-        [Authorize(Roles = "Administrador, Empleado")]
+        [Authorize(Roles = nameof(Rol.Empleado))]
         [HttpGet]
         public IActionResult ComprasDelMes()
         {
@@ -40,7 +40,8 @@ namespace tp_nt1.Controllers
             return View(nameof(ComprasReportes), comprasDelMes);
         }
 
-        [Authorize(Roles = "Administrador, Empleado")]
+
+        [Authorize(Roles = nameof(Rol.Empleado))]
         [HttpGet]
         public IActionResult ComprasHistorialPorFecha()
         {
@@ -169,6 +170,7 @@ namespace tp_nt1.Controllers
             return View(nameof(Create));
         }
 
+
         [Authorize(Roles = nameof(Rol.Cliente))]
         [HttpGet]
         public IActionResult ComprasRealizadas()
@@ -181,6 +183,7 @@ namespace tp_nt1.Controllers
 
             return View(compras.ToList());
         }
+
 
         [Authorize]
         [HttpGet]
@@ -228,7 +231,6 @@ namespace tp_nt1.Controllers
             }
             return sinStock;
         }
-
 
         private bool CompraExists(Guid id)
         {
