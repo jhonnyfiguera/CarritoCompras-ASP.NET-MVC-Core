@@ -9,8 +9,8 @@ using tp_nt1.DataBase;
 namespace tp_nt1.Migrations
 {
     [DbContext(typeof(CarritoDbContext))]
-    [Migration("20210513005735_primeraversion")]
-    partial class primeraversion
+    [Migration("20210605025750_versionactual")]
+    partial class versionactual
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -124,7 +124,7 @@ namespace tp_nt1.Migrations
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("TEXT")
-                        .HasMaxLength(30);
+                        .HasMaxLength(200);
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -196,6 +196,9 @@ namespace tp_nt1.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("ClienteId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("FechaAlta")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Total")
@@ -270,7 +273,7 @@ namespace tp_nt1.Migrations
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("TEXT")
-                        .HasMaxLength(30);
+                        .HasMaxLength(200);
 
                     b.Property<string>("Nombre")
                         .IsRequired()

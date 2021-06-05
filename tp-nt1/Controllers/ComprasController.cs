@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using tp_nt1.DataBase;
 using tp_nt1.Models;
 
@@ -23,13 +22,34 @@ namespace tp_nt1.Controllers
             _context = context;
         }
 
-
-        [Authorize(Roles = nameof(Rol.Cliente))]
-        [HttpGet]
-        public async Task<IActionResult> Index()
+        private object ComprasReportes()
         {
-            var carritoDbContext = _context.Compras.Include(c => c.Carrito).Include(c => c.Cliente);
-            return View(await carritoDbContext.ToListAsync());
+            throw new NotImplementedException();
+        }
+
+        [Authorize(Roles = "Administrador, Empleado")]
+        [HttpGet]
+        public IActionResult ComprasDelMes()
+        {
+            var comprasDelMes = _context.Compras
+                .Include(c => c.Cliente)
+                .Include(c => c.Carrito).ThenInclude(c => c.CarritosItems).ThenInclude(c => c.Producto)
+                .Where(c => c.FechaCompra.Month == DateTime.Now.Month)
+                .OrderByDescending(compra => ((int) compra.Total)).ToList();
+
+            return View(nameof(ComprasReportes), comprasDelMes);
+        }
+
+        [Authorize(Roles = "Administrador, Empleado")]
+        [HttpGet]
+        public IActionResult ComprasHistorialPorFecha()
+        {
+            var comprasHistorial = _context.Compras
+                .Include(c => c.Cliente)
+                .Include(c => c.Carrito).ThenInclude(c => c.CarritosItems).ThenInclude(c => c.Producto)
+                .OrderByDescending(compra => compra.FechaCompra).ToList();
+
+            return View(nameof(ComprasReportes), comprasHistorial);
         }
 
 
@@ -99,6 +119,7 @@ namespace tp_nt1.Controllers
                     CarritoId = carrito.Id,
                     Carrito = carrito,
                     Total = carrito.Subtotal,
+                    FechaCompra = DateTime.Now,
                 };
                 _context.Add(compra);
 
@@ -148,6 +169,41 @@ namespace tp_nt1.Controllers
             return View(nameof(Create));
         }
 
+        [Authorize(Roles = nameof(Rol.Cliente))]
+        [HttpGet]
+        public IActionResult ComprasRealizadas()
+        {
+            var idClienteLogueado = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var compras = _context.Compras
+                .Include(c => c.Carrito).ThenInclude(c => c.CarritosItems).ThenInclude(c => c.Producto)
+                .Include(c => c.Cliente).ThenInclude(c => c.Compras)
+                .Where(c => c.ClienteId == idClienteLogueado);
+
+            return View(compras.ToList());
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult DetalleCompra(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var compra = 
+                _context.Compras
+                .Include(c => c.Cliente)
+                .Include(c => c.Carrito).ThenInclude(c => c.CarritosItems).ThenInclude(c => c.Producto)
+                .FirstOrDefault(m => m.Id == id);
+
+            if (compra == null)
+            {
+                return NotFound();
+            }
+
+            return View(compra);
+        }
 
         private bool SinStockEnSucursal(Guid? id, List<CarritoItem> carritosItems)
         {

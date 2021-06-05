@@ -20,5 +20,8 @@ namespace tp_nt1.Models
         [ForeignKey(nameof(Carrito))]
         public Guid CarritoId { get; set; }
         public Carrito Carrito { get; set; }
+
+        [Display(Name = "Fecha de Compra")]
+        public DateTime FechaCompra { get; set; }
     }
 }

@@ -1,0 +1,50 @@
+﻿@model IEnumerable<tp_nt1.Models.Compra>
+
+@{
+    ViewData["Title"] = "Compras Realizadas";
+}
+
+<h3 class="text-center text-success"><b>¡Lista de Compras Realizadas!</b></h3>
+<br />
+
+<div>
+    <a class="btn btn-outline-info" asp-controller="CarritoItems" asp-action="MisItems">Ir a Carrito</a>
+</div>
+<br />
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+                Id Compra
+            </th>
+            <th>
+                Cantidad de Productos
+            </th>
+            <th>
+                Total
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Compra misItems in Model)
+        {
+        <tr>
+            <td>
+                @misItems.Id
+            </td>
+            <td class="text-center">
+                @misItems.Carrito.CarritosItems.Sum(s => s.Cantidad)
+            </td>
+            <td>
+                $ @misItems.Total
+            </td>
+            <td>
+                <a class="btn btn-outline-info" asp-action="DetalleCompra" asp-route-id="@misItems.Id">Ver Detalle</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+

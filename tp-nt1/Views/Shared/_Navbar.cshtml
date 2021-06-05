@@ -29,7 +29,7 @@
                                             <a class="dropdown-item" asp-controller="Clientes" asp-action="Details" asp-route-id=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Mis datos</a>
                                             <a class="dropdown-item" asp-controller="Clientes" asp-action="Editarme">Actualizar Mis datos</a>
                                             <hr />
-                                            <a class="dropdown-item" asp-controller="Compras" asp-action="Index">Mis Compras Realizadas</a>
+                                            <a class="dropdown-item" asp-controller="Compras" asp-action="ComprasRealizadas">Mis Compras Realizadas</a>
                                         </div>
                                     </li>
 
@@ -62,7 +62,8 @@
 
                                         <div class="dropdown-menu" aria-labelledby="menuOpciones">
                                             <h6 class="dropdown-item"><b> Listar: </b></h6>
-                                            <a class="dropdown-item" asp-controller="Compras" asp-action="Index">Compras del Mes</a>
+                                            <a class="dropdown-item" asp-controller="Compras" asp-action="ComprasDelMes">Compras del Mes</a>
+                                            <a class="dropdown-item" asp-controller="Compras" asp-action="ComprasHistorialPorFecha">Historial de Compras</a>
                                             <a class="dropdown-item" asp-controller="Sucursales" asp-action="Index">Sucursales</a>
                                             <a class="dropdown-item" asp-controller="Categorias" asp-action="Index">Categorias</a>
                                             <a class="dropdown-item" asp-controller="Productos" asp-action="Index">Productos</a>
