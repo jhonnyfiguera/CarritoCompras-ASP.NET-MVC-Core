@@ -9,16 +9,18 @@ using tp_nt1.Models;
 
 namespace tp_nt1.Controllers
 {
-    [Authorize(Roles = "Empleado")]
+    [Authorize(Roles = nameof(Rol.Empleado))]
 
     public class StockItemsController : Controller
     {
+
         private readonly CarritoDbContext _context;
 
         public StockItemsController(CarritoDbContext context)
         {
             _context = context;
         }
+
 
         [HttpGet]
         public IActionResult Index()
@@ -27,6 +29,7 @@ namespace tp_nt1.Controllers
             return View(carritoDbContext.ToList());
         }
 
+
         [HttpGet]
         public IActionResult AgregarStock()
         {
@@ -34,6 +37,7 @@ namespace tp_nt1.Controllers
             ViewData["SucursalId"] = new SelectList(_context.Sucursal, "Id", "Direccion");
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -57,6 +61,7 @@ namespace tp_nt1.Controllers
                 TempData["EditIn"] = true;
                 return RedirectToAction(nameof(Index));
         }
+
 
         [HttpGet]
         public IActionResult Edit(Guid? id)
@@ -111,6 +116,7 @@ namespace tp_nt1.Controllers
             return View(stockItem);
         }
 
+
         [HttpGet]
         public IActionResult Eliminar(Guid? id)
         {
@@ -131,6 +137,7 @@ namespace tp_nt1.Controllers
             return View(stockItem);
         }
 
+
         [HttpPost, ActionName("Eliminar")]
         [ValidateAntiForgeryToken]
         public IActionResult EliminarConfirmar(Guid id)
@@ -140,6 +147,7 @@ namespace tp_nt1.Controllers
              _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool StockItemExists(Guid id)
         {

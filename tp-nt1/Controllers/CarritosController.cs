@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using tp_nt1.DataBase;
 using tp_nt1.Models;
 
@@ -20,6 +18,7 @@ namespace tp_nt1.Controllers
             _context = context;
         }
 
+
         [Authorize(Roles = "Empleado")]
         [HttpGet]
         public IActionResult Index()
@@ -27,6 +26,7 @@ namespace tp_nt1.Controllers
             var carritoDbContext = _context.Carritos.Include(c => c.Cliente);
             return View(carritoDbContext.ToList());
         }
+
 
         [Authorize(Roles = nameof(Rol.Cliente))]
         [HttpGet]
@@ -53,6 +53,7 @@ namespace tp_nt1.Controllers
 
             return View(carrito.CarritosItems);
         }
+
 
         [Authorize(Roles = nameof(Rol.Cliente))]
         [HttpPost, ActionName("VaciarCarrito")]
