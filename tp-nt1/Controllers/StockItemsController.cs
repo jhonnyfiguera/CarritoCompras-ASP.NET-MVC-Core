@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,8 @@ using tp_nt1.Models;
 
 namespace tp_nt1.Controllers
 {
+    [Authorize(Roles = "Administrador, Empleado")]
+
     public class StockItemsController : Controller
     {
         private readonly CarritoDbContext _context;
@@ -19,69 +22,61 @@ namespace tp_nt1.Controllers
             _context = context;
         }
 
-        // GET: StockItems
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public IActionResult Index()
         {
             var carritoDbContext = _context.StockItems.Include(s => s.Producto).Include(s => s.Sucursal);
-            return View(await carritoDbContext.ToListAsync());
+            return View(carritoDbContext.ToList());
         }
 
-        // GET: StockItems/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var stockItem = await _context.StockItems
-                .Include(s => s.Producto)
-                .Include(s => s.Sucursal)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (stockItem == null)
-            {
-                return NotFound();
-            }
-
-            return View(stockItem);
-        }
-
-        // GET: StockItems/Create
-        public IActionResult Create()
+        [HttpGet]
+        public IActionResult AgregarStock()
         {
             ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Nombre");
             ViewData["SucursalId"] = new SelectList(_context.Sucursal, "Id", "Direccion");
             return View();
         }
 
-        // POST: StockItems/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // si la sucursal es del mismo nombre o el stcok del mismo producto y ya existe agrregarlo al existente
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SucursalId,ProductoId,Cantidad")] StockItem stockItem)
+        public  IActionResult AgregarStock(StockItem stockItem)
         {
-            if (ModelState.IsValid)
+            var itemAuxiliar =
+                _context.StockItems
+                .FirstOrDefault(f => f.ProductoId == stockItem.ProductoId
+                && f.SucursalId == stockItem.SucursalId);
+
+            if (itemAuxiliar != null || ModelState.IsValid)
             {
-                stockItem.Id = Guid.NewGuid();
-                _context.Add(stockItem);
-                await _context.SaveChangesAsync();
+                if (itemAuxiliar != null)
+                {
+                    itemAuxiliar.Cantidad += stockItem.Cantidad;
+                }
+                else if (ModelState.IsValid)
+                {
+                    stockItem.Id = Guid.NewGuid();
+                    _context.Add(stockItem);
+                }
+                _context.SaveChanges();
+                TempData["EditIn"] = true;
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Nombre", stockItem.ProductoId);
             ViewData["SucursalId"] = new SelectList(_context.Sucursal, "Id", "Direccion", stockItem.SucursalId);
             return View(stockItem);
         }
 
-        // GET: StockItems/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        [HttpGet]
+        public IActionResult Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var stockItem = await _context.StockItems.FindAsync(id);
+            var stockItem = _context.StockItems.Find(id);
             if (stockItem == null)
             {
                 return NotFound();
@@ -91,12 +86,10 @@ namespace tp_nt1.Controllers
             return View(stockItem);
         }
 
-        // POST: StockItems/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,SucursalId,ProductoId,Cantidad")] StockItem stockItem)
+        public IActionResult Edit(Guid id, StockItem stockItem)
         {
             if (id != stockItem.Id)
             {
@@ -108,7 +101,7 @@ namespace tp_nt1.Controllers
                 try
                 {
                     _context.Update(stockItem);
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -123,23 +116,23 @@ namespace tp_nt1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Descripcion", stockItem.ProductoId);
+            ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Nombre", stockItem.ProductoId);
             ViewData["SucursalId"] = new SelectList(_context.Sucursal, "Id", "Direccion", stockItem.SucursalId);
             return View(stockItem);
         }
 
-        // GET: StockItems/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        [HttpGet]
+        public IActionResult Eliminar(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var stockItem = await _context.StockItems
+            var stockItem =  _context.StockItems
                 .Include(s => s.Producto)
                 .Include(s => s.Sucursal)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefault(m => m.Id == id);
             if (stockItem == null)
             {
                 return NotFound();
@@ -148,14 +141,13 @@ namespace tp_nt1.Controllers
             return View(stockItem);
         }
 
-        // POST: StockItems/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("Eliminar")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public IActionResult EliminarConfirmar(Guid id)
         {
-            var stockItem = await _context.StockItems.FindAsync(id);
+            var stockItem =  _context.StockItems.Find(id);
             _context.StockItems.Remove(stockItem);
-            await _context.SaveChangesAsync();
+             _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
 
