@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace tp_nt1.Migrations
 {
-    public partial class primeraversion : Migration
+    public partial class versionactual : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -32,7 +32,7 @@ namespace tp_nt1.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     Nombre = table.Column<string>(maxLength: 30, nullable: false),
-                    Descripcion = table.Column<string>(maxLength: 30, nullable: false)
+                    Descripcion = table.Column<string>(maxLength: 200, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -99,7 +99,7 @@ namespace tp_nt1.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     Nombre = table.Column<string>(maxLength: 30, nullable: false),
-                    Descripcion = table.Column<string>(maxLength: 30, nullable: false),
+                    Descripcion = table.Column<string>(maxLength: 200, nullable: false),
                     PrecioVigente = table.Column<decimal>(nullable: false),
                     Activo = table.Column<bool>(nullable: false),
                     CategoriaId = table.Column<Guid>(nullable: false)
@@ -196,7 +196,8 @@ namespace tp_nt1.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Total = table.Column<decimal>(nullable: false),
                     ClienteId = table.Column<Guid>(nullable: false),
-                    CarritoId = table.Column<Guid>(nullable: false)
+                    CarritoId = table.Column<Guid>(nullable: false),
+                    FechaAlta = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {

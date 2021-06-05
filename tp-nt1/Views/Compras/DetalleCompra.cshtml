@@ -1,0 +1,99 @@
+﻿@model tp_nt1.Models.Compra
+
+@{
+    ViewData["Title"] = "Detalle Compra";
+}
+
+@if (User.IsInRole(nameof(Rol.Empleado)))
+{
+    <a class="btn btn-outline-info" asp-action="ComprasDelMes">Compras del Mes</a>
+    <hr />
+}
+
+
+
+<h3 class="text-center text-success"><b>¡Detalle de la compra: @Model.Id!</b></h3>
+<br />
+
+@if (User.IsInRole(nameof(Rol.Cliente)))
+{
+    <div class="row">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Resumen de tu Compra:  </h5>
+                <div>
+                    Cliente: <b> @Model.Cliente.Nombre  @Model.Cliente.Apellido</b>
+                </div>
+                <div>
+                    Cantidad de Productos: <b>@Model.Carrito.CarritosItems.Sum(m => m.Cantidad)</b>
+                </div>
+                <div>
+                    Total: <b>$@Model.Carrito.Subtotal</b>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+
+    <h5><b>Detalles de Compra seleccionada</b></h5>
+    <br />
+}
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            @if (User.IsInRole(nameof(Rol.Empleado)))
+            {
+                <th>
+                    Cliente
+                </th>
+            }
+            <th>
+                Nombre Producto
+            </th>
+            <th>
+                Precio Unitario
+            </th>
+            <th>
+                Cantidad
+            </th>
+            <th>
+                Subtotal
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (CarritoItem misItems in Model.Carrito.CarritosItems)
+        {
+            <tr>
+                @if (!User.IsInRole(nameof(Rol.Cliente)))
+                {
+                    <td>
+                        @Model.Carrito.Cliente.Nombre @Model.Carrito.Cliente.Apellido
+                    </td>
+                }
+                <td>
+                    @misItems.Producto.Nombre
+                </td>
+                <td>
+                    $ @misItems.Producto.PrecioVigente
+                </td>
+                <td>
+                    @misItems.Cantidad
+                </td>
+                <td>
+                    $ @misItems.Subtotal
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (User.IsInRole(nameof(Rol.Cliente)))
+{
+    <div>
+        <a class="btn btn-outline-info" asp-action="ComprasRealizadas">Compras Realizadas</a>
+    </div>
+}
+
