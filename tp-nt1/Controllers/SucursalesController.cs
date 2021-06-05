@@ -66,13 +66,18 @@ namespace tp_nt1.Controllers
         [Authorize(Roles = "Administrador, Empleado")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Sucursal sucursal)
+        public IActionResult Create(Sucursal sucursal)
         {
+            if (_context.Sucursal.Any(s => s.Nombre == sucursal.Nombre))
+            {
+                ModelState.AddModelError(nameof(sucursal.Nombre), "El Nombre de Sucursal ya existe; debes ingresar uno diferente.");
+            }
+
             if (ModelState.IsValid)
             {
                 sucursal.Id = Guid.NewGuid();
                 _context.Add(sucursal);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
            
@@ -82,16 +87,16 @@ namespace tp_nt1.Controllers
 
         [Authorize(Roles = "Administrador, Empleado")]
         [HttpGet]
-        public async Task<IActionResult> Edit(Guid? id)
+        public IActionResult Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var sucursal = await _context.Sucursal
+            var sucursal = _context.Sucursal
                .Include(s => s.StockItems)
-               .FirstOrDefaultAsync(m => m.Id == id);
+               .FirstOrDefault(m => m.Id == id);
 
             if (sucursal == null)
             {
@@ -105,11 +110,21 @@ namespace tp_nt1.Controllers
         [Authorize(Roles = "Administrador, Empleado")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Sucursal sucursal)
+        public IActionResult Edit(Guid id, Sucursal sucursal)
         {
             if (id != sucursal.Id)
             {
                 return NotFound();
+            }
+
+            if (_context.Sucursal.Any(s => s.Nombre == sucursal.Nombre && s.Id != id))
+            {
+                ModelState.AddModelError(nameof(sucursal.Nombre), "El Nombre de Sucursal ya existe; debes ingresar uno diferente.");
+            }
+
+            if (_context.Sucursal.Any(s => s.Direccion == sucursal.Direccion && s.Id != id))
+            {
+                ModelState.AddModelError(nameof(sucursal.Nombre), "La direccion ya existe; debes ingresar una diferente.");
             }
 
             if (ModelState.IsValid)
@@ -117,7 +132,7 @@ namespace tp_nt1.Controllers
                 try
                 {
                     _context.Update(sucursal);
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
                 }
                 catch (DbUpdateConcurrencyException)
                 {

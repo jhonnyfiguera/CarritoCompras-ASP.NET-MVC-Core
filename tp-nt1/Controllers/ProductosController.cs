@@ -30,15 +30,53 @@ namespace tp_nt1.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var carritoDbContext = _context.Productos.Include(p => p.Categoria).ToList();
+            var productos = 
+                _context.Productos
+                .Include(p => p.Categoria)
+                .ToList();
 
-            var sucursales =
-                _context.Sucursal
-                .Include(m => m.StockItems).ThenInclude(m => m.Producto).ToList();
+            List<String> productosSinStock = new List<String>();
 
-            Tuple<List<Producto>, List<Sucursal>> modelo = new Tuple<List<Producto>, List<Sucursal>>(carritoDbContext, sucursales);
+            foreach (var p in productos)
+            {
+                if (!HayStockEnSucursales(p.Id))
+                {
+                    productosSinStock.Add(p.Nombre);
+                }
+            }
+
+            Tuple<List<Producto>, List<string>> modelo = new Tuple<List<Producto>, List<string>>(productos, productosSinStock);
 
             return View(modelo);
+        }
+
+
+        private bool HayStockEnSucursales(Guid? idProducto)
+        {
+            var sucursales =
+                _context.Sucursal
+                .Include(p => p.StockItems)
+                .ThenInclude(p => p.Producto)
+                .ToList();
+
+            int i = 0;
+            bool hayStock = false;
+
+            while (!hayStock && i < sucursales.Count)
+            {
+                var sucursal =
+                    _context.Sucursal
+                    .Include(p => p.StockItems)
+                    .ThenInclude(p => p.Producto)
+                    .FirstOrDefault(m => m.Id == sucursales[i].Id);
+
+                if (sucursal.StockItems.Any(p => p.ProductoId == idProducto && p.Cantidad > 0))
+                {
+                    hayStock =  true;
+                }
+                i++;
+            }
+            return hayStock;
         }
 
 
@@ -77,13 +115,19 @@ namespace tp_nt1.Controllers
         [Authorize(Roles = "Administrador, Empleado")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Producto producto)
+        public IActionResult Create(Producto producto)
         {
+
+            if (_context.Productos.Any(p => p.Nombre == producto.Nombre))
+            {
+                ModelState.AddModelError(nameof(producto.Nombre), "El Nombre del Producto ya existe; debes ingresar uno diferente.");
+            }
+
             if (ModelState.IsValid)
             {
                 producto.Id = Guid.NewGuid();
                 _context.Add(producto);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
             ViewData["Categoria"] = new SelectList(_context.Categorias, "Id", "Nombre", producto.CategoriaId);
@@ -94,14 +138,14 @@ namespace tp_nt1.Controllers
 
         [Authorize(Roles = "Administrador, Empleado")]
         [HttpGet]
-        public async Task<IActionResult> Edit(Guid? id)
+        public IActionResult Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var producto = await _context.Productos.FindAsync(id);
+            var producto = _context.Productos.Find(id);
 
             if (producto == null)
             {
@@ -115,11 +159,16 @@ namespace tp_nt1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Producto producto)
+        public IActionResult Edit(Guid id, Producto producto)
         {
             if (id != producto.Id)
             {
                 return NotFound();
+            }
+
+            if (_context.Productos.Any(c => c.Nombre == producto.Nombre && c.Id != id))
+            {
+                ModelState.AddModelError(nameof(producto.Nombre), "El Nombre del Producto ya existe; debes ingresar uno diferente.");
             }
 
             if (ModelState.IsValid)
@@ -127,7 +176,7 @@ namespace tp_nt1.Controllers
                 try
                 {
                     _context.Update(producto);
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
