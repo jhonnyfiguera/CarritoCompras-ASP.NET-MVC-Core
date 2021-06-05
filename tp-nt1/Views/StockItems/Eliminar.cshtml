@@ -1,39 +1,45 @@
 ﻿@model tp_nt1.Models.StockItem
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Eliminar";
 }
 
-<h1>Delete</h1>
+<h3 class="text-center">Eliminar</h3>
+<br />
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>StockItem</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Sucursal)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Sucursal.Direccion)
-        </dd class>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Producto)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Producto.Descripcion)
-        </dd class>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cantidad)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cantidad)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Stock Item</h4>
+                <hr />
+                <dl class="row">
+                    <dt class="col-sm-3">
+                       Sucursal
+                    </dt>
+                    <dd class="col-sm-9">
+                        @Html.DisplayFor(model => model.Sucursal.Nombre)
+                    </dd>
+                    <dt class="col-sm-3">
+                        Producto
+                    </dt>
+                    <dd class="col-sm-9">
+                        @Html.DisplayFor(model => model.Producto.Nombre)
+                    </dd>
+                    <dt class="col-sm-3">
+                        Cantidad
+                    </dt>
+                    <dd class="col-sm-9">
+                        @Html.DisplayFor(model => model.Cantidad)
+                    </dd>
+                </dl>
+                <form asp-action="Eliminar">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="submit" value="Eliminar" class="btn btn-outline-danger" />
+                    <a class="btn btn-outline-dark" asp-action="Index"> Cancelar </a>
+                </form>
+
+            </div>
+        </div>
+    </div>
 </div>

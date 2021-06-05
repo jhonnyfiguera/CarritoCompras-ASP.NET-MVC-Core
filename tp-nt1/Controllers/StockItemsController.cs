@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
 using tp_nt1.DataBase;
 using tp_nt1.Models;
 
 namespace tp_nt1.Controllers
 {
-    [Authorize(Roles = "Administrador, Empleado")]
+    [Authorize(Roles = "Empleado")]
 
     public class StockItemsController : Controller
     {
@@ -37,7 +35,6 @@ namespace tp_nt1.Controllers
             return View();
         }
 
-        // si la sucursal es del mismo nombre o el stcok del mismo producto y ya existe agrregarlo al existente
         [HttpPost]
         [ValidateAntiForgeryToken]
         public  IActionResult AgregarStock(StockItem stockItem)
@@ -46,14 +43,12 @@ namespace tp_nt1.Controllers
                 _context.StockItems
                 .FirstOrDefault(f => f.ProductoId == stockItem.ProductoId
                 && f.SucursalId == stockItem.SucursalId);
-
-            if (itemAuxiliar != null || ModelState.IsValid)
-            {
+            
                 if (itemAuxiliar != null)
                 {
                     itemAuxiliar.Cantidad += stockItem.Cantidad;
                 }
-                else if (ModelState.IsValid)
+                else 
                 {
                     stockItem.Id = Guid.NewGuid();
                     _context.Add(stockItem);
@@ -61,11 +56,6 @@ namespace tp_nt1.Controllers
                 _context.SaveChanges();
                 TempData["EditIn"] = true;
                 return RedirectToAction(nameof(Index));
-            }
-
-            ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Nombre", stockItem.ProductoId);
-            ViewData["SucursalId"] = new SelectList(_context.Sucursal, "Id", "Direccion", stockItem.SucursalId);
-            return View(stockItem);
         }
 
         [HttpGet]
@@ -81,7 +71,7 @@ namespace tp_nt1.Controllers
             {
                 return NotFound();
             }
-            ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Descripcion", stockItem.ProductoId);
+            ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Nombre", stockItem.ProductoId);
             ViewData["SucursalId"] = new SelectList(_context.Sucursal, "Id", "Direccion", stockItem.SucursalId);
             return View(stockItem);
         }

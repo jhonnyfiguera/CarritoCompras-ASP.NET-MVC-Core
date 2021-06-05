@@ -4,11 +4,10 @@
     ViewData["Title"] = "Stock";
 }
 
-<h1>Stock Por Sucursal</h1>
-<div>
-    <a class="btn btn-outline-info" asp-action="AgregarStock">Agregar Stock</a>
-</div>
-<br />
+<a class="btn btn-outline-dark" asp-action="AgregarStock"><b>Agregar Stock</b></a>
+<hr />
+
+<h4><b>Stock Por Sucursal</b></h4>
 <table class="table">
     <thead class="thead-dark">
         <tr>
@@ -39,7 +38,7 @@
                 </td>
                 <td>
                     <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
-                    <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                    <a class="btn btn-outline-danger" asp-action="Eliminar" asp-route-id="@item.Id">Eliminar</a>
                 </td>
             </tr>
         }
