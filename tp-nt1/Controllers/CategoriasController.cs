@@ -64,13 +64,19 @@ namespace tp_nt1.Controllers
         [Authorize(Roles = "Administrador, Empleado")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Categoria categoria)
+        public IActionResult Create(Categoria categoria)
         {
+
+            if (_context.Categorias.Any(c => c.Nombre == categoria.Nombre))
+            {
+                ModelState.AddModelError(nameof(categoria.Nombre), "El Nombre de Categoria ya existe; debes ingresar uno diferente.");
+            }
+
             if (ModelState.IsValid)
             {
                 categoria.Id = Guid.NewGuid();
                 _context.Add(categoria);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
 
@@ -80,14 +86,14 @@ namespace tp_nt1.Controllers
 
         [Authorize(Roles = "Administrador, Empleado")]
         [HttpGet]
-        public async Task<IActionResult> Edit(Guid? id)
+        public IActionResult Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var categoria = await _context.Categorias.FindAsync(id);
+            var categoria = _context.Categorias.Find(id);
 
             if (categoria == null)
             {
@@ -101,11 +107,16 @@ namespace tp_nt1.Controllers
         [Authorize(Roles = "Administrador, Empleado")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Categoria categoria)
+        public IActionResult Edit(Guid id, Categoria categoria)
         {
             if (id != categoria.Id)
             {
                 return NotFound();
+            }
+
+            if (_context.Categorias.Any(c => c.Nombre == categoria.Nombre && c.Id != id))
+            {
+                ModelState.AddModelError(nameof(categoria.Nombre), "El Nombre de Categoria ya existe; debes ingresar uno diferente.");
             }
 
             if (ModelState.IsValid)
@@ -117,7 +128,7 @@ namespace tp_nt1.Controllers
                     categoriaDatabase.Nombre = categoria.Nombre;
                     categoriaDatabase.Descripcion = categoria.Descripcion;
               
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
 
                     TempData["EditIn"] = true;
                 }

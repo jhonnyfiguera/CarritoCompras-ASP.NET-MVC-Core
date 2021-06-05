@@ -1,105 +1,100 @@
-﻿    @model Tuple< List<Producto>, List<Sucursal> > 
+﻿@model Tuple<List<Producto>, List<String>>
 
-    @{
-        ViewData["Title"] = "Productos";
-    }
+@{
+    ViewData["Title"] = "Productos";
+}
 
-    @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
-    {
-        <a class="btn btn-outline-dark" asp-action="Create"><b>Nuevo Producto</b></a>
-        <hr />
-    }
+@if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
+{
+    <a class="btn btn-outline-dark" asp-action="Create"><b>Nuevo Producto</b></a>
+    <hr />
+}
 
-    @if (User.IsInRole(nameof(Rol.Cliente)))
-    {
-        <a class="btn btn-outline-info" asp-controller="CarritoItems" asp-action="MisItems"><b>Volver</b></a>
-        <hr />
-    }
+@if (User.IsInRole(nameof(Rol.Cliente)))
+{
+    <a class="btn btn-outline-info" asp-controller="CarritoItems" asp-action="MisItems"><b>Volver</b></a>
+    <hr />
+}
 
-    <h4><b>Productos</b></h4>
+<h4><b>Productos</b></h4>
 
-    <table class="table">
-        <thead class="thead-dark">
-            <tr>
-                <th>
-                    Nombre
-                </th>
-                <th>
-                    Categoria
-                </th>
-                <th>
-                    Precio
-                </th>
-                @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
-                {
-                    <th>
-                        Activo
-                    </th>
-                }
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (Producto item in Model.Item1)
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+                Nombre
+            </th>
+            <th>
+                Categoria
+            </th>
+            <th>
+                Precio
+            </th>
+            @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
             {
-                @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Nombre)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Categoria.Nombre)
-                        </td>
-                        <td>
-                            @String.Format("{0:C}", item.PrecioVigente)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Activo)
-                        </td>
-                        <td>
-                            <div>
-                                <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@item.Id">Ver Detalle</a>
-                                <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
-                                <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
-                            </div>
-                        </td>
-                    </tr>
-                }
-                else if (item.Activo == true)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Nombre)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Categoria.Nombre)
-                        </td>
-                        <td>
-                            @String.Format("{0:C}", item.PrecioVigente)
-                        </td>
-                        <td>
-                            @if (User.IsInRole(nameof(Rol.Cliente)))
-                            {
-                                <div>
-
-
-
-
-                                    @if (true)
-                                    {
-                                        <a class="btn btn-outline-primary" asp-controller="CarritoItems" asp-action="Agregar" asp-route-id="@item.Id">Agregar</a>
-                                    }
-                                    else
-                                    {
-                                        <a class="btn btn-outline-primary" asp-controller="CarritoItems" asp-action="Agregar" asp-route-id="@item.Id">Agregar</a>
-                                    }
-                                    <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@item.Id">Ver Detalle</a>
-                                </div>
-                            }
-                        </td>
-                    </tr>
-                }
+                <th>
+                    Activo
+                </th>
             }
-        </tbody>
-    </table>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Producto item in Model.Item1)
+        {
+            @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Categoria.Nombre)
+                    </td>
+                    <td>
+                        @String.Format("{0:C}", item.PrecioVigente)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Activo)
+                    </td>
+                    <td>
+                        <div>
+                            <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@item.Id">Ver Detalle</a>
+                            <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                            <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+            else if (item.Activo == true)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Categoria.Nombre)
+                    </td>
+                    <td>
+                        @String.Format("{0:C}", item.PrecioVigente)
+                    </td>
+                    <td>
+                        @if (Model.Item2.Contains(item.Nombre))
+                        {
+                            <div>
+                                <a class="btn btn-outline-danger" asp-action="Index">Sin Stock en Sucursales</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div>
+                                <a class="btn btn-outline-success" asp-controller="CarritoItems" asp-action="Agregar" asp-route-id="@item.Id">Agregar $</a>
+                                <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@item.Id">Ver Detalle</a>
+                            </div>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

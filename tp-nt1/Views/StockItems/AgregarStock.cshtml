@@ -1,29 +1,25 @@
 ﻿@model tp_nt1.Models.StockItem
 
 @{
-    ViewData["Title"] = "Editar";
+    ViewData["Title"] = "Agregar";
 }
 
-<h4 class="text-center"><b>Editar Stock</b></h4>
+<h3 class="text-center"><b>Agregar Stock</b></h3>
 <br />
 
 <div class="row">
     <div class="col-md-6 offset-md-3">
         <div class="card">
             <div class="card-body">
-
-                <form asp-action="Edit">
+                <form asp-action="AgregarStock">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" asp-for="Id" />
                     <div class="form-group">
                         <label asp-for="Sucursal" class="control-label"></label>
                         <select asp-for="SucursalId" class="form-control" asp-items="ViewBag.SucursalId"></select>
-                        <span asp-validation-for="SucursalId" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Producto" class="control-label"></label>
                         <select asp-for="ProductoId" class="form-control" asp-items="ViewBag.ProductoId"></select>
-                        <span asp-validation-for="ProductoId" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Cantidad" class="control-label"></label>
@@ -31,10 +27,11 @@
                         <span asp-validation-for="Cantidad" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <input type="submit" value="Actualizar" class="btn btn-outline-primary" />
-                        <a class="btn btn-outline-danger" asp-action="Index">Cancelar</a>
+                        <input type="submit" value="Agregar" class="btn btn-outline-primary" />
+                        <a class="btn btn-outline-danger" asp-controller="Home" asp-action="Index">Cancelar</a>
                     </div>
                 </form>
+
             </div>
         </div>
     </div>

@@ -67,6 +67,7 @@
                                             <a class="dropdown-item" asp-controller="Sucursales" asp-action="Index">Sucursales</a>
                                             <a class="dropdown-item" asp-controller="Categorias" asp-action="Index">Categorias</a>
                                             <a class="dropdown-item" asp-controller="Productos" asp-action="Index">Productos</a>
+                                            <a class="dropdown-item" asp-controller="StockItems" asp-action="Index">Stock Por Sucursal</a>
                                             <hr />
                                             <h6 class="dropdown-item"><b> Dar de Alta:</b></h6>
                                             <a class="dropdown-item" asp-controller="Empleados" asp-action="Create">Nuevo Empleado</a>
@@ -74,7 +75,7 @@
                                             <a class="dropdown-item" asp-controller="Categorias" asp-action="Create">Nueva Categoria</a>
                                             <a class="dropdown-item" asp-controller="Productos" asp-action="Create">Nuevo Producto</a>
                                             <hr />
-                                            <a class="dropdown-item" asp-controller="StockItems" asp-action="Create"><b>Actualizar Stock Sucursal</b></a>
+                                            <a class="dropdown-item" asp-controller="StockItems" asp-action="AgregarStock"><b>Agregar Stock Sucursal</b></a>
                                         </div>
                                     </li>
                                 }
@@ -105,10 +106,7 @@
                                             <a class="dropdown-item" asp-controller="Sucursales" asp-action="Index">Sucursales</a>
                                             <a class="dropdown-item" asp-controller="Categorias" asp-action="Index">Categorias</a>
                                             <a class="dropdown-item" asp-controller="Productos" asp-action="Index">Productos</a>
-                                            <a class="dropdown-item" asp-controller="Compras" asp-action="ComprasDelMes">Compras Realizadas</a>
-                                            <a class="dropdown-item" asp-controller="CarritoItems" asp-action="Index">Compras Pendientes</a>
-                                            <hr />
-                                            <a class="dropdown-item" asp-controller="StockItems" asp-action="Create"><b>Actualizar Stock Sucursal</b></a>
+                                            <a class="dropdown-item" asp-controller="Compras" asp-action="Index">Compras Realizadas</a>
                                         </div>
                                     </li>
                                 }
