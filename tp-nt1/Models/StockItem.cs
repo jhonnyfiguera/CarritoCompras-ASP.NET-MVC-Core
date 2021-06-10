@@ -18,7 +18,7 @@ namespace tp_nt1.Models
         public Producto Producto { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
-        [Range(0, 100000, ErrorMessage = "La {0} se debe encontrar entre {1} y {2}")]
+        [Range(1, 100000, ErrorMessage = "La {0} se debe encontrar entre {1} y {2}")]
         public int Cantidad { get; set; }
     }
 }

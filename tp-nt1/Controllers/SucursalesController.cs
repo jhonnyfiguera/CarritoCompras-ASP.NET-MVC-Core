@@ -27,31 +27,9 @@ namespace tp_nt1.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Sucursal.ToListAsync());
-        }
-
-
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var sucursal = await _context.Sucursal
-                .Include(s => s.StockItems)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (sucursal == null)
-            {
-                return NotFound();
-            }
-
-            return View(sucursal);
+            return View(_context.Sucursal.ToList());
         }
 
 
@@ -71,6 +49,11 @@ namespace tp_nt1.Controllers
             if (_context.Sucursal.Any(s => s.Nombre == sucursal.Nombre))
             {
                 ModelState.AddModelError(nameof(sucursal.Nombre), "El Nombre de Sucursal ya existe; debes ingresar uno diferente.");
+            }
+
+            if (_context.Sucursal.Any(s => s.Direccion == sucursal.Direccion))
+            {
+                ModelState.AddModelError(nameof(sucursal.Direccion), "La direccion de Sucursal ya existe; debes ingresar uno diferente.");
             }
 
             if (ModelState.IsValid)
@@ -154,16 +137,16 @@ namespace tp_nt1.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Administrador, Empleado")]
-        public async Task<IActionResult> Delete(Guid? id)
+        public IActionResult Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var sucursal = await _context.Sucursal
+            var sucursal = _context.Sucursal
                 .Include(s => s.StockItems)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefault(m => m.Id == id);
 
             if (sucursal == null)
             {
@@ -177,18 +160,18 @@ namespace tp_nt1.Controllers
         [Authorize(Roles = "Administrador, Empleado")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public IActionResult DeleteConfirmed(Guid id)
         {
-            var sucursal = await _context.Sucursal
+            var sucursal = _context.Sucursal
                 .Include(s => s.StockItems)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefault(m => m.Id == id);
 
             var stock = sucursal.StockItems.Sum(s => s.Cantidad);
   
             if (stock == 0)
             {
                 _context.Sucursal.Remove(sucursal);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
 

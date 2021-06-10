@@ -1,0 +1,45 @@
+﻿<section class="search-section">
+
+    <div class="container">
+
+        <form asp-controller="Productos" asp-action="Index" method="get" novalidate="novalidate">
+
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <div class="row">
+
+                        <div class="col-lg-2 col-md-3 col-sm-12 p-0">
+                            <input type="text" class="form-control search-input" name="nombre" placeholder="Nombre del Producto" value="@ViewBag.Nombre">
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12 p-0">
+                            <select class="form-control search-input" name="categoriaId" asp-items="ViewBag.Categorias">
+                                <option value="">Elija una Categoría</option>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12 p-0">
+                            <select class="form-control search-input" name="precio" asp-items="ViewBag.Precio">
+                                <option value="">Elija un Precio</option>
+                            </select>
+                        </div>
+
+                        @if (User.IsInRole(nameof(Rol.Empleado)) || User.IsInRole(nameof(Rol.Administrador)))
+                        {
+                            <div class="col-lg-2 col-md-2 col-sm-12 p-0">
+                                <select class="form-control search-input" name="estado" asp-items="@ViewBag.Estado">
+                                    <option value="">Elija un Estado</option>
+                                </select>
+                            </div>
+                        }
+
+                        <div class="col-lg-1 col-md-2 col-sm-12 p-0">
+                            <button type="submit" class="btn btn-info search-button">Buscar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

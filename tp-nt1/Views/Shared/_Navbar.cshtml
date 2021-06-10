@@ -63,7 +63,7 @@
                                         <div class="dropdown-menu" aria-labelledby="menuOpciones">
                                             <h6 class="dropdown-item"><b> Listar: </b></h6>
                                             <a class="dropdown-item" asp-controller="Compras" asp-action="ComprasDelMes">Compras del Mes</a>
-                                            <a class="dropdown-item" asp-controller="Compras" asp-action="ComprasHistorialPorFecha">Historial de Compras</a>
+                                            <a class="dropdown-item" asp-controller="Compras" asp-action="ComprasHistorial">Historial de Compras</a>
                                             <a class="dropdown-item" asp-controller="Sucursales" asp-action="Index">Sucursales</a>
                                             <a class="dropdown-item" asp-controller="StockItems" asp-action="Index">Stock Por Sucursal</a>
                                             <a class="dropdown-item" asp-controller="Categorias" asp-action="Index">Categorias</a>
@@ -120,16 +120,13 @@
                 else
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Productos" asp-action="Index">Productos</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link text-dark" asp-controller="Sucursales" asp-action="Index">Sucursales</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-controller="Accesos" asp-action="Ingresar">Ingresar</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Clientes" asp-action="Create">Registrate</a>
+                        <a class="nav-link text-dark" asp-controller="Clientes" asp-action="Create">Registrarte</a>
                     </li>
                 }
             </ul>

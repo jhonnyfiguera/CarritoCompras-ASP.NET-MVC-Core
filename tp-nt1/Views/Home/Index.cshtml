@@ -1,8 +1,42 @@
 ﻿@{
-    ViewData["Title"] = "Carrito de Compras";
+    ViewData["Title"] = "Los Amigos";
 }
 
-<div class="text-center">
-    <h3 class="display-4">Los Amigos</h3>
-    <h4><a href="https://www.facebook.com/losamigo.carniceria.9" target="_blank">Carniceria</a></h4>
+
+@if (User.IsInRole(nameof(Rol.Empleado)) || User.IsInRole(nameof(Rol.Administrador)))
+{
+    <h4><a href="https://www.facebook.com/losamigo.carniceria.9" target="_blank"><b>Carnicería</b></a> Los Amigos!</h4>
+}
+else
+{
+    <h4>Encuentra tu producto en la <a href="https://www.facebook.com/losamigo.carniceria.9" target="_blank"><b>Carnicería</b></a> Los Amigos!</h4>
+    <partial name="~/Views/Productos/_Busqueda.cshtml" />
+}
+
+
+<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner">
+        <div class="carousel-item active" style="height: 60vh">
+            <img src="~/images/brochete-pollo.jpg" class="d-block overflow-auto" alt="brochete">
+        </div>
+        <div class="carousel-item" style="height: 60vh">
+            <img src="~/images/asado-clasico2.jpg" class="d-block overflow-auto" alt="asado">
+        </div>
+        <div class="carousel-item" style="height: 60vh">
+            <img src="~/images/bife-angosto_1.jpg" class="d-block overflow-auto" alt="bife">
+        </div>
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Anterior</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Siguiente</span>
+    </a>
 </div>
