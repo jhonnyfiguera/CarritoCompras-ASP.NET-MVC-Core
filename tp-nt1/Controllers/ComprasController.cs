@@ -22,10 +22,6 @@ namespace tp_nt1.Controllers
             _context = context;
         }
 
-        private object ComprasReportes()
-        {
-            throw new NotImplementedException();
-        }
 
         [Authorize(Roles = nameof(Rol.Empleado))]
         [HttpGet]
@@ -35,22 +31,61 @@ namespace tp_nt1.Controllers
                 .Include(c => c.Cliente)
                 .Include(c => c.Carrito).ThenInclude(c => c.CarritosItems).ThenInclude(c => c.Producto)
                 .Where(c => c.FechaCompra.Month == DateTime.Now.Month)
-                .OrderByDescending(compra => ((int) compra.Total)).ToList();
+                .OrderByDescending(compra => ((int)compra.Total)).ToList();
 
-            return View(nameof(ComprasReportes), comprasDelMes);
+            return View("ComprasReportes", comprasDelMes);
         }
 
 
         [Authorize(Roles = nameof(Rol.Empleado))]
         [HttpGet]
-        public IActionResult ComprasHistorialPorFecha()
+        public IActionResult ComprasHistorial()
         {
             var comprasHistorial = _context.Compras
                 .Include(c => c.Cliente)
                 .Include(c => c.Carrito).ThenInclude(c => c.CarritosItems).ThenInclude(c => c.Producto)
                 .OrderByDescending(compra => compra.FechaCompra).ToList();
 
-            return View(nameof(ComprasReportes), comprasHistorial);
+            return View("ComprasReportes", comprasHistorial);
+        }
+
+
+        [Authorize(Roles = nameof(Rol.Cliente))]
+        [HttpGet]
+        public IActionResult ComprasRealizadas()
+        {
+            var idClienteLogueado = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var compras = _context.Compras
+                .Include(c => c.Carrito).ThenInclude(c => c.CarritosItems).ThenInclude(c => c.Producto)
+                .Include(c => c.Cliente).ThenInclude(c => c.Compras)
+                .Where(c => c.ClienteId == idClienteLogueado);
+
+            return View(compras.ToList());
+        }
+
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult DetalleCompra(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var compra =
+                _context.Compras
+                .Include(c => c.Cliente)
+                .Include(c => c.Carrito).ThenInclude(c => c.CarritosItems).ThenInclude(c => c.Producto)
+                .FirstOrDefault(m => m.Id == id);
+
+            if (compra == null)
+            {
+                return NotFound();
+            }
+
+            return View(compra);
         }
 
 
@@ -103,7 +138,7 @@ namespace tp_nt1.Controllers
                 return NotFound();
             }
 
-            if (!SinStockEnSucursal(miSucursal.Id, carrito.CarritosItems))
+            if (HayStockEnSucursal(miSucursal.Id, carrito.CarritosItems))
             {
                 foreach (var item in carrito.CarritosItems)
                 {
@@ -125,6 +160,7 @@ namespace tp_nt1.Controllers
                 _context.Add(compra);
 
                 carrito.Activo = false;
+
                 Carrito nuevoCarrito = new Carrito
                 {
                     Id = Guid.NewGuid(),
@@ -148,7 +184,7 @@ namespace tp_nt1.Controllers
 
                 foreach (var sucursal in otrasSucursales)
                 {
-                    if (!SinStockEnSucursal(sucursal.Id, carrito.CarritosItems))
+                    if (HayStockEnSucursal(sucursal.Id, carrito.CarritosItems))
                     {
                         sucursalesConStock.Add(sucursal);
                     }
@@ -156,7 +192,7 @@ namespace tp_nt1.Controllers
 
                 if (sucursalesConStock.Count > 0)
                 {
-                    ViewBag.MensajeSinStock = "En la " + miSucursal.Nombre + ", no contamos con stock en algunos productos que seleccionastes";
+                    ViewBag.MensajeSinStock = "En la sucursal " + miSucursal.Nombre + ", no contamos con stock en algunos productos que seleccionastes";
 
                     ViewBag.MensajeContinuarCompra = "En las siguientes sucursales, si contamos con stock de todos tus productos, para finalizar tu compra selecciona alguna de ellas";
                     ViewData["SucursalId"] = new SelectList(sucursalesConStock, "Id", "Direccion");
@@ -171,70 +207,14 @@ namespace tp_nt1.Controllers
         }
 
 
-        [Authorize(Roles = nameof(Rol.Cliente))]
-        [HttpGet]
-        public IActionResult ComprasRealizadas()
-        {
-            var idClienteLogueado = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var compras = _context.Compras
-                .Include(c => c.Carrito).ThenInclude(c => c.CarritosItems).ThenInclude(c => c.Producto)
-                .Include(c => c.Cliente).ThenInclude(c => c.Compras)
-                .Where(c => c.ClienteId == idClienteLogueado);
-
-            return View(compras.ToList());
-        }
-
-
-        [Authorize]
-        [HttpGet]
-        public IActionResult DetalleCompra(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var compra = 
-                _context.Compras
-                .Include(c => c.Cliente)
-                .Include(c => c.Carrito).ThenInclude(c => c.CarritosItems).ThenInclude(c => c.Producto)
-                .FirstOrDefault(m => m.Id == id);
-
-            if (compra == null)
-            {
-                return NotFound();
-            }
-
-            return View(compra);
-        }
-
-        private bool SinStockEnSucursal(Guid? id, List<CarritoItem> carritosItems)
+        private bool HayStockEnSucursal(Guid? id, List<CarritoItem> carritosItems)
         {
             var sucursal =
             _context.Sucursal
             .Include(s => s.StockItems).ThenInclude(m => m.Producto)
             .FirstOrDefault(m => m.Id == id);
 
-            var sinStock = false;
-            var indice = 0;
-
-            while (!sinStock && indice < carritosItems.Count)
-            {
-                var itemCarrito = carritosItems[indice];
-                var itemSucursal = sucursal.StockItems.FirstOrDefault(m => m.ProductoId == itemCarrito.ProductoId && m.Cantidad >= itemCarrito.Cantidad);
-
-                if (itemSucursal == null)
-                {
-                    sinStock = true;
-                }
-                indice++;
-            }
-            return sinStock;
-        }
-
-        private bool CompraExists(Guid id)
-        {
-            return _context.Compras.Any(e => e.Id == id);
+            return carritosItems.All  (c =>   sucursal.StockItems.Any(s => s.ProductoId == c.ProductoId && s.Cantidad >= c.Cantidad)   );
         }
     }
 }

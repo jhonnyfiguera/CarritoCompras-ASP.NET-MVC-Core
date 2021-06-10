@@ -35,11 +35,17 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Descripcion)
                 </td>
-                @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
+                @if (User.IsInRole(nameof(Rol.Administrador)))
                 {
                     <td>
                         <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
                         <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                    </td>
+                }
+                @if (User.IsInRole(nameof(Rol.Empleado)))
+                {
+                    <td>
+                        <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
                     </td>
                 }
             </tr>

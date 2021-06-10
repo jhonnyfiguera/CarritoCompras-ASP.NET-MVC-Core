@@ -28,70 +28,58 @@ namespace tp_nt1.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(string nombre, Guid? categoriaId, int? precio, string estado)
         {
-            var productos = 
-                _context.Productos
-                .Include(p => p.Categoria)
-                .ToList();
 
-            List<String> productosSinStock = new List<String>();
+            var estadoAux = false;
+
+            if (!string.IsNullOrWhiteSpace(estado) && estado.SequenceEqual("Activo"))
+            {
+                estadoAux = true;
+            }
+
+            var productos =
+                _context.Productos
+                .Include(x => x.Categoria)
+                .Where(x => (string.IsNullOrWhiteSpace(nombre) || EF.Functions.Like(x.Nombre, $"%{nombre}%"))
+                             && (string.IsNullOrWhiteSpace(estado) || x.Activo == estadoAux) 
+                            && (!precio.HasValue || (int)x.PrecioVigente <= precio.Value)
+                            && (!categoriaId.HasValue || x.CategoriaId == categoriaId.Value)).ToList();
+
+            ViewBag.Nombre = nombre;
+            ViewBag.Categorias = new SelectList(_context.Categorias, nameof(Categoria.Id), nameof(Categoria.Nombre), categoriaId);
+            ViewBag.Precio = new SelectList(new int[6] { 200, 400, 700, 900, 1300, 1600 }, precio);
+            ViewBag.Estado = new SelectList(new string[2] { "Activo", "Inactivo" }, estado);
+
+            List<string> sinStockProductos = new List<String>();
 
             foreach (var p in productos)
             {
-                if (!HayStockEnSucursales(p.Id))
+                if (!_context.StockItems.Any(s => s.ProductoId == p.Id && s.Cantidad > 0))
                 {
-                    productosSinStock.Add(p.Nombre);
+                    sinStockProductos.Add(p.Nombre);
                 }
             }
 
-            Tuple<List<Producto>, List<string>> modelo = new Tuple<List<Producto>, List<string>>(productos, productosSinStock);
+            Tuple<List<Producto>, List<string>> modelo = new Tuple<List<Producto>, List<string>>(productos, sinStockProductos);
 
             return View(modelo);
         }
 
 
-        private bool HayStockEnSucursales(Guid? idProducto)
-        {
-            var sucursales =
-                _context.Sucursal
-                .Include(p => p.StockItems)
-                .ThenInclude(p => p.Producto)
-                .ToList();
-
-            int i = 0;
-            bool hayStock = false;
-
-            while (!hayStock && i < sucursales.Count)
-            {
-                var sucursal =
-                    _context.Sucursal
-                    .Include(p => p.StockItems)
-                    .ThenInclude(p => p.Producto)
-                    .FirstOrDefault(m => m.Id == sucursales[i].Id);
-
-                if (sucursal.StockItems.Any(p => p.ProductoId == idProducto && p.Cantidad > 0))
-                {
-                    hayStock =  true;
-                }
-                i++;
-            }
-            return hayStock;
-        }
-
-
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> Details(Guid? id)
+        public IActionResult Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var producto = await _context.Productos
+            var producto = 
+                _context.Productos
                 .Include(p => p.Categoria)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefault(m => m.Id == id);
 
             if (producto == null)
             {
@@ -229,12 +217,11 @@ namespace tp_nt1.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        #endregion
-
 
         private bool ProductoExists(Guid id)
         {
             return _context.Productos.Any(e => e.Id == id);
         }
+        #endregion
     }
 }

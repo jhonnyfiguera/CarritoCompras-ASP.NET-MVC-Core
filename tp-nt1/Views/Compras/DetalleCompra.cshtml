@@ -7,10 +7,9 @@
 @if (User.IsInRole(nameof(Rol.Empleado)))
 {
     <a class="btn btn-outline-info" asp-action="ComprasDelMes">Compras del Mes</a>
+    <a class="btn btn-outline-info" asp-action="ComprasHistorial">Historial de Compras</a>
     <hr />
 }
-
-
 
 <h3 class="text-center text-success"><b>¡Detalle de la compra: @Model.Id!</b></h3>
 <br />

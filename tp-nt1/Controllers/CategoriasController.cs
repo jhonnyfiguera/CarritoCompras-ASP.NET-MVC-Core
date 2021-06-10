@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using tp_nt1.DataBase;
 using tp_nt1.Models;
 
@@ -26,30 +25,9 @@ namespace tp_nt1.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Categorias.ToListAsync());
-        }
-
-
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var categoria = await _context.Categorias
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (categoria == null)
-            {
-                return NotFound();
-            }
-
-            return View(categoria);
+            return View(_context.Categorias.ToList());
         }
 
 
@@ -153,15 +131,15 @@ namespace tp_nt1.Controllers
         #region No se puede Eliminar una Categoria
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpGet]
-        public async Task<IActionResult> Delete(Guid? id)
+        public IActionResult Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var categoria = await _context.Categorias
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var categoria = _context.Categorias
+                .FirstOrDefault(m => m.Id == id);
 
             if (categoria == null)
             {
@@ -175,19 +153,19 @@ namespace tp_nt1.Controllers
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public IActionResult DeleteConfirmed(Guid id)
         {
-            var categoria = await _context.Categorias.FindAsync(id);
+            var categoria = _context.Categorias.Find(id);
             _context.Categorias.Remove(categoria);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
-        #endregion
 
 
         private bool CategoriaExists(Guid id)
         {
             return _context.Categorias.Any(e => e.Id == id);
         }
+        #endregion
     }
 }
