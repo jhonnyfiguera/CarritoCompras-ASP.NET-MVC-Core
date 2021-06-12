@@ -6,9 +6,6 @@ using System.Linq;
 using tp_nt1.DataBase;
 using tp_nt1.Models;
 
-//Enunciado Categoría:
-//No pueden eliminarse del sistema.
-
 namespace tp_nt1.Controllers
 {
     public class CategoriasController : Controller
@@ -127,8 +124,6 @@ namespace tp_nt1.Controllers
             return View(categoria);
         }
 
-
-        #region No se puede Eliminar una Categoria
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpGet]
         public IActionResult Delete(Guid? id)
@@ -166,6 +161,5 @@ namespace tp_nt1.Controllers
         {
             return _context.Categorias.Any(e => e.Id == id);
         }
-        #endregion
     }
 }

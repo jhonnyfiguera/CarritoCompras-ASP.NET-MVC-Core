@@ -18,7 +18,7 @@
                 Categoria
             </th>
             <th>
-                Precio
+                Precio (x Kg)
             </th>
             @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
             {
@@ -26,17 +26,17 @@
                     Activo
                 </th>
             }
-            <th>
-                @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
-                {
-                    <a class="btn btn-outline-dark" asp-action="Create"><b>Nuevo Producto</b></a>
-                }
+        <th>
+            @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
+            {
+                <a class="btn btn-outline-dark" asp-action="Create"><b>Nuevo Producto</b></a>
+            }
 
-                @if (User.IsInRole(nameof(Rol.Cliente)))
-                {
-                    <a class="btn btn-outline-dark" asp-controller="CarritoItems" asp-action="MisItems"><b>Volver</b></a>
-                }
-            </th>
+            @if (User.IsInRole(nameof(Rol.Cliente)))
+            {
+                <button type="button" class="btn btn-outline-dark" onclick="history.back();">Volver</button>
+            }
+        </th>
             <th></th>
         </tr>
     </thead>
@@ -50,7 +50,7 @@
                         @Html.DisplayFor(modelItem => item.Nombre)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Categoria.Nombre)
+                        @Html.DisplayFor(modelItem => item.Categoria.Nombre) (x Kg)
                     </td>
                     <td>
                         @String.Format("{0:C}", item.PrecioVigente)
@@ -104,7 +104,7 @@
                         else
                         {
                             <div>
-                                <a class="btn btn-outline-success" asp-controller="CarritoItems" asp-action="Agregar" asp-route-id="@item.Id">Agregar</a>
+                                <a class="btn btn-outline-success" asp-controller="CarritoItems" asp-action="Agregar" asp-route-productoId="@item.Id">Agregar</a>
                                 <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@item.Id">Ver Detalle</a>
                             </div>
                         }

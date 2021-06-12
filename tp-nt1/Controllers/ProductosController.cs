@@ -9,9 +9,6 @@ using System.Threading.Tasks;
 using tp_nt1.DataBase;
 using tp_nt1.Models;
 
-//No se puede eliminarse del sistema.
-//Solo los productos pueden dehabilitarse.
-
 namespace tp_nt1.Controllers
 {
     public class ProductosController : Controller
@@ -183,8 +180,6 @@ namespace tp_nt1.Controllers
             return View(producto);
         }
 
-
-        #region No se puede Eliminar un Producto
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpGet]
         public async Task<IActionResult> Delete(Guid? id)
@@ -222,6 +217,5 @@ namespace tp_nt1.Controllers
         {
             return _context.Productos.Any(e => e.Id == id);
         }
-        #endregion
     }
 }

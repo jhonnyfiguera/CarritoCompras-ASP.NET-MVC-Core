@@ -5,11 +5,11 @@
 
 @if (User.IsInRole(nameof(Rol.Empleado)) || User.IsInRole(nameof(Rol.Administrador)))
 {
-    <h4><a href="https://www.facebook.com/losamigo.carniceria.9" target="_blank"><b>Carnicería</b></a> Los Amigos!</h4>
+    <h4 class="text-center"><a href="https://www.facebook.com/losamigo.carniceria.9" target="_blank"><b>Carnicería</b></a> Los Amigos!</h4>
 }
 else
 {
-    <h4>Encuentra tu producto en la <a href="https://www.facebook.com/losamigo.carniceria.9" target="_blank"><b>Carnicería</b></a> Los Amigos!</h4>
+    <h4 class="text-center">Encuentra tu producto en la <a href="https://www.facebook.com/losamigo.carniceria.9" target="_blank"><b>Carnicería</b></a> Los Amigos!</h4>
     <partial name="~/Views/Productos/_Busqueda.cshtml" />
 }
 
