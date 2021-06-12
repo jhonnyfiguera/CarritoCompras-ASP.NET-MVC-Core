@@ -24,22 +24,22 @@ namespace tp_nt1.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Administradores.ToListAsync());
+            return View(_context.Administradores.ToList());
         }
 
  
         [HttpGet]
-        public async Task<IActionResult> Details(Guid? id)
+        public IActionResult Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var administrador = await _context.Administradores
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var administrador = _context.Administradores
+                .FirstOrDefault(m => m.Id == id);
 
             if (administrador == null)
             {
@@ -59,7 +59,7 @@ namespace tp_nt1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(string password)
+        public IActionResult Create(Administrador administrador, string password)
         {
             try
             {
@@ -70,15 +70,15 @@ namespace tp_nt1.Controllers
                 ModelState.AddModelError(nameof(Administrador.Password), ex.Message);
             }
 
-            Administrador administrador = new Administrador
+            if (_context.Administradores.Any(a => a.Username == administrador.Username))
             {
-                Nombre = "Administrador del Sistema",
-                Apellido = "Administrador del Sistema",
-                Telefono = "1100000000",
-                Direccion = "Administrador, Administrador, 0000",
-                Email = "administrador@gmail.com",
-                Username = "administrador",
-            };
+                ModelState.AddModelError(nameof(Administrador.Username), "El Nombre de Usuario ya existe; debes ingresar uno diferente o Iniciar sesión.");
+            }
+
+            if (_context.Administradores.Any(a => a.Email == administrador.Email))
+            {
+                ModelState.AddModelError(nameof(Administrador.Email), "El Email ya existe; debes ingresar uno diferente o Iniciar sesión.");
+            }
 
             if (ModelState.IsValid)
             {
@@ -89,7 +89,7 @@ namespace tp_nt1.Controllers
                 _context.Add(administrador);
                 _context.SaveChanges();
 
-                return RedirectToAction(nameof(AccesosController.Ingresar), "Accesos");
+                return RedirectToAction(nameof(Details), new { administrador.Id });
             }
 
             return View(administrador);
@@ -97,14 +97,14 @@ namespace tp_nt1.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Edit(Guid? id)
+        public IActionResult Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var administrador = await _context.Administradores.FindAsync(id);
+            var administrador = _context.Administradores.Find(id);
 
             if (administrador == null)
             {
@@ -117,7 +117,7 @@ namespace tp_nt1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Administrador administrador, string password)
+        public IActionResult Edit(Guid id, Administrador administrador, string password)
         {
             if (!string.IsNullOrWhiteSpace(password))
             {
@@ -164,7 +164,7 @@ namespace tp_nt1.Controllers
                         admDatabase.Password = password.Encriptar();
                     }
 
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
 
                     TempData["EditIn"] = true;
                 }

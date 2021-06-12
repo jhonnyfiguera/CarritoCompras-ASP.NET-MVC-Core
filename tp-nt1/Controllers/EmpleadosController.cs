@@ -34,22 +34,22 @@ namespace tp_nt1.Controllers
 
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Empleados.ToListAsync());
+            return View(_context.Empleados.ToList());
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> Details(Guid? id)
+        public IActionResult Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var empleado = await _context.Empleados
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var empleado = _context.Empleados
+                .FirstOrDefault(m => m.Id == id);
 
             if (empleado == null)
             {
@@ -108,14 +108,14 @@ namespace tp_nt1.Controllers
 
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpGet]
-        public async Task<IActionResult> Edit(Guid? id)
+        public IActionResult Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var empleado = await _context.Empleados.FindAsync(id);
+            var empleado = _context.Empleados.Find(id);
 
             if (empleado == null)
             {
@@ -129,7 +129,7 @@ namespace tp_nt1.Controllers
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Empleado empleado, string password)
+        public IActionResult Edit(Guid id, Empleado empleado, string password)
         {
             if (!string.IsNullOrWhiteSpace(password))
             {
@@ -176,7 +176,7 @@ namespace tp_nt1.Controllers
                         empleadoDatabase.Password = password.Encriptar();
                     }
 
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
 
                     TempData["EditIn"] = true;
                 }
@@ -259,15 +259,15 @@ namespace tp_nt1.Controllers
 
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpGet]
-        public async Task<IActionResult> Delete(Guid? id)
+        public IActionResult Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var empleado = await _context.Empleados
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var empleado = _context.Empleados
+                .FirstOrDefault(m => m.Id == id);
 
             if (empleado == null)
             {
@@ -281,11 +281,11 @@ namespace tp_nt1.Controllers
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public IActionResult DeleteConfirmed(Guid id)
         {
-            var empleado = await _context.Empleados.FindAsync(id);
+            var empleado = _context.Empleados.Find(id);
             _context.Empleados.Remove(empleado);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
 
