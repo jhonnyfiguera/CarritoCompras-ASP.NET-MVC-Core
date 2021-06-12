@@ -12,41 +12,34 @@
         <div class="card">
             <div class="card-body">
 
-                <form asp-action="Edit" method="post">
+                <div class="form-group">
+                    <b>Nombre</b>:
+                    <label class="control-label">@Model.Producto.Nombre</label>
+                </div>
 
+                <div class="form-group">
+                    <b>Precio </b><small class="text-secondary">(por Kg)</small>:
+                    <label class="control-label">$ @Model.Producto.PrecioVigente</label>
+                </div>
+
+                <div class="form-group">
+                    <b>Cantidad </b><small class="text-secondary">(por Kg)</small>:
+                    <label class="control-label">@Model.Cantidad</label>
+                </div>
+
+                <div class="form-group">
+                    <b>Subtotal</b>:
+                    <label class="control-label">$ @Model.Subtotal</label>
+                </div>
+
+                <form asp-action="Edit" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="Id" />
-                    <input type="hidden" asp-for="ProductoId" />
-                    <input type="hidden" asp-for="CarritoId" />
-                    <input type="hidden" asp-for="ValorUnitario" />
-                    <input type="hidden" asp-for="Subtotal" />
-
-                    <div class="form-group">
-                        @Html.DisplayNameFor(model => model.Producto)
-                        <label class="control-label">: @Model.Producto.Nombre</label>
-                    </div>
-
-                    <div class="form-group">
-                        @Html.DisplayNameFor(model => model.Producto.PrecioVigente)
-                        <label class="control-label">: $@Model.Producto.PrecioVigente</label>
-                    </div>
-
-                    <div class="form-group">
-                        @Html.DisplayNameFor(model => model.Cantidad)
-                        <label class="control-label">: @Model.Cantidad</label>
-                    </div>
-
-                    <div class="form-group">
-                        @Html.DisplayNameFor(model => model.Subtotal)
-                        <label class="control-label">: @Model.Subtotal</label>
-                    </div>
-
                     <div class="form-group">
                         <label asp-for="Cantidad" class="control-label"><b class="text-success">Nueva Cantidad</b></label>
                         <input asp-for="Cantidad" class="form-control" />
                         <span asp-validation-for="Cantidad" class="text-danger"></span>
                     </div>
-
                     <div class="form-group">
                         <input type="submit" value="Actualizar" class="btn btn-outline-primary" />
                         <a class="btn btn-outline-danger" asp-action="MisItems">Cancelar</a>

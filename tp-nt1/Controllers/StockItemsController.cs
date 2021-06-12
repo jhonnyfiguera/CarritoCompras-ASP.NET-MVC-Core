@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using tp_nt1.DataBase;
+using tp_nt1.Extensions;
 using tp_nt1.Models;
 
 namespace tp_nt1.Controllers
@@ -43,16 +44,29 @@ namespace tp_nt1.Controllers
         [ValidateAntiForgeryToken]
         public  IActionResult AgregarStock(StockItem stockItem)
         {
-            var itemAuxiliar =
+            bool cantidadValida = true;
+            try
+            {
+                stockItem.Cantidad.ValidarInput();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(nameof(StockItem.Cantidad), ex.Message);
+                cantidadValida = false;
+            }
+
+            if (cantidadValida)
+            {
+                var itemAuxiliar =
                 _context.StockItems
                 .FirstOrDefault(f => f.ProductoId == stockItem.ProductoId
                 && f.SucursalId == stockItem.SucursalId);
-            
+
                 if (itemAuxiliar != null)
                 {
                     itemAuxiliar.Cantidad += stockItem.Cantidad;
                 }
-                else 
+                else
                 {
                     stockItem.Id = Guid.NewGuid();
                     _context.Add(stockItem);
@@ -60,6 +74,11 @@ namespace tp_nt1.Controllers
                 _context.SaveChanges();
                 TempData["EditIn"] = true;
                 return RedirectToAction(nameof(Index));
+            }
+
+            ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Nombre");
+            ViewData["SucursalId"] = new SelectList(_context.Sucursal, "Id", "Direccion");
+            return View();
         }
 
 
@@ -91,24 +110,22 @@ namespace tp_nt1.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            bool cantidadValida = true;
+            try
             {
-                try
-                {
-                    _context.Update(stockItem);
-                    _context.SaveChanges();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StockItemExists(stockItem.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                stockItem.Cantidad.ValidarInput();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(nameof(StockItem.Cantidad), ex.Message);
+                cantidadValida = false;
+            }
+
+            if (cantidadValida)
+            {
+                _context.Update(stockItem);
+                _context.SaveChanges();
+                TempData["EditIn"] = true;
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Nombre", stockItem.ProductoId);

@@ -1,56 +1,44 @@
-﻿@model tp_nt1.Models.Producto
+﻿@model tp_nt1.Models.CarritoItem
 
 @{
     ViewData["Title"] = "Agregar";
 }
 
-<h3 class="text-center"><b>Agregar</b></h3>
-<br />  
+<h4 class="text-center"><b>Estas agregando el Producto:</b></h4>
+<br />
 
 <div class="row">
     <div class="col-md-6 offset-md-3">
         <div class="card">
             <div class="card-body">
 
-                <h5>Estas agregando el siguiente Item:</h5>
-                <br />
+                <div class="form-group">
+                    <b>Nombre</b>:
+                    <label class="control-label">@Model.Producto.Nombre</label>
+                </div>
 
-                <dl class="row">
-                    <dt class="col-sm-3">
-                       Nombre
-                    </dt>
-                    <dd class="col-sm-9">
-                        @Html.DisplayFor(model => model.Nombre)
-                    </dd>
-                </dl>
-
-                <dl class="row">
-                    <dt class="col-sm-3">
-                        Precio (x Kg)
-                    </dt>
-                    <dd class="col-sm-9">
-                        $ @Html.DisplayFor(model => model.PrecioVigente)
-                    </dd>
-                </dl>
+                <div class="form-group">
+                    <b>Precio </b><small class="text-secondary">(por Kg)</small>:
+                    <label class="control-label">$ @Model.Producto.PrecioVigente</label>
+                </div>
 
                 <form asp-action="Agregar" method="post">
 
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" name="productoId" asp-for="@Model.Producto.Id" />
 
                     <div class="form-group">
-                        <label class="control-label"> Cantidad (x Kg)</label>
-                        <br />
-                        <input class="form-group" type="number" range="1,100000"
-                               min="1" max="100000" pattern="^[0-9]+" name="Cantidad" />
+                        <label class="control-label"><b class="text-success">Cantidad 
+                            <small class="text-secondary">(por Kg)</small></b></label>
+                        <input asp-for="Cantidad" class="form-control" />
+                        <span asp-validation-for="Cantidad" class="text-danger"></span>
                     </div>
 
                     <div class="form-group">
                         <input type="submit" value="Agregar" class="btn btn-outline-primary" />
-                        <a class="btn btn-outline-info" asp-controller="Productos" asp-action="Index">Volver</a>
+                        <button type="button" class="btn btn-outline-dark" onclick="history.back();">Volver</button>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>
