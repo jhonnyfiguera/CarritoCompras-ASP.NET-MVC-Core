@@ -23,6 +23,7 @@
                 @Html.DisplayNameFor(model => model.Descripcion)
             </th>
             <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -39,6 +40,8 @@
                 {
                     <td>
                         <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                    </td>
+                    <td>
                         <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
                     </td>
                 }

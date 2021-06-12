@@ -48,6 +48,15 @@
         </script>
     }
 
+    @if (TempData["SinStock"] as bool? ?? false)
+    {
+        <script>
+            alertify.set('notifier', 'position', 'top-center');
+            alertify.set('notifier', 'delay', 10);
+            alertify.error("Lo sentimos, en nuestras Sucursales no contamos con el stock suficiente para completar el Pedido!");
+        </script>
+    }
+
     @RenderSection("Scripts", required: false)
 
 </body>

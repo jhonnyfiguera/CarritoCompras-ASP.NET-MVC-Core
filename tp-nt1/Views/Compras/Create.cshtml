@@ -7,33 +7,22 @@
 <h4 class="text-center"><b>Nueva Compra</b></h4>
 <br />
 
+<div class="text-center">
+    <i class="text-info">@ViewBag.MensajeSinStock</i>
+</div>
+<br />
+
 <div class="row">
     <div class="col-md-6 offset-md-3">
         <div class="card">
             <div class="card-body">
-
-                @*<div class="form-group text-center">
-
-                </div>*@
                 <h4 class="text-success"><b>Estas a un paso de finalizar</b> </h4>
-                <h6>Selecciona donde deseas retirar tus produtos</h6>
+                <h6>Selecciona donde deseas retirar tus productos</h6>
                 <hr />
 
                 <form asp-action="CrearCompra" method="post">
 
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                    <div class="form-group">
-                        <strong class="text-danger">@ViewBag.MensajeSinStock</strong>
-                    </div>
-
-                    <div class="form-group">
-                        <strong class="text-success">@ViewBag.MensajeContinuarCompra</strong>
-                    </div>
-
-                    <div class="form-group">
-                        <strong class="text-danger">@ViewBag.MensajeNohayStock</strong>
-                    </div>
 
                     <div class="form-group">
                         <label class="control-label"><b class="text-success">Sucursal</b></label>
@@ -42,7 +31,7 @@
 
                     <div class="form-group">
                         <input type="submit" value="Continuar" class="btn btn-outline-primary" />
-                        <a class="btn btn-outline-info" asp-controller="CarritoItems" asp-action="MisItems">Volver</a>
+                        <button type="button" class="btn btn-outline-dark" onclick="history.back();">Volver</button>
                     </div>
                 </form>
             </div>

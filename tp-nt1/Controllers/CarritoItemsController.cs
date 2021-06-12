@@ -39,18 +39,18 @@ namespace tp_nt1.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Details(Guid? id)
+        public IActionResult Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var carritoItem = await 
+            var carritoItem =  
                 _context.CarritoItems
                 .Include(c => c.Carrito)
                 .Include(c => c.Producto)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefault(m => m.Id == id);
 
             if (carritoItem == null)
             {
@@ -62,45 +62,21 @@ namespace tp_nt1.Controllers
 
 
         [HttpGet]
-        public IActionResult Agregar(Guid? id)
+        public IActionResult Agregar(Guid? productoId)
         {
-            if (id == null)
+            if (productoId == null)
             {
                 return NotFound();
             }
 
-            var producto = _context.Productos.Find(id);
+            var producto = _context.Productos.Find(productoId);
 
             if (producto == null || producto.Activo == false)
             {
                 return NotFound();
             }
-
-            var idClienteLoqueado = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            var carrito =  
-                _context.Carritos
-                .Include(c => c.Cliente)
-                .FirstOrDefault(m => m.ClienteId == idClienteLoqueado && m.Activo == true);
-
-            if (carrito == null)
-            {
-                return NotFound();
-            }
-
-            CarritoItem carritoItem = new CarritoItem
-            {
-                Id = Guid.NewGuid(),
-                CarritoId = carrito.Id,
-                Carrito = carrito,
-                ProductoId = producto.Id,
-                Producto = producto,
-                ValorUnitario = producto.PrecioVigente,
-                Cantidad = 1,
-                Subtotal = producto.PrecioVigente * 1,
-            };
        
-            return View(carritoItem);
+            return View(producto);
         }
 
 

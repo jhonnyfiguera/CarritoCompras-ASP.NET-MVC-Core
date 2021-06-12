@@ -32,10 +32,14 @@ namespace tp_nt1.Controllers
                 .Include(c => c.Carrito).ThenInclude(c => c.CarritosItems).ThenInclude(c => c.Producto)
                 .Where(c => c.FechaCompra.Month == DateTime.Now.Month)
                 .OrderByDescending(compra => ((int)compra.Total)).ToList();
+          
+            DateTime hoy = DateTime.Now;
+            string mesActual = hoy.ToString("MMMM");
+            var añoActual = hoy.Year;
 
+            ViewBag.Titulo = "Compras "+ mesActual + " del " + añoActual;
             return View("ComprasReportes", comprasDelMes);
         }
-
 
         [Authorize(Roles = nameof(Rol.Empleado))]
         [HttpGet]
@@ -45,7 +49,7 @@ namespace tp_nt1.Controllers
                 .Include(c => c.Cliente)
                 .Include(c => c.Carrito).ThenInclude(c => c.CarritosItems).ThenInclude(c => c.Producto)
                 .OrderByDescending(compra => compra.FechaCompra).ToList();
-
+            ViewBag.Titulo = "Historial de Compras";
             return View("ComprasReportes", comprasHistorial);
         }
 
@@ -192,18 +196,17 @@ namespace tp_nt1.Controllers
 
                 if (sucursalesConStock.Count > 0)
                 {
-                    ViewBag.MensajeSinStock = "En la sucursal " + miSucursal.Nombre + ", no contamos con stock en algunos productos que seleccionastes";
+                    ViewBag.MensajeSinStock = "Lo sentimos, en " + miSucursal.Nombre + " no contamos con stock suficiente para completar el Pedido. " +
+                         "¡Por favor, intenta en otra Sucursal!";
 
-                    ViewBag.MensajeContinuarCompra = "En las siguientes sucursales, si contamos con stock de todos tus productos, para finalizar tu compra selecciona alguna de ellas";
                     ViewData["SucursalId"] = new SelectList(sucursalesConStock, "Id", "Direccion");
 
                     return View(nameof(Create));
                 }
             }
 
-            ViewBag.MensajeNohayStock = "En ninguna sucursal contamos con stock de algunos productos que seleccionastes";
-
-            return View(nameof(Create));
+            TempData["SinStock"] = true;
+            return RedirectToAction(nameof(CarritoItemsController.MisItems), "CarritoItems");
         }
 
 
