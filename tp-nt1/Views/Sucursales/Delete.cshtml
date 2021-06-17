@@ -54,7 +54,7 @@
                 <form asp-action="Delete">
                     <input type="hidden" asp-for="Id" />
                     <input type="submit" value="Eliminar" class="btn btn-outline-danger" />
-                    <a class="btn btn-outline-dark" asp-action="Index"> Cancelar </a>
+                    <button type="button" class="btn btn-outline-dark" onclick="history.back();">Volver</button>
                 </form>
 
             </div>

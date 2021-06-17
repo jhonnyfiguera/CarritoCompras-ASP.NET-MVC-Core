@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using tp_nt1.DataBase;
-using tp_nt1.Extensions;
 using tp_nt1.Models;
 
 namespace tp_nt1.Controllers
@@ -42,43 +41,26 @@ namespace tp_nt1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public  IActionResult AgregarStock(StockItem stockItem)
+        public IActionResult AgregarStock(StockItem stockItem)
         {
-            bool cantidadValida = true;
-            try
-            {
-                stockItem.Cantidad.ValidarInput();
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(nameof(StockItem.Cantidad), ex.Message);
-                cantidadValida = false;
-            }
+            var itemAuxiliar =
+            _context.StockItems
+            .FirstOrDefault(f => f.ProductoId == stockItem.ProductoId
+            && f.SucursalId == stockItem.SucursalId);
 
-            if (cantidadValida)
+            if (itemAuxiliar != null)
             {
-                var itemAuxiliar =
-                _context.StockItems
-                .FirstOrDefault(f => f.ProductoId == stockItem.ProductoId
-                && f.SucursalId == stockItem.SucursalId);
-
-                if (itemAuxiliar != null)
-                {
-                    itemAuxiliar.Cantidad += stockItem.Cantidad;
-                }
-                else
-                {
-                    stockItem.Id = Guid.NewGuid();
-                    _context.Add(stockItem);
-                }
-                _context.SaveChanges();
-                TempData["EditIn"] = true;
-                return RedirectToAction(nameof(Index));
+                itemAuxiliar.Cantidad += stockItem.Cantidad;
             }
+            else
+            {
+                stockItem.Id = Guid.NewGuid();
+                _context.Add(stockItem);
+            }
+            _context.SaveChanges();
+            TempData["EditIn"] = true;
 
-            ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Nombre");
-            ViewData["SucursalId"] = new SelectList(_context.Sucursal, "Id", "Direccion");
-            return View();
+            return RedirectToAction(nameof(Index));
         }
 
 
@@ -90,85 +72,35 @@ namespace tp_nt1.Controllers
                 return NotFound();
             }
 
-            var stockItem = _context.StockItems.Find(id);
+            var stockItem = _context.StockItems
+                .Include(s => s.Producto)
+                .Include(s => s.Sucursal)
+                .FirstOrDefault(m => m.Id == id);
+
             if (stockItem == null)
             {
                 return NotFound();
             }
-            ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Nombre", stockItem.ProductoId);
-            ViewData["SucursalId"] = new SelectList(_context.Sucursal, "Id", "Direccion", stockItem.SucursalId);
             return View(stockItem);
         }
 
-       
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Guid id, StockItem stockItem)
-        {
-            if (id != stockItem.Id)
-            {
-                return NotFound();
-            }
-
-            bool cantidadValida = true;
-            try
-            {
-                stockItem.Cantidad.ValidarInput();
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(nameof(StockItem.Cantidad), ex.Message);
-                cantidadValida = false;
-            }
-
-            if (cantidadValida)
-            {
-                _context.Update(stockItem);
-                _context.SaveChanges();
-                TempData["EditIn"] = true;
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ProductoId"] = new SelectList(_context.Productos, "Id", "Nombre", stockItem.ProductoId);
-            ViewData["SucursalId"] = new SelectList(_context.Sucursal, "Id", "Direccion", stockItem.SucursalId);
-            return View(stockItem);
-        }
-
-
-        [HttpGet]
-        public IActionResult Eliminar(Guid? id)
+        public IActionResult Edit(Guid id, int Cantidad)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var stockItem =  _context.StockItems
-                .Include(s => s.Producto)
-                .Include(s => s.Sucursal)
-                .FirstOrDefault(m => m.Id == id);
-            if (stockItem == null)
-            {
-                return NotFound();
-            }
+            var stockItemDataBase = _context.StockItems.Find(id);
 
-            return View(stockItem);
-        }
+            stockItemDataBase.Cantidad = Cantidad;
 
-
-        [HttpPost, ActionName("Eliminar")]
-        [ValidateAntiForgeryToken]
-        public IActionResult EliminarConfirmar(Guid id)
-        {
-            var stockItem =  _context.StockItems.Find(id);
-            _context.StockItems.Remove(stockItem);
-             _context.SaveChanges();
+            _context.SaveChanges();
+            TempData["EditIn"] = true;
             return RedirectToAction(nameof(Index));
-        }
-
-
-        private bool StockItemExists(Guid id)
-        {
-            return _context.StockItems.Any(e => e.Id == id);
         }
     }
 }

@@ -65,8 +65,9 @@
 }
 else
 {
-    <div class="text-center">
-        <br />
-        <a class="btn btn-outline-info" asp-controller="CarritoItems" asp-action="MisItems">Mi Carrito</a>
-    </div>
+<div class="text-center">
+    <br />
+    <button type="button" class="btn btn-outline-dark" onclick="history.back();">Volver</button>
+    <a class="navbar-brand m-0 p-0" asp-controller="CarritoItems" asp-action="MisItems"><img src="~/images/carrito.png" style="height:40px;" /></a>
+</div>
 }

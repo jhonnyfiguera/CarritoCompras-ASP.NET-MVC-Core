@@ -7,11 +7,6 @@ using System.Threading.Tasks;
 using tp_nt1.DataBase;
 using tp_nt1.Models;
 
-//Sucursal
-//Cada sucursal tendrá su propio stock y sus datos de locación y contacto.
-//Por el mercado tan volátil las sucursales pueden crearse y eliminarse en todo momento.
-//Para poder eliminar una sucursal, la misma no tiene que tener productos en su stock.
-
 namespace tp_nt1.Controllers
 {
     public class SucursalesController : Controller
