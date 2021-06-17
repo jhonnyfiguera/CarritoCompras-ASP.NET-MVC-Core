@@ -19,6 +19,9 @@
                 Id Compra
             </th>
             <th>
+                Fecha
+            </th>
+            <th>
                 Cantidad de Productos
             </th>
             <th>
@@ -33,6 +36,9 @@
         <tr>
             <td>
                 @misItems.Id
+            </td>
+            <td>
+                @misItems.FechaCompra
             </td>
             <td class="text-center">
                 @misItems.Carrito.CarritosItems.Sum(s => s.Cantidad)

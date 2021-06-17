@@ -1,8 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using tp_nt1.Models;
 
 namespace tp_nt1.DataBase
@@ -12,6 +8,7 @@ namespace tp_nt1.DataBase
         public CarritoDbContext(DbContextOptions<CarritoDbContext> opciones) : base(opciones)
         {
         }
+
         public DbSet<Carrito> Carritos { get; set; }
         public DbSet<CarritoItem> CarritoItems { get; set; }
         public DbSet<Categoria> Categorias { get; set; }

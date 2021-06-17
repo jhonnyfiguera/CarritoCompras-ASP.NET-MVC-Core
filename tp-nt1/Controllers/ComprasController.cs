@@ -30,14 +30,11 @@ namespace tp_nt1.Controllers
             var comprasDelMes = _context.Compras
                 .Include(c => c.Cliente)
                 .Include(c => c.Carrito).ThenInclude(c => c.CarritosItems).ThenInclude(c => c.Producto)
-                .Where(c => c.FechaCompra.Month == DateTime.Now.Month)
+                .Where(c => c.FechaCompra.Month == DateTime.Now.Month && c.FechaCompra.Year == DateTime.Now.Year)
                 .OrderByDescending(compra => ((int)compra.Total)).ToList();
-          
-            DateTime hoy = DateTime.Now;
-            string mesActual = hoy.ToString("MMMM");
-            var añoActual = hoy.Year;
 
-            ViewBag.Titulo = "Compras "+ mesActual + " del " + añoActual;
+            ViewBag.Titulo = "Compras "+ DateTime.Now.ToString("MMMM") + " del " + DateTime.Now.Year;
+
             return View("ComprasReportes", comprasDelMes);
         }
 

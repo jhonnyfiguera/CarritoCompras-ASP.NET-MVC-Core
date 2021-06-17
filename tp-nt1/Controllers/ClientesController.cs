@@ -8,20 +8,6 @@ using tp_nt1.DataBase;
 using tp_nt1.Extensions;
 using tp_nt1.Models;
 
-//Enunciado Cliente: 
-//Los Clientes pueden auto registrarse.
-//La autoregistración desde el sitio es exclusiva para los clientes, por lo cual, se le asignará dicho rol automáticamente.
-//Un usuario puede navegar los productos y sus descripciones sin iniciar sesión, es decir, de forma anónima.
-//Para agregar productos al carrito debe iniciar sesión primero.
-//El cliente, puede agregar diferentes productos en el carrito y por cada producto modificar la cantidad que quiere.
-//Esta acción no implica validación en stock.
-//El ciente verá el subtotal por cada producto/cantidad.
-//También verá el subtotal del carrito.
-//El cliente puede finalizar la compra.
-//Cuando elija finalizar la compra se le solicitará un lugar para retirar (una sucursal).
-//El cliente puede vaciar el carrito.
-//El cliente puede actualizar sus datos de contacto tales como el teléfono, dirección, etc., 
-//pero no puede modificar sus datos básicos tales como DNI, Nombre, Apellido, etc.
 
 namespace tp_nt1.Controllers
 {

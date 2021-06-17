@@ -4,9 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using tp_nt1.DataBase;
-using tp_nt1.Extensions;
 using tp_nt1.Models;
 
 namespace tp_nt1.Controllers
@@ -90,17 +88,6 @@ namespace tp_nt1.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Agregar(int cantidad, Guid? productoId)
         {
-            bool cantidadValida = true;
-            try
-            {
-                cantidad.ValidarInput();
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(nameof(CarritoItem.Cantidad), ex.Message);
-                cantidadValida = false;
-            }
-
             if (productoId == null)
             {
                 return NotFound();
@@ -128,40 +115,31 @@ namespace tp_nt1.Controllers
             {
                 return NotFound();
             }
-           
-            if (cantidadValida)
-            {
-                var miCarritoItems = carrito.CarritosItems.FirstOrDefault(m => m.ProductoId == productoId);
-                if (miCarritoItems != null)
-                {
-                    miCarritoItems.Cantidad += cantidad;
-                    miCarritoItems.Subtotal += (producto.PrecioVigente * cantidad);
-                }
-                else
-                {
-                    CarritoItem carritoItem = new CarritoItem
-                    {
-                        Id = Guid.NewGuid(),
-                        ProductoId = producto.Id,
-                        Producto = producto,
-                        CarritoId = carrito.Id,
-                        Carrito = carrito,
-                        ValorUnitario = producto.PrecioVigente,
-                        Cantidad = cantidad,
-                        Subtotal = producto.PrecioVigente * cantidad,
-                    };
-                    _context.Add(carritoItem);
-                }
-                carrito.Subtotal = carrito.CarritosItems.Sum(s => s.Subtotal);
-                _context.SaveChanges();
-                return RedirectToAction(nameof(MisItems));
-            }
 
-            CarritoItem carritoAux = new CarritoItem
+            var miCarritoItems = carrito.CarritosItems.FirstOrDefault(m => m.ProductoId == productoId);
+            if (miCarritoItems != null)
             {
-                Producto = producto,
-            };
-            return View(carritoAux);
+                miCarritoItems.Cantidad += cantidad;
+                miCarritoItems.Subtotal += (producto.PrecioVigente * cantidad);
+            }
+            else
+            {
+                CarritoItem carritoItem = new CarritoItem
+                {
+                    Id = Guid.NewGuid(),
+                    ProductoId = producto.Id,
+                    Producto = producto,
+                    CarritoId = carrito.Id,
+                    Carrito = carrito,
+                    ValorUnitario = producto.PrecioVigente,
+                    Cantidad = cantidad,
+                    Subtotal = producto.PrecioVigente * cantidad,
+                };
+                _context.Add(carritoItem);
+            }
+            carrito.Subtotal = carrito.CarritosItems.Sum(s => s.Subtotal);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(MisItems));
         }
 
 
@@ -190,17 +168,6 @@ namespace tp_nt1.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Guid id, int cantidad)
         {
-            bool cantidadValida = true;
-            try
-            {
-                cantidad.ValidarInput();
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(nameof(CarritoItem.Cantidad), ex.Message);
-                cantidadValida = false;
-            }
-
             if (id == null)
             {
                 return NotFound();
@@ -212,17 +179,15 @@ namespace tp_nt1.Controllers
                 .Include(m => m.Producto)
                 .FirstOrDefault(c => c.Id == id);
 
-            if (miCarritoItems != null && cantidadValida)
+            if (miCarritoItems != null)
             {
                 miCarritoItems.Cantidad = (int)cantidad;
                 miCarritoItems.Subtotal = (miCarritoItems.Producto.PrecioVigente * (int)cantidad);
                 miCarritoItems.Carrito.Subtotal = miCarritoItems.Carrito.CarritosItems.Sum(s => s.Subtotal);
                 _context.SaveChanges();
                 TempData["EditIn"] = true;
-                return RedirectToAction(nameof(MisItems));
             }
-
-            return View(miCarritoItems);
+            return RedirectToAction(nameof(MisItems));
         }
 
 
@@ -264,12 +229,6 @@ namespace tp_nt1.Controllers
             _context.SaveChanges();
 
             return RedirectToAction(nameof(MisItems));
-        }
-
-
-        private bool CarritoItemExists(Guid id)
-        {
-            return _context.CarritoItems.Any(e => e.Id == id);
         }
     }
 }

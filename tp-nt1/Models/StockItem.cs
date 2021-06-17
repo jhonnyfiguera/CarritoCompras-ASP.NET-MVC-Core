@@ -18,6 +18,8 @@ namespace tp_nt1.Models
         public Producto Producto { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
+        [Range(1, 100000, ErrorMessage = "El valor debe estar entre {1} y {2} ")]
+        [RegularExpression(@"[0-9]*", ErrorMessage = "No se admite Decimales ni Negativos")]
         public int Cantidad { get; set; }
     }
 }

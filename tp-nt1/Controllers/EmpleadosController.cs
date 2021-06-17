@@ -8,14 +8,6 @@ using tp_nt1.DataBase;
 using tp_nt1.Extensions;
 using tp_nt1.Models;
 
-//Empleado
-//Los empleados, deben ser agregados por otro empleado o administrador.
-//Al momento del alta del empleado se le definirá un username y password.
-//También se le asignará a estas cuentas el rol de Empleado automáticamente.
-//El empleado puede listar las compras realizadas en el mes en modo listado, ordenado de forma descendente por valor de compra.
-//El empleado puede dar de alta otros empleados.
-//El empleado puede crear productos, categorias, Sucursales, agregar productos al stock de cada sucursal.
-//El empleado puede habilitar y/o deshabilitar productos.
 
 namespace tp_nt1.Controllers
 {
