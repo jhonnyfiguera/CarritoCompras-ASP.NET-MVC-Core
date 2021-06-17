@@ -214,7 +214,8 @@ namespace tp_nt1.Controllers
             .Include(s => s.StockItems).ThenInclude(m => m.Producto)
             .FirstOrDefault(m => m.Id == id);
 
-            return carritosItems.All  (c =>   sucursal.StockItems.Any(s => s.ProductoId == c.ProductoId && s.Cantidad >= c.Cantidad)   );
+            return carritosItems.All(c => sucursal.StockItems
+                .Any(s => s.ProductoId == c.ProductoId && s.Cantidad >= c.Cantidad));
         }
     }
 }

@@ -18,16 +18,6 @@ namespace tp_nt1.Controllers
             _context = context;
         }
 
-
-        [Authorize(Roles = "Empleado")]
-        [HttpGet]
-        public IActionResult Index()
-        {
-            var carritoDbContext = _context.Carritos.Include(c => c.Cliente);
-            return View(carritoDbContext.ToList());
-        }
-
-
         [Authorize(Roles = nameof(Rol.Cliente))]
         [HttpGet]
         public IActionResult VaciarCarrito()

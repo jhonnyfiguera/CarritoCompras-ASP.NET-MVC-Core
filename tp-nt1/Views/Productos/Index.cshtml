@@ -12,10 +12,10 @@
     <thead>
         <tr>
             <th>
-                Nombre
+                Categoria
             </th>
             <th>
-                Categoria
+                Nombre
             </th>
             <th>
                 Precio (x Kg)
@@ -26,17 +26,17 @@
                     Activo
                 </th>
             }
-        <th>
-            @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
-            {
-                <a class="btn btn-outline-dark" asp-action="Create"><b>Nuevo Producto</b></a>
-            }
+            <th>
+                @if (User.IsInRole(nameof(Rol.Administrador)) || User.IsInRole(nameof(Rol.Empleado)))
+                {
+                    <a class="btn btn-outline-dark" asp-action="Create"><b>Nuevo Producto</b></a>
+                }
 
-            @if (User.IsInRole(nameof(Rol.Cliente)))
-            {
-                <button type="button" class="btn btn-outline-dark" onclick="history.back();">Volver</button>
-            }
-        </th>
+                @if (User.IsInRole(nameof(Rol.Cliente)))
+                {
+                    <button type="button" class="btn btn-outline-dark" onclick="history.back();">Volver</button>
+                }
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -47,10 +47,10 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Nombre)
+                        @Html.DisplayFor(modelItem => item.Categoria.Nombre)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Categoria.Nombre) (x Kg)
+                        @Html.DisplayFor(modelItem => item.Nombre)
                     </td>
                     <td>
                         @String.Format("{0:C}", item.PrecioVigente)
@@ -85,10 +85,10 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Nombre)
+                        @Html.DisplayFor(modelItem => item.Categoria.Nombre)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Categoria.Nombre)
+                        @Html.DisplayFor(modelItem => item.Nombre)
                     </td>
                     <td>
                         @String.Format("{0:C}", item.PrecioVigente)

@@ -186,39 +186,6 @@ namespace tp_nt1.Controllers
         }
 
 
-        #region No puede Eliminarse un Administrador
-        //[HttpGet]
-        //public async Task<IActionResult> Delete(Guid? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var administrador = await _context.Administradores
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-
-        //    if (administrador == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(administrador);
-        //}
-
-
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(Guid id)
-        //{
-        //    var administrador = await _context.Administradores.FindAsync(id);
-        //    _context.Administradores.Remove(administrador);
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
-        #endregion
-
-
         private bool AdministradorExists(Guid id)
         {
             return _context.Administradores.Any(e => e.Id == id);
