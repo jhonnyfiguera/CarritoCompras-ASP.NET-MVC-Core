@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using tp_nt1.DataBase;
 using tp_nt1.Extensions;
 using tp_nt1.Models;
@@ -25,23 +24,23 @@ namespace tp_nt1.Controllers
 
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Clientes.ToListAsync());
+            return View(_context.Clientes.ToList());
         }
 
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Details(Guid? id)
+        public IActionResult Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var cliente = await _context.Clientes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var cliente = _context.Clientes
+                .FirstOrDefault(m => m.Id == id);
 
             if (cliente == null)
             {
@@ -111,14 +110,14 @@ namespace tp_nt1.Controllers
 
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpGet]
-        public async Task<IActionResult> Edit(Guid? id)
+        public IActionResult Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var cliente = await _context.Clientes.FindAsync(id);
+            var cliente = _context.Clientes.Find(id);
 
             if (cliente == null)
             {
@@ -131,7 +130,7 @@ namespace tp_nt1.Controllers
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Cliente cliente, string password)
+        public IActionResult Edit(Guid id, Cliente cliente, string password)
         {
             if (!string.IsNullOrWhiteSpace(password))
             {
@@ -179,7 +178,7 @@ namespace tp_nt1.Controllers
                         clienteDatabase.Password = password.Encriptar();
                     }
 
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
 
                     TempData["EditIn"] = true;
                 }
@@ -262,15 +261,15 @@ namespace tp_nt1.Controllers
 
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpGet]
-        public async Task<IActionResult> Delete(Guid? id)
+        public IActionResult Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var cliente = await _context.Clientes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var cliente = _context.Clientes
+                .FirstOrDefault(m => m.Id == id);
 
             if (cliente == null)
             {
@@ -285,11 +284,11 @@ namespace tp_nt1.Controllers
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public IActionResult DeleteConfirmed(Guid id)
         {
-            var cliente = await _context.Clientes.FindAsync(id);
+            var cliente = _context.Clientes.Find(id);
             _context.Clientes.Remove(cliente);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
 

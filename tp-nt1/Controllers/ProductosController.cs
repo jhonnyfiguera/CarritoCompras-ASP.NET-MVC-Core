@@ -156,10 +156,19 @@ namespace tp_nt1.Controllers
                 ModelState.AddModelError(nameof(producto.Nombre), "El Nombre del Producto ya existe; debes ingresar uno diferente.");
             }
 
+            var carritoItems = _context.CarritoItems
+                .Include(c => c.Carrito).ThenInclude(c => c.CarritosItems)
+                .Where(c => c.ProductoId == id && c.Carrito.Activo == true).ToList();
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    foreach (var item in carritoItems)
+                    {
+                        item.Subtotal = item.Cantidad * producto.PrecioVigente;
+                        item.Carrito.Subtotal = item.Carrito.CarritosItems.Sum(s => s.Subtotal);
+                    }
                     _context.Update(producto);
                     _context.SaveChanges();
                 }
