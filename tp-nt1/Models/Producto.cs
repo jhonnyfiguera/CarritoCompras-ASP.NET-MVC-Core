@@ -21,6 +21,7 @@ namespace tp_nt1.Models
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
         [Range(0, 100000000, ErrorMessage = "El {0} se debe encontrar entre {1} y {2}")]
+        [RegularExpression(@"[0-9]*", ErrorMessage = "No se admite Decimales ni Negativos")]
         [Display(Name = "Precio Vigente")]
         public decimal PrecioVigente { get; set; }
 

@@ -130,13 +130,14 @@ namespace tp_nt1.Controllers
                 return NotFound();
             }
 
-            var producto = _context.Productos.Find(id);
+            var producto = _context.Productos
+                .Include(p => p.Categoria)
+                .FirstOrDefault(p => p.Id == id);
 
             if (producto == null)
             {
                 return NotFound();
             }
-            ViewData["Categoria"] = new SelectList(_context.Categorias, "Id", "Nombre", producto.CategoriaId);
 
             return View(producto);
         }
@@ -151,25 +152,29 @@ namespace tp_nt1.Controllers
                 return NotFound();
             }
 
-            if (_context.Productos.Any(c => c.Nombre == producto.Nombre && c.Id != id))
-            {
-                ModelState.AddModelError(nameof(producto.Nombre), "El Nombre del Producto ya existe; debes ingresar uno diferente.");
-            }
-
             var carritoItems = _context.CarritoItems
                 .Include(c => c.Carrito).ThenInclude(c => c.CarritosItems)
                 .Where(c => c.ProductoId == id && c.Carrito.Activo == true).ToList();
+
+            var productoBD = _context.Productos
+                .Include(p => p.Categoria)
+                .FirstOrDefault(p => p.Id == id);
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    foreach (var item in carritoItems)
+                    if (productoBD.PrecioVigente != producto.PrecioVigente)
                     {
-                        item.Subtotal = item.Cantidad * producto.PrecioVigente;
-                        item.Carrito.Subtotal = item.Carrito.CarritosItems.Sum(s => s.Subtotal);
+                        foreach (var item in carritoItems)
+                        {
+                            item.Subtotal = item.Cantidad * producto.PrecioVigente;
+                            item.Carrito.Subtotal = item.Carrito.CarritosItems.Sum(s => s.Subtotal);
+                        }
                     }
-                    _context.Update(producto);
+                    productoBD.PrecioVigente = producto.PrecioVigente;
+                    productoBD.Descripcion = producto.Descripcion;
+                    productoBD.Activo = producto.Activo;
                     _context.SaveChanges();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -185,7 +190,7 @@ namespace tp_nt1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Categoria"] = new SelectList(_context.Categorias, "Id", "Nombre", producto.CategoriaId);
+
             return View(producto);
         }
 
@@ -214,11 +219,11 @@ namespace tp_nt1.Controllers
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public IActionResult DeleteConfirmed(Guid id)
         {
-            var producto = await _context.Productos.FindAsync(id);
+            var producto = _context.Productos.Find(id);
             _context.Productos.Remove(producto);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
 
