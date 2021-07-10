@@ -132,7 +132,9 @@ namespace tp_nt1.Controllers
                 .Include(c => c.Cliente).ThenInclude(m => m.Compras)
                 .FirstOrDefault(m => m.ClienteId == idClienteLogueado && m.Activo == true);
 
-            var miSucursal = _context.Sucursal.Find(sucursalId);
+            var miSucursal = _context.Sucursal
+                .Include(c => c.StockItems).ThenInclude(p => p.Producto)
+                .FirstOrDefault(m => m.Id == sucursalId);
 
             if (miSucursal == null || carrito == null)
             {
@@ -145,7 +147,6 @@ namespace tp_nt1.Controllers
                 {
                     var stockItemSucursal = miSucursal.StockItems.FirstOrDefault(p => p.ProductoId == item.ProductoId);
                     stockItemSucursal.Cantidad -= item.Cantidad;
-                    _context.SaveChanges();
                 }
 
                 Compra compra = new Compra
@@ -167,7 +168,8 @@ namespace tp_nt1.Controllers
                     Id = Guid.NewGuid(),
                     Activo = true,
                     ClienteId = idClienteLogueado,
-                    Subtotal = 0
+                    Subtotal = 0,
+                    MensajeActualizacion = "SinMensaje"
                 };
                 _context.Add(nuevoCarrito);
 

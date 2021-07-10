@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="es-ar">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -30,6 +30,14 @@
     <script src="~/lib/bootstrap-select/js/i18n/defaults-es_ES.js"></script>
     <script src="~/lib/alertifyjs/alertify.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @if (TempData["PrecioActualizado"] as bool? ?? false)
+    {
+        <script>
+            alertify.set('notifier', 'position', 'top-center', 'text-white');
+            alertify.success("Algunos precios se han actualizado.");
+        </script>
+    }
 
 
     @if (TempData["EditIn"] as bool? ?? false)

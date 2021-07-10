@@ -95,7 +95,8 @@ namespace tp_nt1.Controllers
                     Id = Guid.NewGuid(),
                     Activo = true,
                     ClienteId = cliente.Id,
-                    Subtotal = 0
+                    Subtotal = 0,
+                    MensajeActualizacion = "SinMensaje"
                 };
                 _context.Add(carrito);
 
