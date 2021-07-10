@@ -33,6 +33,14 @@ namespace tp_nt1.Controllers
                 .Include(c => c.Cliente)
                 .FirstOrDefault(m => m.ClienteId == idClienteLogueado && m.Activo == true);
 
+            if (!carrito.MensajeActualizacion.Equals("SinMensaje"))
+            {
+                TempData["PrecioActualizado"] = true;
+                carrito.MensajeActualizacion = "SinMensaje";
+                _context.SaveChanges();
+            }
+
+            var p = carrito.MensajeActualizacion;
             return View(carrito.CarritosItems);
         }
 

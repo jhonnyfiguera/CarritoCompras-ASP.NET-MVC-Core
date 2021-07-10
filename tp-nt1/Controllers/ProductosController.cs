@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using tp_nt1.DataBase;
 using tp_nt1.Models;
@@ -170,7 +171,9 @@ namespace tp_nt1.Controllers
                         {
                             item.Subtotal = item.Cantidad * producto.PrecioVigente;
                             item.Carrito.Subtotal = item.Carrito.CarritosItems.Sum(s => s.Subtotal);
+                            item.Carrito.MensajeActualizacion = "Precio Actualizado";
                         }
+                        
                     }
                     productoBD.PrecioVigente = producto.PrecioVigente;
                     productoBD.Descripcion = producto.Descripcion;
@@ -196,16 +199,16 @@ namespace tp_nt1.Controllers
 
         [Authorize(Roles = nameof(Rol.Administrador))]
         [HttpGet]
-        public async Task<IActionResult> Delete(Guid? id)
+        public IActionResult Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var producto = await _context.Productos
+            var producto = _context.Productos
                 .Include(p => p.Categoria)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefault(m => m.Id == id);
 
             if (producto == null)
             {
