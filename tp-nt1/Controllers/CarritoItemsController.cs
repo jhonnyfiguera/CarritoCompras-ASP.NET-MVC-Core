@@ -40,7 +40,6 @@ namespace tp_nt1.Controllers
                 _context.SaveChanges();
             }
 
-            var p = carrito.MensajeActualizacion;
             return View(carrito.CarritosItems);
         }
 
