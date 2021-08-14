@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using tp_nt1.DataBase;
 using tp_nt1.Extensions;
 using tp_nt1.Models;
